@@ -16,6 +16,12 @@ describe('CampusBuddy Single-File Prototype Integrity', () => {
     assert.ok(htmlContent.length > 5000, 'HTML file should be comprehensive');
   });
 
+  test('index.html and campusbuddy.html are identical in content', () => {
+    const indexPath = path.resolve(__dirname, '../index.html');
+    const indexContent = fs.readFileSync(indexPath, 'utf8');
+    assert.equal(indexContent, htmlContent, 'index.html and campusbuddy.html must be kept strictly identical');
+  });
+
   test('All required meta tags, viewport, fonts, and title are present', () => {
     assert.match(htmlContent, /<meta name="viewport" content="width=device-width/);
     assert.match(htmlContent, /<title>CampusBuddy/);
