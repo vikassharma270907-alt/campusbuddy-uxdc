@@ -28,16 +28,22 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
 
       - name: Verify Project Deliverables Exist
         run: |
           test -f campusbuddy.html || (echo "Missing campusbuddy.html" && exit 1)
           test -f index.html || (echo "Missing index.html" && exit 1)
           test -f server.js || (echo "Missing server.js" && exit 1)
+          test -f manifest.webmanifest || (echo "Missing manifest.webmanifest" && exit 1)
+          test -f sw.js || (echo "Missing sw.js" && exit 1)
+          test -f render.yaml || (echo "Missing render.yaml" && exit 1)
           test -f DESIGN.md || (echo "Missing DESIGN.md" && exit 1)
           test -f RESEARCH.md || (echo "Missing RESEARCH.md" && exit 1)
           test -f DEMO_SCRIPT.md || (echo "Missing DEMO_SCRIPT.md" && exit 1)
           test -f SUBMISSION.md || (echo "Missing SUBMISSION.md" && exit 1)
+          test -f AUDIT_REPORT.md || (echo "Missing AUDIT_REPORT.md" && exit 1)
           test -f package.json || (echo "Missing package.json" && exit 1)
 
       - name: Run Full CI Quality Gate (Lint, Typecheck, Test Suite & Sync)

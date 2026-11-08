@@ -9,7 +9,7 @@ services:
     runtime: node
     plan: free
     region: oregon
-    buildCommand: npm install
+    buildCommand: npm install && npm run build
     startCommand: npm start
     healthCheckPath: /health
     envVars:
@@ -25,7 +25,7 @@ services:
     name: campusbuddy-app
     plan: free
     region: oregon
-    buildCommand: ""
+    buildCommand: npm run build
     publishPath: .
     routes:
       - type: rewrite

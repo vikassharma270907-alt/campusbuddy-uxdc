@@ -11,13 +11,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 describe('CampusBuddy End-to-End User Journey Smoke Suite', () => {
-  const TEST_PORT = 9188;
+  let testPort;
   const server = createServer();
 
   before(async () => {
     await new Promise((resolve, reject) => {
-      server.listen(TEST_PORT, '127.0.0.1', (err) => {
+      server.listen(0, '127.0.0.1', (err) => {
         if (err) return reject(err);
+        testPort = server.address().port;
         resolve();
       });
     });
@@ -33,11 +34,11 @@ describe('CampusBuddy End-to-End User Journey Smoke Suite', () => {
   });
 
   const get = (urlPath) => new Promise((resolve, reject) => {
-    http.get(`http://127.0.0.1:${TEST_PORT}${urlPath}`, (res) => {
+    http.get(`http://127.0.0.1:${testPort}${urlPath}`, (res) => {
       let data = '';
       res.on('data', chunk => { data += chunk; });
       res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body: data }));
-    }).on('error', reject);
+    });
   });
 
   test('E2E Gate 1: HTTP server serves production index.html and health endpoint', async () => {

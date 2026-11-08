@@ -4,13 +4,14 @@ import http from 'node:http';
 import { createServer } from '../server.js';
 
 describe('CampusBuddy Production HTTP Server', () => {
-  const TEST_PORT = 8992;
+  let testPort;
   const server = createServer();
 
   before(async () => {
     await new Promise((resolve, reject) => {
-      server.listen(TEST_PORT, (err) => {
+      server.listen(0, '127.0.0.1', (err) => {
         if (err) return reject(err);
+        testPort = server.address().port;
         resolve();
       });
     });
@@ -26,7 +27,7 @@ describe('CampusBuddy Production HTTP Server', () => {
   });
 
   const request = (urlPath, options = {}) => new Promise((resolve, reject) => {
-    const req = http.request(`http://localhost:${TEST_PORT}${urlPath}`, options, (res) => {
+    const req = http.request(`http://127.0.0.1:${testPort}${urlPath}`, options, (res) => {
       let data = '';
       res.on('data', chunk => { data += chunk; });
       res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body: data }));
