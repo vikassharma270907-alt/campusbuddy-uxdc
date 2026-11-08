@@ -66,6 +66,8 @@ const healthPayload = JSON.stringify({
 }, null, 2);
 fs.writeFileSync(path.join(distDir, 'health'), healthPayload);
 fs.writeFileSync(path.join(distDir, 'healthz'), healthPayload);
+fs.writeFileSync(path.join(distDir, 'health.json'), healthPayload);
+fs.writeFileSync(path.join(distDir, 'healthz.json'), healthPayload);
 
 // Generate static /calendar.ics in dist/
 const pad = n => String(n).padStart(2, '0');

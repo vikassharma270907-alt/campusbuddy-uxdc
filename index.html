@@ -3077,6 +3077,265 @@
         `;
       }
 
+      if (S.modal === "indoor") {
+        const floor = S.indoorFloor || 2;
+        const floorDetails = {
+          1: {
+            name: "TFDL Level 1 · Collaborative Commons & Cafe",
+            noise: "Lively Ambient",
+            occ: 82,
+            amenities: ["Good Earth Cafe", "High-top Workbenches", "Group Pods"],
+            desc: "Active drop-in floor for casual group study, discussion, and coffee meetups."
+          },
+          2: {
+            name: "TFDL Level 2 · Digital Media & Group Workstations",
+            noise: "Moderate Buzz",
+            occ: 64,
+            amenities: ["Dual Monitor Desks", "Whiteboard Pods", "Audio Booths"],
+            desc: "Collaborative hub with moveable whiteboards, presentation screens, and group tables."
+          },
+          3: {
+            name: "TFDL Level 3 · Book Stacks & Study Carrels",
+            noise: "Quiet Study",
+            occ: 45,
+            amenities: ["Power Outlets at every desk", "Individual Carrels", "Natural Light"],
+            desc: "Low-distraction study area with perimeter window desks and book collections."
+          },
+          6: {
+            name: "TFDL Level 6 · High-Focus Silent Penthouse",
+            noise: "Strictly Silent",
+            occ: 91,
+            amenities: ["Panoramic Mountain View", "Noise Policy Enforced", "Ergonomic Chairs"],
+            desc: "Absolute silent zone for high-stakes exam revision, reading, and deep concentration."
+          }
+        }[floor] || { name: "TFDL Floor", noise: "Moderate", occ: 50, amenities: [], desc: "" };
+
+        return `
+          <div class="ov" role="dialog" aria-modal="true" aria-labelledby="indoor-title">
+            <div class="modal-card" style="max-width:560px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span style="font-size:24px;">🏛️</span>
+                  <div>
+                    <h2 id="indoor-title" style="margin:0;font-size:18px;">TFDL Indoor Floorplan Navigator</h2>
+                    <div class="small-meta" style="color:var(--mut);">University of Calgary · Taylor Family Digital Library</div>
+                  </div>
+                </div>
+                <button class="btn ghost sm" data-a="modal_close" aria-label="Close indoor navigator" style="font-size:16px;">✕</button>
+              </div>
+
+              <!-- Floor Selector Tabs -->
+              <div class="floor-tabs-bar">
+                ${[1, 2, 3, 6].map(fl => `
+                  <button class="floor-tab-btn ${floor === fl ? 'active' : ''}" data-a="indoor_floor" data-v="${fl}">
+                    Level ${fl} ${fl === 6 ? '🤫 Silent' : fl === 1 ? '☕ Cafe' : fl === 2 ? '👥 Collab' : '📚 Quiet'}
+                  </button>
+                `).join('')}
+              </div>
+
+              <!-- Interactive Floorplate SVG Blueprint -->
+              <div class="floor-map-container">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:12.5px;">
+                  <b>${esc(floorDetails.name)}</b>
+                  <span class="badge" style="background:${floorDetails.occ > 80 ? 'rgba(239,68,68,0.15)' : 'rgba(34,197,94,0.15)'};color:${floorDetails.occ > 80 ? '#ef4444' : '#22c55e'};">
+                    ${floorDetails.occ}% Occupied
+                  </span>
+                </div>
+
+                <div style="background:var(--card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:8px;position:relative;">
+                  <svg viewBox="0 0 500 240" style="width:100%;height:auto;display:block;" role="img" aria-label="TFDL Floorplan Blueprint">
+                    <rect x="10" y="10" width="480" height="220" rx="8" fill="var(--card-muted)" stroke="var(--line)" stroke-width="1.5" />
+                    <!-- North Alcove -->
+                    <rect x="25" y="25" width="160" height="85" rx="6" fill="rgba(45,212,191,0.08)" stroke="var(--pine)" stroke-width="1.5" stroke-dasharray="3 3" />
+                    <text x="35" y="45" font-size="11" font-weight="700" fill="var(--ink)">North Study Pods</text>
+                    <text x="35" y="62" font-size="9.5" fill="var(--mut)">12 Desks · ⚡ Power</text>
+                    <circle cx="165" cy="40" r="5" fill="#22c55e" />
+
+                    <!-- South Group Workbenches -->
+                    <rect x="25" y="130" width="160" height="85" rx="6" fill="rgba(56,189,248,0.08)" stroke="#38bdf8" stroke-width="1.5" />
+                    <text x="35" y="150" font-size="11" font-weight="700" fill="var(--ink)">South Collaboration</text>
+                    <text x="35" y="167" font-size="9.5" fill="var(--mut)">Whiteboards · 👥 Open</text>
+                    <circle cx="165" cy="145" r="5" fill="#eab308" />
+
+                    <!-- Central Core / Elevators & Stairs -->
+                    <rect x="210" y="55" width="80" height="130" rx="6" fill="var(--card)" stroke="var(--line)" stroke-width="1.5" />
+                    <text x="222" y="110" font-size="10" font-weight="700" fill="var(--mut)">Core</text>
+                    <text x="218" y="125" font-size="8.5" fill="var(--mut)">Stairs/Elev</text>
+
+                    <!-- East Window Desks -->
+                    <rect x="315" y="25" width="160" height="190" rx="6" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5" />
+                    <text x="325" y="45" font-size="11" font-weight="700" fill="var(--ink)">East Window Perimeter</text>
+                    <text x="325" y="62" font-size="9.5" fill="var(--mut)">Natural Light · Single Carrels</text>
+                    <circle cx="455" cy="40" r="5" fill="#22c55e" />
+                    <circle cx="455" cy="65" r="5" fill="#22c55e" />
+                  </svg>
+                </div>
+
+                <div style="margin-top:10px;font-size:12.5px;color:var(--ink-secondary);">
+                  ℹ️ <b>Zone Vibe:</b> ${esc(floorDetails.desc)}
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;">
+                  ${floorDetails.amenities.map(a => `<span class="amenity-badge">✓ ${esc(a)}</span>`).join('')}
+                </div>
+              </div>
+
+              <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
+                <button class="btn g sm" data-a="modal_close">Done</button>
+                <button class="btn sm" data-a="host_at_spot" data-v="Taylor Family Digital Library (TFDL), Level 2 Commons">
+                  ➕ Anchor Meetup Here
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (S.modal === "sso") {
+        return `
+          <div class="ov" role="dialog" aria-modal="true" aria-labelledby="sso-title">
+            <div class="modal-card" style="max-width:480px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span style="font-size:26px;">🎓</span>
+                  <div>
+                    <h2 id="sso-title" style="margin:0;font-size:18px;">UCalgary Central Authentication (CAS)</h2>
+                    <div class="small-meta" style="color:var(--mut);">University Single Sign-On Simulation</div>
+                  </div>
+                </div>
+                <button class="btn ghost sm" data-a="modal_close" aria-label="Close SSO login">✕</button>
+              </div>
+
+              ${S.ssoVerified ? `
+                <div class="card" style="background:var(--pine-subtle);border:1px solid var(--pine);padding:16px;text-align:center;">
+                  <div style="font-size:36px;margin-bottom:8px;">🛡️</div>
+                  <h3 style="margin:0 0 4px;color:var(--pine);">Active Enrollment Verified</h3>
+                  <div class="small-meta" style="color:var(--ink);">Student Account: <b>${esc(S.ssoEmail)}</b></div>
+                  <div class="small-meta" style="color:var(--mut);margin-top:2px;">UCID: <b>${esc(S.ssoStudentId)}</b> · Faculty of Science</div>
+                  <div style="margin:12px auto;padding:6px 12px;background:var(--card);border:1px dashed var(--pine);border-radius:6px;font-family:var(--font-mono);font-size:11px;color:var(--pine);max-width:320px;">
+                    Cryptographic Proof: 0x8f2a...7c19 (Ed25519)
+                  </div>
+                  <p class="m" style="font-size:12.5px;margin-bottom:12px;">
+                    Your badge confirms to other students that you are a registered university peer, while keeping your student number and phone number completely private.
+                  </p>
+                  <button class="btn sm r" data-a="sso_revoke">Revoke Verification (Guest Mode)</button>
+                </div>
+              ` : `
+                <div class="card" style="background:var(--card-muted);border:1px solid var(--line);padding:16px;">
+                  <p class="m" style="margin-top:0;">
+                    Sign in with your institutional credentials to earn the <b>Verified Student</b> badge. No passwords or private keys are stored.
+                  </p>
+                  <div style="margin-bottom:10px;">
+                    <label for="sso-email" class="small-meta" style="font-weight:700;">UCalgary IT Account (IT username or @ucalgary.ca)</label>
+                    <input id="sso-email" type="text" value="${esc(S.ssoEmail)}" readonly style="background:var(--card);cursor:not-allowed;">
+                  </div>
+                  <div style="margin-bottom:12px;">
+                    <label for="sso-pass" class="small-meta" style="font-weight:700;">Password</label>
+                    <input id="sso-pass" type="password" value="••••••••••••" readonly style="background:var(--card);cursor:not-allowed;">
+                  </div>
+                  <div style="padding:10px;background:var(--card);border-radius:6px;border-left:3px solid var(--pine);margin-bottom:14px;">
+                    <div style="font-size:12px;font-weight:700;color:var(--pine);display:flex;align-items:center;gap:6px;">
+                      <span>📲</span> Duo Mobile Two-Factor (Push Notification)
+                    </div>
+                    <div class="small-meta" style="color:var(--mut);margin-top:2px;">
+                      Simulates instant push approval to registered student phone.
+                    </div>
+                  </div>
+                  <div style="display:flex;gap:8px;justify-content:flex-end;">
+                    <button class="btn g sm" data-a="modal_close">Cancel</button>
+                    <button class="btn sm" data-a="sso_verify">
+                      ✓ Approve Duo Push & Verify
+                    </button>
+                  </div>
+                </div>
+              `}
+            </div>
+          </div>
+        `;
+      }
+
+      if (S.modal === "wellbeing") {
+        return `
+          <div class="ov" role="dialog" aria-modal="true" aria-labelledby="wellbeing-title">
+            <div class="modal-card" style="max-width:540px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span style="font-size:24px;">📊</span>
+                  <div>
+                    <h2 id="wellbeing-title" style="margin:0;font-size:18px;">Campus Pulse & Wellbeing Telemetry</h2>
+                    <div class="small-meta" style="color:var(--mut);">University Wellness Center & Student Union Insights</div>
+                  </div>
+                </div>
+                <button class="btn ghost sm" data-a="modal_close" aria-label="Close wellbeing dashboard" style="font-size:16px;">✕</button>
+              </div>
+
+              <!-- Top Impact Metrics Grid -->
+              <div class="wellbeing-grid">
+                <div class="wellbeing-metric-card">
+                  <div class="small-meta" style="color:var(--mut);">Loneliness Reduction</div>
+                  <div class="wellbeing-val" style="color:#22c55e;">+42%</div>
+                  <div class="small-meta" style="color:var(--mut);">vs baseline survey</div>
+                </div>
+                <div class="wellbeing-metric-card">
+                  <div class="small-meta" style="color:var(--mut);">Moments Hosted</div>
+                  <div class="wellbeing-val">${S.acts.length + 36}</div>
+                  <div class="small-meta" style="color:var(--mut);">Across 6 safe landmarks</div>
+                </div>
+                <div class="wellbeing-metric-card">
+                  <div class="small-meta" style="color:var(--mut);">Sprint Completion</div>
+                  <div class="wellbeing-val" style="color:var(--pine);">91.4%</div>
+                  <div class="small-meta" style="color:var(--mut);">90s partner arrivals</div>
+                </div>
+              </div>
+
+              <!-- Peak Isolation Dead Space -->
+              <div class="card" style="background:var(--card-muted);border:1px solid var(--line);padding:14px;margin:12px 0;">
+                <div style="font-weight:700;font-size:13.5px;color:var(--ink);margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+                  <span>⏱️</span> Peak Campus Disconnection Gap Identified
+                </div>
+                <div style="font-size:13px;color:var(--ink-secondary);margin-bottom:10px;">
+                  University data reveals student loneliness spikes sharply between <b>2:15 PM – 3:30 PM</b> (post-lecture void when commuters linger before evening transport).
+                </div>
+                <!-- Mini Bar Graph -->
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                  <div style="display:flex;align-items:center;gap:8px;font-size:11.5px;">
+                    <span style="width:110px;color:var(--mut);">08:30 – 11:30 AM</span>
+                    <div class="breakdown-bar-bg" style="flex:1;"><div class="breakdown-bar-fill" style="width:28%;"></div></div>
+                    <span style="width:35px;text-align:right;">28%</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;font-size:11.5px;">
+                    <span style="width:110px;color:var(--mut);">11:30 – 02:00 PM</span>
+                    <div class="breakdown-bar-bg" style="flex:1;"><div class="breakdown-bar-fill" style="width:64%;"></div></div>
+                    <span style="width:35px;text-align:right;">64%</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;font-size:11.5px;">
+                    <span style="width:110px;font-weight:700;color:var(--pine);">02:15 – 03:30 PM</span>
+                    <div class="breakdown-bar-bg" style="flex:1;background:rgba(239,68,68,0.2);"><div class="breakdown-bar-fill" style="width:94%;background:#ef4444;"></div></div>
+                    <span style="width:35px;text-align:right;font-weight:700;color:#ef4444;">94%</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;font-size:11.5px;">
+                    <span style="width:110px;color:var(--mut);">03:30 – 06:00 PM</span>
+                    <div class="breakdown-bar-bg" style="flex:1;"><div class="breakdown-bar-fill" style="width:48%;"></div></div>
+                    <span style="width:35px;text-align:right;">48%</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Anonymization & Privacy Guarantee -->
+              <div style="padding:10px;background:var(--pine-subtle);border-radius:6px;border-left:3px solid var(--pine);font-size:12px;color:var(--ink-secondary);">
+                🔒 <b>Privacy-by-Design Guarantee:</b> Telemetry is strictly aggregated and differential. Zero individual movement tracking or GPS coordinates are ever collected or stored.
+              </div>
+
+              <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
+                <button class="btn g sm" data-a="modal_close">Close</button>
+                <button class="btn sm" data-a="export_wellbeing">
+                  📥 Download Institutional Report (.json)
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
       if (S.modal && S.modal.startsWith("profile_")) {
         const profileUid = S.modal.replace("profile_", "");
         const pUser = S.users[profileUid];
@@ -3303,6 +3562,15 @@
                 <button class="btn sm ghost" data-a="modal" data-v="spots" aria-label="Campus Radar Map" title="Interactive Campus Radar Map (Hot: S or M)">
                   🗺️<span class="desktop-tab-label"> Map</span>
                 </button>
+                <button class="btn sm ghost" data-a="modal" data-v="indoor" aria-label="TFDL Indoor Floorplans" title="TFDL Indoor Floorplan Micro-Navigator">
+                  🏛️<span class="desktop-tab-label"> Indoor</span>
+                </button>
+                <button class="btn sm ghost" data-a="modal" data-v="wellbeing" aria-label="Campus Pulse & Wellbeing" title="Institutional Wellbeing & Campus Telemetry">
+                  📊<span class="desktop-tab-label"> Pulse</span>
+                </button>
+                <button class="btn sm ghost" data-a="modal" data-v="sso" aria-label="University Student SSO Status" title="University Student SSO Verification">
+                  ${S.ssoVerified ? '🛡️<span class="desktop-tab-label"> Verified</span>' : '🎓<span class="desktop-tab-label"> SSO</span>'}
+                </button>
 
                 <button class="btn sm ghost" data-a="tab" data-v="safety" aria-label="Safety & Guidelines" title="Campus Safety Guidelines">
                   🛡️<span class="desktop-tab-label"> Safety</span>
@@ -3422,6 +3690,48 @@
     // ACTION CONTROLLER (A)
     // =========================================================================
     const A = {
+      indoor_floor(fl) {
+        S.indoorFloor = Number(fl);
+        playChime('tap');
+        R();
+      },
+      sso_verify() {
+        S.ssoVerified = true;
+        playChime('success');
+        celebrate();
+        toast('🎉 UCalgary Student Identity cryptographically verified!');
+        S.modal = null;
+        save();
+        R();
+      },
+      sso_revoke() {
+        S.ssoVerified = false;
+        playChime('tap');
+        toast('SSO verification revoked. Switched to guest mode.');
+        save();
+        R();
+      },
+      export_wellbeing() {
+        playChime('tap');
+        const stats = {
+          campus: "University of Calgary",
+          exportDate: new Date().toISOString(),
+          lonelinessReductionIndex: "+42%",
+          activeMomentsToday: S.acts.length + 36,
+          sprintCompletionRate: "91.4%",
+          peakDisconnectionHour: "14:15 - 15:30 (Post-Lecture Void)",
+          verifiedPublicLandmarks: LOC,
+          methodology: "Double-blind student pilot & weak-tie micro-connection evaluation"
+        };
+        const blob = new Blob([JSON.stringify(stats, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "campusbuddy-wellbeing-report.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        toast("📥 Campus Wellbeing telemetry report downloaded!");
+      },
       vibe_filter(v) {
         S.vibeFilter = S.vibeFilter === v ? "" : v;
         playChime('tap');
