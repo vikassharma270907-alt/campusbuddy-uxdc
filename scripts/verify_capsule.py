@@ -35,26 +35,16 @@ try:
         page.on("pageerror", lambda err: print(f"BROWSER ERROR: {err}"))
         
         page.goto(f"http://127.0.0.1:{port}/campusbuddy.html", wait_until="domcontentloaded")
-        time.sleep(0.5)
+        time.sleep(1)
         
-        # Click enter demo if on landing page
-        if page.locator('[data-a="start"]').count() > 0:
-            page.click('[data-a="start"]')
-            time.sleep(0.5)
-            
-        capsule = page.locator(".live-activity-capsule")
-        capsule_count = capsule.count()
-        print(f"Capsule count after enter demo: {capsule_count}")
-        if capsule_count > 0:
-            capsule.first.screenshot(path="assets/screenshots/capsule_fixed.png")
+        info = page.evaluate("() => ({ me: S.me, myNext: S.acts.find(a => a.ps.includes(S.me) && a.st === 'open'), acts: S.acts.map(a => ({ id: a.id, ps: a.ps, st: a.st })) })")
+        print(f"Info from page: me={info.get('me')}, myNext={info.get('myNext')}")
+        
+        has_capsule = page.locator(".live-activity-capsule").count() > 0
+        if has_capsule:
+            capsule = page.locator(".live-activity-capsule")
+            capsule.screenshot(path="assets/screenshots/capsule_fixed.png")
             print("Captured assets/screenshots/capsule_fixed.png!")
-            
-            b = page.locator('.capsule-badge').bounding_box()
-            c = page.locator('.capsule-content').bounding_box()
-            a = page.locator('.capsule-actions').bounding_box()
-            print(f"Badge: {b}")
-            print(f"Content: {c}")
-            print(f"Actions: {a}")
         
         page.screenshot(path="assets/screenshots/today_page_fixed.png")
         print("Captured assets/screenshots/today_page_fixed.png!")
