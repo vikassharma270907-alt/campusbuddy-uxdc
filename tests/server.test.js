@@ -41,7 +41,14 @@ describe('CampusBuddy Production HTTP Server', () => {
   });
 
   const request = (urlPath, options = {}) => new Promise((resolve, reject) => {
-    const req = http.request(`http://127.0.0.1:${testPort}${urlPath}`, options, (res) => {
+    const reqOptions = {
+      host: '127.0.0.1',
+      port: testPort,
+      path: urlPath,
+      method: options.method || 'GET',
+      headers: options.headers || {}
+    };
+    const req = http.request(reqOptions, (res) => {
       const chunks = [];
       res.on('data', chunk => { chunks.push(chunk); });
       res.on('end', () => {
@@ -60,10 +67,12 @@ describe('CampusBuddy Production HTTP Server', () => {
 
   const get = (urlPath, headers = {}) => request(urlPath, { method: 'GET', headers });
 
-  test('GET / serves index.html with 200 OK and security headers', async () => {
+  test('GET / serves index.html with 200 OK, CORS, and security headers', async () => {
     const res = await get('/');
     assert.equal(res.status, 200);
     assert.match(res.headers['content-type'], /text\/html/);
+    assert.equal(res.headers['access-control-allow-origin'], '*');
+    assert.equal(res.headers['vary'], 'Accept-Encoding');
     assert.equal(res.headers['x-content-type-options'], 'nosniff');
     assert.equal(res.headers['x-frame-options'], 'SAMEORIGIN');
     assert.equal(res.headers['referrer-policy'], 'strict-origin-when-cross-origin');
@@ -79,14 +88,18 @@ describe('CampusBuddy Production HTTP Server', () => {
     const res = await get('/', { 'Accept-Encoding': 'gzip' });
     assert.equal(res.status, 200);
     assert.equal(res.headers['content-encoding'], 'gzip');
+    assert.equal(res.headers['vary'], 'Accept-Encoding');
     const decompressed = await gunzip(res.rawBuffer);
     assert.match(decompressed.toString('utf8'), /<title>CampusBuddy/);
   });
 
-  test('OPTIONS / returns 204 No Content with Allow headers', async () => {
+  test('OPTIONS / returns 204 No Content with CORS preflight and Allow headers', async () => {
     const res = await request('/', { method: 'OPTIONS' });
     assert.equal(res.status, 204);
     assert.match(res.headers.allow, /GET, HEAD, OPTIONS/);
+    assert.equal(res.headers['access-control-allow-origin'], '*');
+    assert.equal(res.headers['access-control-allow-methods'], 'GET, HEAD, OPTIONS');
+    assert.equal(res.headers['access-control-allow-headers'], '*');
   });
 
   test('GET /health returns 200 OK with valid JSON status payload', async () => {
@@ -175,8 +188,25 @@ describe('CampusBuddy Production HTTP Server', () => {
     assert.match(res.body, /Forbidden/);
   });
 
+  test('Path traversal attempt with .. returns 403 Forbidden', async () => {
+    const res = await request('/../../etc/passwd');
+    assert.equal(res.status, 403);
+    assert.match(res.body, /Forbidden/);
+  });
+
+  test('GET /node_modules returns 403 Forbidden', async () => {
+    const res = await get('/node_modules');
+    assert.equal(res.status, 403);
+    assert.match(res.body, /Forbidden/);
+  });
+
   test('GET /nonexistent-image.png returns 404 Not Found instead of SPA fallback', async () => {
     const res = await get('/nonexistent-image.png');
+    assert.equal(res.status, 404);
+  });
+
+  test('GET /missing-asset.xyz with arbitrary non-HTML extension returns 404 Not Found', async () => {
+    const res = await get('/missing-asset.xyz');
     assert.equal(res.status, 404);
   });
 
@@ -225,10 +255,17 @@ describe('CampusBuddy Production HTTP Server', () => {
   });
 
   test('GET /sample-test.mp3 returns 200 OK with audio/mpeg MIME type', async () => {
-    const res = await get('/sample-test.mp3');
-    assert.equal(res.status, 200);
-    assert.match(res.headers['content-type'], /audio\/mpeg/);
-    assert.ok(res.rawBuffer.length > 0);
+    fs.writeFileSync(sampleAudioPath, Buffer.from('ID3v2.4.0-campusbuddy-test-audio'));
+    try {
+      const res = await get('/sample-test.mp3');
+      assert.equal(res.status, 200);
+      assert.match(res.headers['content-type'], /audio\/mpeg/);
+      assert.ok(res.rawBuffer.length > 0);
+    } finally {
+      if (fs.existsSync(sampleAudioPath)) {
+        try { fs.unlinkSync(sampleAudioPath); } catch {}
+      }
+    }
   });
 
   test('GET /non-existent-route returns index.html fallback for SPA routing', async () => {
