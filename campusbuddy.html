@@ -2224,6 +2224,7 @@
         S.tab = v;
         S.err = "";
         S.modal = null;
+        if (v !== "study") S.t0 = null;
         if (typeof window !== "undefined" && typeof window.scrollTo === "function") {
           window.scrollTo(0, 0);
         }
@@ -2329,7 +2330,7 @@
         const dtEnd = formatIcsDate(endDate);
         const dtStamp = formatIcsDate(new Date());
 
-        const sanitize = str => String(str || "").replace(/[\\;,]/g, "\\$&").replace(/\n/g, "\\n");
+        const sanitize = str => String(str || "").replace(/[\\;,]/g, "\\$&").replace(/\r\n|\r|\n/g, "\\n");
 
         const icsContent = [
           "BEGIN:VCALENDAR",
@@ -2534,6 +2535,7 @@
         if (t.length < 3) err = "Give your moment a title of at least 3 characters.";
         else if (!(m >= 2 && m <= 8)) err = "Attendee limit must be between 2 and 8.";
         else if (!(du >= 15 && du <= 180)) err = "Duration must be between 15 and 180 minutes.";
+        else if (!LOC.includes(loc)) err = "Please select a verified campus public spot from the list.";
 
         if (err) {
           S.err = err;
@@ -2661,11 +2663,16 @@
     if (syncChannel) {
       syncChannel.onmessage = event => {
         if (event.data && event.data.type === "SYNC" && event.data.state) {
-          if (event.data.state.acts) S.acts = event.data.state.acts;
-          if (event.data.state.inv) S.inv = event.data.state.inv;
-          if (event.data.state.notes) S.notes = event.data.state.notes;
-          if (event.data.state.blocks) S.blocks = event.data.state.blocks;
-          R();
+          isSyncing = true;
+          try {
+            if (event.data.state.acts) S.acts = event.data.state.acts;
+            if (event.data.state.inv) S.inv = event.data.state.inv;
+            if (event.data.state.notes) S.notes = event.data.state.notes;
+            if (event.data.state.blocks) S.blocks = event.data.state.blocks;
+            R();
+          } finally {
+            isSyncing = false;
+          }
         }
       };
     }
@@ -2677,11 +2684,16 @@
           try {
             const ext = JSON.parse(e.newValue);
             if (ext && ext.acts) {
-              S.acts = ext.acts;
-              if (ext.inv) S.inv = ext.inv;
-              if (ext.notes) S.notes = ext.notes;
-              if (ext.blocks) S.blocks = ext.blocks;
-              R();
+              isSyncing = true;
+              try {
+                S.acts = ext.acts;
+                if (ext.inv) S.inv = ext.inv;
+                if (ext.notes) S.notes = ext.notes;
+                if (ext.blocks) S.blocks = ext.blocks;
+                R();
+              } finally {
+                isSyncing = false;
+              }
             }
           } catch (err) {}
         }

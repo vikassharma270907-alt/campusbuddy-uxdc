@@ -147,10 +147,10 @@ function createServer() {
     }
 
     const filePath = path.join(PUBLIC_DIR, normalized);
-    const resolvedPath = path.resolve(filePath);
+    const rel = path.relative(PUBLIC_DIR, filePath);
 
-    // Prevent directory traversal outside of PUBLIC_DIR (case-insensitive for Windows compatibility)
-    if (!resolvedPath.toLowerCase().startsWith(PUBLIC_DIR.toLowerCase())) {
+    // Prevent directory traversal outside of PUBLIC_DIR
+    if (rel.startsWith('..') || path.isAbsolute(rel)) {
       res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
       res.end('403 Forbidden');
       return;
@@ -223,7 +223,8 @@ function createServer() {
       }
 
       const contentType = MIME_TYPES[reqExt] || 'application/octet-stream';
-      const cacheControl = reqExt === '.html'
+      const isNoCache = reqExt === '.html' || baseName === 'sw.js';
+      const cacheControl = isNoCache
         ? 'no-cache, no-store, must-revalidate'
         : 'public, max-age=86400, stale-while-revalidate=604800';
 
@@ -255,10 +256,14 @@ const server = createServer();
 // Graceful shutdown handling for container and cloud environments
 const handleShutdown = (signal) => {
   console.log(`\n[CampusBuddy] Received ${signal}. Gracefully closing HTTP server...`);
+  if (typeof server.closeIdleConnections === 'function') {
+    server.closeIdleConnections();
+  }
   server.close(() => {
     console.log('[CampusBuddy] HTTP server closed cleanly. Exiting.');
     process.exit(0);
   });
+  setTimeout(() => process.exit(0), 5000).unref();
 };
 
 process.on('SIGTERM', () => handleShutdown('SIGTERM'));
