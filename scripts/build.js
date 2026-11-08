@@ -24,6 +24,8 @@ fs.mkdirSync(distDir, { recursive: true });
 const PUBLIC_FILES = [
   'index.html',
   'campusbuddy.html',
+  'video_showcase.html',
+  'video.html',
   'manifest.webmanifest',
   'sw.js',
   'favicon.ico',

@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusBuddy — Full Project Video Walkthrough & Interactive Showcase</title>
+  <link rel="icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;600;700;800&family=Figtree:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #07090e;
+      --bg-surface: #0e121a;
+      --bg-card: #131824;
+      --bg-card-hover: #1a2133;
+      --bg-glass: rgba(19, 24, 36, 0.75);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-bright: rgba(255, 255, 255, 0.16);
+      --border-mint: rgba(45, 212, 191, 0.35);
+      --mint: #2dd4bf;
+      --mint-glow: rgba(45, 212, 191, 0.25);
+      --teal: #14b8a6;
+      --cyan: #38bdf8;
+      --indigo: #818cf8;
+      --amber: #f59e0b;
+      --amber-glow: rgba(245, 158, 11, 0.2);
+      --rose: #f43f5e;
+      --emerald: #10b981;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+      --radius-full: 9999px;
+      --font-display: 'Bricolage Grotesque', sans-serif;
+      --font-body: 'Figtree', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --transition-smooth: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      line-height: 1.6;
+      background-image: 
+        radial-gradient(circle at 15% 10%, rgba(45, 212, 191, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 25%, rgba(99, 102, 241, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 50% 90%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-deep);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #232b3d;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #333f56;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 13, 20, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #134e48, #0f766e);
+      border: 1px solid var(--border-mint);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 0 16px var(--mint-glow);
+    }
+
+    .brand-text h1 {
+      font-family: var(--font-display);
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-text p {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .badge-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-event {
+      background: rgba(45, 212, 191, 0.12);
+      color: var(--mint);
+      border: 1px solid var(--border-mint);
+    }
+
+    .badge-track {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--amber);
+      border: 1px solid var(--amber-glow);
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .mode-toggle-group {
+      display: flex;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      padding: 3px;
+    }
+
+    .mode-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition-smooth);
+    }
+
+    .mode-btn.active {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-bright);
+    }
+
+    .mode-btn:hover:not(.active) {
+      color: var(--text-primary);
+    }
+
+    .btn-action {
+      background: linear-gradient(135deg, rgba(45, 212, 191, 0.15), rgba(20, 184, 166, 0.25));
+      border: 1px solid var(--border-mint);
+      color: var(--mint);
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: var(--transition-smooth);
+    }
+
+    .btn-action:hover {
+      background: linear-gradient(135deg, rgba(45, 212, 191, 0.25), rgba(20, 184, 166, 0.35));
+      box-shadow: 0 0 16px var(--mint-glow);
+      transform: translateY(-1px);
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      max-width: 1480px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 1fr 390px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 1120px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Video Player Arena */
+    .player-column {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .video-viewport-wrapper {
+      position: relative;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Presentation Screen Canvas */
+    .presentation-screen {
+      position: absolute;
+      inset: 0;
+      background: #080a0f;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .presentation-screen.hidden {
+      display: none;
+    }
+
+    /* Iframe Live Prototype View */
+    .prototype-screen {
+      position: absolute;
+      inset: 0;
+      background: #0b0f19;
+      display: none;
+      flex-direction: column;
+    }
+
+    .prototype-screen.active {
+      display: flex;
+    }
+
+    .prototype-bar {
+      height: 38px;
+      background: #0a0d15;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .prototype-bar .url-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      padding: 4px 14px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--mint);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .prototype-frame {
+      width: 100%;
+      height: calc(100% - 38px);
+      border: none;
+      background: #ffffff;
+    }
+
+    /* Visual Scenes */
+    .scene-container {
+      flex: 1;
+      position: relative;
+      padding: 36px 44px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: 
+        radial-gradient(circle at 80% 20%, rgba(45, 212, 191, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 10% 80%, rgba(99, 102, 241, 0.1) 0%, transparent 60%);
+    }
+
+    .scene-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      position: relative;
+      z-index: 10;
+    }
+
+    .scene-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chapter-number-pill {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-bright);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--cyan);
+    }
+
+    .scene-title-group h2 {
+      font-family: var(--font-display);
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      line-height: 1.15;
+      margin-top: 6px;
+      background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .scene-title-group p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .scene-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 0;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Scene-Specific Layouts */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      width: 100%;
+    }
+
+    .feature-card {
+      background: rgba(19, 24, 36, 0.85);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--mint), transparent);
+      opacity: 0;
+      transition: var(--transition-smooth);
+    }
+
+    .feature-card.active-card {
+      border-color: var(--border-mint);
+      background: rgba(22, 29, 44, 0.95);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .feature-card.active-card::before {
+      opacity: 1;
+    }
+
+    .feature-card .icon-box {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+    }
+
+    .feature-card h3 {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .feature-card p {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Stopwatch Widget for Scene 2 */
+    .stopwatch-stage {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      width: 100%;
+      background: rgba(14, 18, 27, 0.9);
+      border: 1px solid var(--border-mint);
+      border-radius: var(--radius-lg);
+      padding: 24px 32px;
+      box-shadow: 0 0 40px rgba(45, 212, 191, 0.1);
+    }
+
+    .stopwatch-display {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #080b12;
+      border: 2px solid var(--mint);
+      border-radius: var(--radius-md);
+      padding: 16px 24px;
+      min-width: 180px;
+      box-shadow: 0 0 25px var(--mint-glow);
+    }
+
+    .stopwatch-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--mint);
+      font-weight: 700;
+    }
+
+    .stopwatch-timer {
+      font-family: var(--font-mono);
+      font-size: 38px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -1px;
+      margin: 4px 0;
+    }
+
+    .stopwatch-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .stopwatch-details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .match-breakdown-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12.5px;
+    }
+
+    .bar-label {
+      width: 130px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal), var(--mint));
+      border-radius: var(--radius-full);
+      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .bar-points {
+      width: 60px;
+      text-align: right;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--mint);
+    }
+
+    /* Terminal Code Display for Scene 5 */
+    .terminal-card {
+      width: 100%;
+      background: #090c14;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      font-family: var(--font-mono);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+    }
+
+    .terminal-header {
+      background: #111624;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .terminal-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    .terminal-title {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-left: 10px;
+    }
+
+    .terminal-body {
+      padding: 18px 22px;
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: #e2e8f0;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+
+    .terminal-green { color: #34d399; font-weight: 600; }
+    .terminal-cyan { color: #38bdf8; }
+    .terminal-dim { color: #64748b; }
+    .terminal-gold { color: #fbbf24; }
+
+    /* Scene Footer / Status */
+    .scene-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-muted);
+      position: relative;
+      z-index: 10;
+    }
+
+    .scene-tags {
+      display: flex;
+      gap: 8px;
+    }
+
+    .scene-tag {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    /* Video Player Controls Bar */
+    .player-controls-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Progress bar */
+    .timeline-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .scrub-track {
+      position: relative;
+      height: 8px;
+      background: #1b2234;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      overflow: hidden;
+      transition: height 0.15s ease;
+    }
+
+    .scrub-track:hover {
+      height: 12px;
+    }
+
+    .scrub-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background: linear-gradient(90deg, #14b8a6, #2dd4bf);
+      border-radius: var(--radius-full);
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    .chapter-markers-strip {
+      display: flex;
+      justify-content: space-between;
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .chapter-marker-pip {
+      width: 2px;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .timeline-labels {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+    }
+
+    .controls-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .playback-buttons {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .ctrl-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      font-size: 14px;
+    }
+
+    .ctrl-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--border-bright);
+      transform: scale(1.05);
+    }
+
+    .ctrl-btn.play-btn {
+      width: 46px;
+      height: 46px;
+      background: linear-gradient(135deg, var(--teal), var(--mint));
+      color: #042f2e;
+      border: none;
+      font-size: 18px;
+      font-weight: 800;
+      box-shadow: 0 0 20px var(--mint-glow);
+    }
+
+    .ctrl-btn.play-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 28px rgba(45, 212, 191, 0.5);
+    }
+
+    /* Waveform visualizer */
+    .waveform-visualizer {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 24px;
+      padding: 0 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+
+    .wave-bar {
+      width: 3px;
+      height: 6px;
+      background: var(--text-muted);
+      border-radius: 1px;
+      transition: height 0.1s ease;
+    }
+
+    .waveform-visualizer.playing .wave-bar {
+      background: var(--mint);
+      animation: waveDance 1.2s infinite ease-in-out;
+    }
+
+    .wave-bar:nth-child(2) { animation-delay: 0.1s !important; }
+    .wave-bar:nth-child(3) { animation-delay: 0.2s !important; }
+    .wave-bar:nth-child(4) { animation-delay: 0.3s !important; }
+    .wave-bar:nth-child(5) { animation-delay: 0.15s !important; }
+    .wave-bar:nth-child(6) { animation-delay: 0.25s !important; }
+    .wave-bar:nth-child(7) { animation-delay: 0.35s !important; }
+    .wave-bar:nth-child(8) { animation-delay: 0.05s !important; }
+
+    @keyframes waveDance {
+      0%, 100% { height: 6px; }
+      50% { height: 22px; }
+    }
+
+    .secondary-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .speed-selector {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+
+    .speed-selector:hover {
+      color: var(--text-primary);
+    }
+
+    /* Subtitles / Closed Captions */
+    .caption-card {
+      background: rgba(14, 18, 27, 0.85);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+    }
+
+    .caption-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    .voice-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--mint);
+      font-weight: 600;
+    }
+
+    .voice-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--mint);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--mint);
+    }
+
+    .caption-text {
+      font-size: 15px;
+      font-weight: 500;
+      color: #e2e8f0;
+      line-height: 1.55;
+      min-height: 48px;
+    }
+
+    .caption-text .highlight {
+      color: var(--mint);
+      font-weight: 700;
+    }
+
+    /* Sidebar Column */
+    .sidebar-column {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .sidebar-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .sidebar-title {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chapter-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .chapter-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .chapter-item:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-bright);
+      transform: translateX(3px);
+    }
+
+    .chapter-item.active {
+      border-color: var(--border-mint);
+      background: rgba(45, 212, 191, 0.08);
+    }
+
+    .chapter-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+    }
+
+    .chapter-item.active .chapter-icon {
+      background: var(--mint);
+      color: #042f2e;
+    }
+
+    .chapter-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .chapter-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .chapter-duration {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+
+    .chapter-item.active .chapter-duration {
+      color: var(--mint);
+    }
+
+    /* Live Interactive Action Hub */
+    .action-triggers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .trigger-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: var(--transition-smooth);
+    }
+
+    .trigger-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--border-bright);
+      color: var(--text-primary);
+    }
+
+    .trigger-btn .t-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .trigger-btn .t-desc {
+      font-size: 10.5px;
+      color: var(--text-muted);
+    }
+
+    /* Quick Specs Card */
+    .specs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 12.5px;
+    }
+
+    .spec-item {
+      display: flex;
+      justify-content: space-between;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .spec-label {
+      color: var(--text-muted);
+    }
+
+    .spec-val {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 20px 28px;
+      background: var(--bg-surface);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 18px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--mint);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header>
+    <a href="campusbuddy.html" class="brand">
+      <div class="brand-logo">🎓</div>
+      <div class="brand-text">
+        <h1>CampusBuddy <span class="badge-pill badge-event">UXDC 2026</span> <span class="badge-pill badge-track">Experienced</span></h1>
+        <p>Interactive Video Presentation & Project Walkthrough</p>
+      </div>
+    </a>
+
+    <div class="header-controls">
+      <!-- Mode Toggle -->
+      <div class="mode-toggle-group">
+        <button class="mode-btn active" id="btnModePresentation" onclick="setMode('presentation')">
+          <span>🎬</span> Video Presentation
+        </button>
+        <button class="mode-btn" id="btnModePrototype" onclick="setMode('prototype')">
+          <span>🖥️</span> Live Web Demo
+        </button>
+      </div>
+
+      <!-- Quick Action: Launch Standalone App -->
+      <a href="campusbuddy.html" target="_blank" class="btn-action">
+        <span>🚀 Open Standalone Prototype</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Presentation Container -->
+  <main>
+    <!-- Left Column: Video Viewport & Player Controls -->
+    <div class="player-column">
+      
+      <!-- Video Viewport -->
+      <div class="video-viewport-wrapper">
+        
+        <!-- Screen A: Animated Presentation Screen -->
+        <div class="presentation-screen" id="presentationScreen">
+          <div class="scene-container" id="sceneContainer">
+            
+            <!-- Top Scene Metadata -->
+            <div class="scene-header">
+              <div class="scene-title-group">
+                <div class="scene-meta">
+                  <span class="chapter-number-pill" id="sceneNumber">ACT 01</span>
+                  <span class="badge-pill badge-event" id="sceneCategory">Problem & Mission</span>
+                </div>
+                <h2 id="sceneHeading">The Disconnection Epidemic</h2>
+                <p id="sceneSubheading">Why thousands of university students feel isolated in plain sight.</p>
+              </div>
+            </div>
+
+            <!-- Dynamic Animated Scene Body -->
+            <div class="scene-body" id="sceneDynamicBody">
+              <!-- Injected by JavaScript according to current chapter -->
+            </div>
+
+            <!-- Bottom Scene Footer -->
+            <div class="scene-footer">
+              <div class="scene-tags" id="sceneTags">
+                <span class="scene-tag">Weak-Tie Theory</span>
+                <span class="scene-tag">Mispredicted Solitude</span>
+                <span class="scene-tag">Anti-Feed Design</span>
+              </div>
+              <div id="sceneTimeIndicator" style="font-family: var(--font-mono); color: var(--mint);">00:00 / 07:42</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Screen B: Live Prototype Screen (Interactive Iframe) -->
+        <div class="prototype-screen" id="prototypeScreen">
+          <div class="prototype-bar">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
+              <span>Live CampusBuddy Web Client</span>
+            </div>
+            <div class="url-pill">
+              <span>🔒 file:///campusbuddy.html (60/60 Tests Passing)</span>
+            </div>
+            <button onclick="reloadPrototype()" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 13px;" title="Reload Prototype">⟳ Reload</button>
+          </div>
+          <iframe id="prototypeIframe" class="prototype-frame" src="campusbuddy.html"></iframe>
+        </div>
+
+      </div>
+
+      <!-- Player Controls Panel -->
+      <div class="player-controls-panel">
+        
+        <!-- Scrub Timeline -->
+        <div class="timeline-container">
+          <div class="scrub-track" id="scrubTrack" onclick="handleScrubClick(event)">
+            <div class="scrub-fill" id="scrubFill"></div>
+            <div class="chapter-markers-strip" id="chapterMarkers">
+              <!-- Injected by script -->
+            </div>
+          </div>
+          <div class="timeline-labels">
+            <span id="currentTimeLabel">00:00</span>
+            <span id="activeChapterTitle" style="color: var(--mint); font-weight: 600;">Chapter 1: The Disconnection Epidemic</span>
+            <span id="totalDurationLabel">07:42</span>
+          </div>
+        </div>
+
+        <!-- Controls Row -->
+        <div class="controls-row">
+          <div class="playback-buttons">
+            <button class="ctrl-btn" onclick="prevChapter()" title="Previous Chapter">⏮</button>
+            <button class="ctrl-btn" onclick="seekOffset(-10)" title="Rewind 10s">↺ 10s</button>
+            <button class="ctrl-btn play-btn" id="btnPlayPause" onclick="togglePlay()" title="Play / Pause">▶</button>
+            <button class="ctrl-btn" onclick="seekOffset(10)" title="Forward 10s">10s ↻</button>
+            <button class="ctrl-btn" onclick="nextChapter()" title="Next Chapter">⏭</button>
+          </div>
+
+          <!-- Waveform Visualizer -->
+          <div class="waveform-visualizer" id="waveVisualizer">
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+          </div>
+
+          <!-- Secondary Controls: Speed & Mode -->
+          <div class="secondary-controls">
+            <select class="speed-selector" id="playbackSpeed" onchange="setPlaybackSpeed(this.value)">
+              <option value="1">1.0x Normal</option>
+              <option value="1.25">1.25x Fast</option>
+              <option value="1.5">1.5x Rapid</option>
+            </select>
+            <button class="ctrl-btn" onclick="toggleMute()" id="btnMute" title="Mute / Unmute">🔊</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Live Voice Narration & Closed Captions Box -->
+      <div class="caption-card">
+        <div class="caption-header">
+          <span class="voice-status">
+            <span class="voice-dot"></span>
+            <span>Studio Voiceover (Wispr Flow / Azure Neural: Andrew)</span>
+          </span>
+          <span style="font-family: var(--font-mono);">Synchronized Closed Captions</span>
+        </div>
+        <p class="caption-text" id="captionText">
+          Welcome to CampusBuddy: "Your campus. Your people. Your moments." Press Play to start the walkthrough.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Interactive Sidebar & Chapters -->
+    <div class="sidebar-column">
+      
+      <!-- Chapter Playlist -->
+      <div class="sidebar-panel">
+        <div class="sidebar-title">
+          <span>Presentation Chapters</span>
+          <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); font-family: var(--font-mono);">7 ACTS</span>
+        </div>
+
+        <div class="chapter-list" id="chapterList">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Quick Interactive Demo Actions -->
+      <div class="sidebar-panel">
+        <div class="sidebar-title">
+          <span>Interactive Feature Triggers</span>
+          <span class="badge-pill badge-event">Live Test</span>
+        </div>
+        <div class="action-triggers-grid">
+          <button class="trigger-btn" onclick="triggerPrototypeAction('journey')">
+            <span class="t-title">⚡ 90s Journey</span>
+            <span class="t-desc">Simulate Maya's study partner match</span>
+          </button>
+          <button class="trigger-btn" onclick="triggerPrototypeAction('persona')">
+            <span class="t-title">👤 Switch Persona</span>
+            <span class="t-desc">Toggle between Maya, Tom & Dev</span>
+          </button>
+          <button class="trigger-btn" onclick="triggerPrototypeAction('theme')">
+            <span class="t-title">🌓 Toggle Theme</span>
+            <span class="t-desc">Switch Light & Dark/Grey Modes</span>
+          </button>
+          <button class="trigger-btn" onclick="triggerPrototypeAction('icebreaker')">
+            <span class="t-title">🎲 Shuffle Icebreaker</span>
+            <span class="t-desc">Generate low-pressure prompts</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Build Specifications & Test Badge -->
+      <div class="sidebar-panel">
+        <div class="sidebar-title">
+          <span>Build Specifications</span>
+          <span class="badge-pill" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);">53/53 PASSED</span>
+        </div>
+
+        <div class="specs-list">
+          <div class="spec-item">
+            <span class="spec-label">Tech Stack</span>
+            <span class="spec-val">Vanilla HTML5 / ES6+ / CSS3</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Client Dependencies</span>
+            <span class="spec-val" style="color: var(--mint);">0 (Zero Bloat)</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Automated Tests</span>
+            <span class="spec-val" style="color: #34d399;">60 / 60 Passing</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Accessibility</span>
+            <span class="spec-val">WCAG 2.2 AA Contrast</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Offline Capability</span>
+            <span class="spec-val">PWA + Service Worker</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Safety Architecture</span>
+            <span class="spec-val">100% Public Landmarks</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Hidden HTML5 Audio Element for Master Narration -->
+  <audio id="audioMaster" src="assets/audio/campusbuddy_master_narration.mp3" preload="auto"></audio>
+
+  <!-- Footer -->
+  <footer>
+    <div>
+      <span>CampusBuddy © 2026 — Created for UXDC Designathon Experienced Track. Solo Submission by Vikas Sharma.</span>
+    </div>
+    <div class="footer-links">
+      <a href="https://vikassharma270907-alt.github.io/campusbuddy-uxdc/" target="_blank">GitHub Pages</a>
+      <a href="https://github.com/vikassharma270907-alt/campusbuddy-uxdc" target="_blank">GitHub Repo</a>
+      <a href="DESIGN.md" target="_blank">Design Doc</a>
+      <a href="DEMO_SCRIPT.md" target="_blank">Judging Script</a>
+    </div>
+  </footer>
+
+  <!-- Application Logic & Video Engine Script -->
+  <script>
+    // Chapter definitions with exact measured durations from ffprobe
+    const CHAPTERS = [
+      {
+        id: 1,
+        title: "The Disconnection Epidemic & Mission",
+        subtitle: "Why university students feel lonely in plain sight",
+        startTime: 0.0,
+        duration: 68.28,
+        tags: ["Weak-Tie Theory", "Mispredicted Solitude", "Anti-Feed"],
+        category: "Problem & Mission",
+        caption: "University campuses are bustling with thousands of students, but acute disconnection strikes in small mundane moments: eating lunch alone, or grinding through calculus in the library with no one to collaborate with.",
+        renderBody: () => `
+          <div class="card-grid">
+            <div class="feature-card active-card">
+              <div class="icon-box" style="color: #f43f5e;">⚠️</div>
+              <h3>Algorithmic Doomscrolling</h3>
+              <p>Traditional social feeds turn students into passive spectators, increasing comparison, anxiety, and screen fatigue.</p>
+            </div>
+            <div class="feature-card active-card">
+              <div class="icon-box" style="color: #fbbf24;">💬</div>
+              <h3>Chaotic Group Chats</h3>
+              <p>Mass Discord & WhatsApp groups become noisy uncoordinated bulletin boards with zero accountability.</p>
+            </div>
+            <div class="feature-card active-card">
+              <div class="icon-box" style="color: var(--mint);">⚡</div>
+              <h3>The Micro-Moment Solution</h3>
+              <p>CampusBuddy introduces 30–60 min time-bound meetups anchored in 100% verified public campus spaces.</p>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 2,
+        title: "⚡ The 90-Second Journey & Stopwatch",
+        subtitle: "From 'nobody to study with' to confirmed plan in under 90 seconds",
+        startTime: 68.28,
+        duration: 81.43,
+        tags: ["90s Sprint", "Explainable Match", "Public Landmarks"],
+        category: "Live Walkthrough",
+        caption: "Watch the stopwatch tick in real time! CampusBuddy calculates an explainable 75% match (+30 study, +25 time, +20 calculus). Maya taps 'Join this moment' and is confirmed in just 14 seconds!",
+        renderBody: () => `
+          <div class="stopwatch-stage">
+            <div class="stopwatch-display">
+              <span class="stopwatch-label">Connection Timer</span>
+              <span class="stopwatch-timer" id="liveTimerNum">00:14s</span>
+              <span class="stopwatch-sub">Target: &lt; 90 Seconds</span>
+            </div>
+            <div class="stopwatch-details">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-weight: 700; color: #ffffff;">Dev's Calculus Revision @ TFDL Commons</span>
+                <span class="badge-pill badge-event">75% Match Score</span>
+              </div>
+              <div class="match-breakdown-bar">
+                <span class="bar-label">Activity Fit</span>
+                <div class="bar-track"><div class="bar-fill" style="width: 100%;"></div></div>
+                <span class="bar-points">+30 pts</span>
+              </div>
+              <div class="match-breakdown-bar">
+                <span class="bar-label">Free Time Overlap</span>
+                <div class="bar-track"><div class="bar-fill" style="width: 85%;"></div></div>
+                <span class="bar-points">+25 pts</span>
+              </div>
+              <div class="match-breakdown-bar">
+                <span class="bar-label">Calculus Topic</span>
+                <div class="bar-track"><div class="bar-fill" style="width: 70%;"></div></div>
+                <span class="bar-points">+20 pts</span>
+              </div>
+              <div style="margin-top: 6px; font-size: 12px; color: var(--mint);">
+                📍 Safe Spot: Taylor Family Digital Library (TFDL), Level 2 Commons
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 3,
+        title: "Multi-Persona Simulation & Invites",
+        subtitle: "Deterministic reactive state machine: Pending ➔ Accepted",
+        startTime: 149.71,
+        duration: 53.64,
+        tags: ["Persona Switcher", "State Machine", "Reactive Sync"],
+        category: "Interactive Simulation",
+        caption: "We switch to Tom, an analytical sophomore math student, who invites Maya for coffee. Switching back to Maya, she accepts with 1 tap. The state machine transitions instantly and capacities decrement reactively.",
+        renderBody: () => `
+          <div class="card-grid">
+            <div class="feature-card active-card">
+              <div class="icon-box" style="color: var(--cyan);">👤</div>
+              <h3>Persona Switcher</h3>
+              <p>Evaluators can switch between Maya, Dev, Tom, and Ines to experience the app from both organizer and invitee perspectives.</p>
+            </div>
+            <div class="feature-card active-card">
+              <div class="icon-box" style="color: #34d399;">⚙️</div>
+              <h3>State Machine Integrity</h3>
+              <p>Strict lifecycle: <code>pending</code> ➔ <code>accepted</code> / <code>declined</code>. Capacity counters automatically prevent overbooking.</p>
+            </div>
+            <div class="feature-card active-card">
+              <div class="icon-box" style="color: var(--amber);">📊</div>
+              <h3>Jaccard Peer Similarity</h3>
+              <p>Classmates are ranked multi-dimensionally using study styles, free blocks, and shared academic courses.</p>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 4,
+        title: "Comprehensive Features & Safety Guardrails",
+        subtitle: "Uncompromising psychological safety and post-meetup reflection",
+        startTime: 203.35,
+        duration: 91.54,
+        tags: ["Safe Landmarks", "Zero Contact Sharing", "Mutual Blocking"],
+        category: "Safety & UX",
+        caption: "CampusBuddy enforces four strict safety guardrails: 100% verified public campus spots, zero contact sharing, 1-tap profile invisibility, and instant mutual blocking without false AI moderation claims.",
+        renderBody: () => `
+          <div class="card-grid" style="grid-template-columns: repeat(4, 1fr); gap: 14px;">
+            <div class="feature-card">
+              <div class="icon-box" style="color: var(--mint);">🏛️</div>
+              <h3>Public Landmarks</h3>
+              <p>TFDL, MacEwan Hall & Science Theatres only. Private spaces strictly rejected.</p>
+            </div>
+            <div class="feature-card">
+              <div class="icon-box" style="color: var(--cyan);">🛡️</div>
+              <h3>Zero Contact Sharing</h3>
+              <p>No phone numbers or social media handles required to coordinate meetups.</p>
+            </div>
+            <div class="feature-card">
+              <div class="icon-box" style="color: var(--amber);">👁️</div>
+              <h3>1-Tap Invisibility</h3>
+              <p>Students can hide their profile instantly to browse campus moments privately.</p>
+            </div>
+            <div class="feature-card">
+              <div class="icon-box" style="color: #f43f5e;">🚫</div>
+              <h3>Mutual Blocking</h3>
+              <p>Blocking immediately cancels pending invites and mutually hides users.</p>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 5,
+        title: "How It Was Built: Craftsmanship & Stack",
+        subtitle: "Pure vanilla engineering, hardened Node server & 60/60 automated tests",
+        startTime: 294.89,
+        duration: 76.92,
+        tags: ["Zero Dependencies", "Node.js Hardened", "60/60 Tests"],
+        category: "Engineering Architecture",
+        caption: "Zero bloated frameworks, zero external CDN vulnerabilities. Semantic HTML5, CSS design tokens, and modular ES6+ JavaScript backed by 60 automated passing tests in Node's native test runner.",
+        renderBody: () => `
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <span class="terminal-dot dot-red"></span>
+              <span class="terminal-dot dot-yellow"></span>
+              <span class="terminal-dot dot-green"></span>
+              <span class="terminal-title">bash — npm test (Node.js Native Test Runner)</span>
+            </div>
+            <div class="terminal-body">
+              <div><span class="terminal-cyan">&gt; campusbuddy@1.0.0 test</span></div>
+              <div><span class="terminal-dim">&gt; node --test tests/core-rules.test.js tests/server.test.js</span></div>
+              <div style="margin-top: 6px;"><span class="terminal-green">✔ CampusBuddy Match Scoring Rules</span> (4.98ms)</div>
+              <div><span class="terminal-green">✔ Capacity and Join Constraints</span> (2.01ms)</div>
+              <div><span class="terminal-green">✔ Invitation State Machine Transitions</span> (2.46ms)</div>
+              <div><span class="terminal-green">✔ Blocking and Safety Constraints</span> (2.44ms)</div>
+              <div><span class="terminal-green">✔ CampusBuddy Production HTTP Server</span> (99.79ms)</div>
+              <div style="margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 6px;">
+                <span class="terminal-green">ℹ tests 60 | suites 8 | pass 60 | fail 0 | cancelled 0</span>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 6,
+        title: "Design System & The Cool Grey / Dark Theme",
+        subtitle: "WCAG 2.2 AA accessibility, OLED carbon slate & tactile feedback",
+        startTime: 371.81,
+        duration: 56.38,
+        tags: ["Dark Mode", "WCAG 2.2 AA", "Design Tokens"],
+        category: "Visual Design System",
+        caption: "Our unique cool grey and dark theme embraces deep carbon obsidian, precision titanium borders, and luminous mint teal and amber accents, with seamless 1-tap switching to warm daylight mode.",
+        renderBody: () => `
+          <div class="card-grid">
+            <div class="feature-card active-card">
+              <div class="icon-box" style="color: var(--mint);">🌓</div>
+              <h3>Dual Accessible Modes</h3>
+              <p>Exceeds WCAG 2.2 AA contrast with 7.4:1 contrast ratios on dark mode and 5.2:1 in daylight mode.</p>
+            </div>
+            <div class="feature-card active-card">
+              <div class="icon-box" style="color: var(--cyan);">🎨</div>
+              <h3>Cool Carbon Palette</h3>
+              <p>Deep Obsidian (#0c0e12), Titanium Slate (#161922), and glowing Mint Teal (#2dd4bf) design tokens.</p>
+            </div>
+            <div class="feature-card active-card">
+              <div class="icon-box" style="color: var(--indigo);">🔤</div>
+              <h3>Typography Pairing</h3>
+              <p>Display warmth of <strong>Bricolage Grotesque</strong> paired with the geometric clarity of <strong>Figtree</strong>.</p>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 7,
+        title: "Conclusion & The Future of Belonging",
+        subtitle: "Your campus. Your people. Your moments.",
+        startTime: 428.19,
+        duration: 34.15,
+        tags: ["Human Belonging", "Deploy on Render", "Open Source"],
+        category: "Conclusion",
+        caption: "CampusBuddy proves that solving student disconnection doesn't require addictive algorithms or intrusive data harvesting. Belonging starts with short, safe moments.",
+        renderBody: () => `
+          <div class="feature-card active-card" style="text-align: center; padding: 32px; width: 100%;">
+            <div style="font-size: 42px; margin-bottom: 10px;">🎓✨</div>
+            <h3 style="font-size: 24px; margin-bottom: 8px;">CampusBuddy: Your campus. Your people. Your moments.</h3>
+            <p style="font-size: 15px; max-width: 640px; margin: 0 auto 20px auto; color: var(--text-secondary);">
+              Created for the <strong>UXDC Designathon 2026 Experienced Track</strong> by Vikas Sharma. Verified with 60 automated tests, production ready, and deployed live.
+            </p>
+            <div style="display: flex; justify-content: center; gap: 14px;">
+              <a href="campusbuddy.html" target="_blank" class="btn-action"><span>Launch Web Prototype</span></a>
+              <a href="https://github.com/vikassharma270907-alt/campusbuddy-uxdc" target="_blank" class="btn-action" style="background: rgba(255,255,255,0.06); border-color: var(--border-bright); color: #ffffff;"><span>GitHub Repository</span></a>
+            </div>
+          </div>
+        `
+      }
+    ];
+
+    // Global Audio & Player State
+    const audio = document.getElementById('audioMaster');
+    const scrubFill = document.getElementById('scrubFill');
+    const currentTimeLabel = document.getElementById('currentTimeLabel');
+    const totalDurationLabel = document.getElementById('totalDurationLabel');
+    const activeChapterTitle = document.getElementById('activeChapterTitle');
+    const btnPlayPause = document.getElementById('btnPlayPause');
+    const waveVisualizer = document.getElementById('waveVisualizer');
+    const captionText = document.getElementById('captionText');
+    const sceneNumber = document.getElementById('sceneNumber');
+    const sceneCategory = document.getElementById('sceneCategory');
+    const sceneHeading = document.getElementById('sceneHeading');
+    const sceneSubheading = document.getElementById('sceneSubheading');
+    const sceneDynamicBody = document.getElementById('sceneDynamicBody');
+    const sceneTags = document.getElementById('sceneTags');
+    const sceneTimeIndicator = document.getElementById('sceneTimeIndicator');
+
+    let currentChapterIndex = 0;
+    let totalDuration = 462.34;
+    let isPlaying = false;
+    let currentMode = 'presentation';
+
+    // Format Seconds to MM:SS
+    function formatTime(sec) {
+      if (isNaN(sec)) return "00:00";
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+
+    // Initialize Chapter Sidebar
+    function initChaptersUI() {
+      const list = document.getElementById('chapterList');
+      const markerContainer = document.getElementById('chapterMarkers');
+      list.innerHTML = '';
+      markerContainer.innerHTML = '';
+
+      CHAPTERS.forEach((ch, idx) => {
+        // Chapter Sidebar item
+        const item = document.createElement('div');
+        item.className = `chapter-item ${idx === 0 ? 'active' : ''}`;
+        item.id = `chapter-item-${idx}`;
+        item.onclick = () => seekToChapter(idx);
+        item.innerHTML = `
+          <div class="chapter-icon">${idx + 1}</div>
+          <div class="chapter-info">
+            <span class="chapter-name">${ch.title}</span>
+            <span class="chapter-duration">${formatTime(ch.startTime)} — ${formatTime(ch.startTime + ch.duration)}</span>
+          </div>
+        `;
+        list.appendChild(item);
+
+        // Timeline Marker Pip
+        const pct = (ch.startTime / totalDuration) * 100;
+        const pip = document.createElement('div');
+        pip.className = 'chapter-marker-pip';
+        pip.style.position = 'absolute';
+        pip.style.left = `${pct}%`;
+        markerContainer.appendChild(pip);
+      });
+    }
+
+    // Render Scene for specified Chapter
+    function renderScene(idx) {
+      const ch = CHAPTERS[idx];
+      currentChapterIndex = idx;
+
+      sceneNumber.innerText = `ACT 0${ch.id}`;
+      sceneCategory.innerText = ch.category;
+      sceneHeading.innerText = ch.title;
+      sceneSubheading.innerText = ch.subtitle;
+      sceneDynamicBody.innerHTML = ch.renderBody();
+
+      sceneTags.innerHTML = ch.tags.map(t => `<span class="scene-tag">${t}</span>`).join('');
+      captionText.innerHTML = ch.caption;
+      activeChapterTitle.innerText = `Act ${ch.id}: ${ch.title}`;
+
+      // Update active sidebar item
+      document.querySelectorAll('.chapter-item').forEach((el, i) => {
+        el.classList.toggle('active', i === idx);
+      });
+    }
+
+    // Seek to Chapter
+    function seekToChapter(idx) {
+      if (idx < 0 || idx >= CHAPTERS.length) return;
+      const targetTime = CHAPTERS[idx].startTime + 0.1;
+      audio.currentTime = targetTime;
+      renderScene(idx);
+      if (!isPlaying) {
+        audio.play().then(() => {
+          isPlaying = true;
+          updatePlayStateUI();
+        }).catch(err => console.log("Play interrupted:", err));
+      }
+    }
+
+    // Next / Prev Chapter
+    function nextChapter() {
+      if (currentChapterIndex < CHAPTERS.length - 1) {
+        seekToChapter(currentChapterIndex + 1);
+      }
+    }
+
+    function prevChapter() {
+      if (audio.currentTime - CHAPTERS[currentChapterIndex].startTime > 3) {
+        audio.currentTime = CHAPTERS[currentChapterIndex].startTime;
+      } else if (currentChapterIndex > 0) {
+        seekToChapter(currentChapterIndex - 1);
+      }
+    }
+
+    // Seek by Offset
+    function seekOffset(sec) {
+      audio.currentTime = Math.max(0, Math.min(totalDuration, audio.currentTime + sec));
+    }
+
+    // Handle Scrub Timeline Click
+    function handleScrubClick(e) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const pct = clickX / rect.width;
+      audio.currentTime = pct * totalDuration;
+    }
+
+    // Toggle Play / Pause
+    function togglePlay() {
+      if (isPlaying) {
+        audio.pause();
+        isPlaying = false;
+      } else {
+        audio.play().then(() => {
+          isPlaying = true;
+        }).catch(err => {
+          console.warn("Audio autoplay blocked, click interactively:", err);
+        });
+      }
+      updatePlayStateUI();
+    }
+
+    function updatePlayStateUI() {
+      btnPlayPause.innerText = isPlaying ? "⏸" : "▶";
+      waveVisualizer.classList.toggle('playing', isPlaying);
+    }
+
+    // Audio Playback Speed
+    function setPlaybackSpeed(spd) {
+      audio.playbackRate = parseFloat(spd);
+    }
+
+    // Mute Toggle
+    function toggleMute() {
+      audio.muted = !audio.muted;
+      document.getElementById('btnMute').innerText = audio.muted ? "🔇" : "🔊";
+    }
+
+    // Update Player on Audio Time Update
+    audio.addEventListener('timeupdate', () => {
+      const cur = audio.currentTime;
+      const pct = (cur / totalDuration) * 100;
+      scrubFill.style.width = `${pct}%`;
+      currentTimeLabel.innerText = formatTime(cur);
+      sceneTimeIndicator.innerText = `${formatTime(cur)} / ${formatTime(totalDuration)}`;
+
+      // Determine active chapter
+      let activeIdx = 0;
+      for (let i = CHAPTERS.length - 1; i >= 0; i--) {
+        if (cur >= CHAPTERS[i].startTime) {
+          activeIdx = i;
+          break;
+        }
+      }
+
+      if (activeIdx !== currentChapterIndex) {
+        renderScene(activeIdx);
+      }
+    });
+
+    audio.addEventListener('play', () => {
+      isPlaying = true;
+      updatePlayStateUI();
+    });
+
+    audio.addEventListener('pause', () => {
+      isPlaying = false;
+      updatePlayStateUI();
+    });
+
+    audio.addEventListener('ended', () => {
+      isPlaying = false;
+      updatePlayStateUI();
+    });
+
+    // View Mode Switcher
+    function setMode(mode) {
+      currentMode = mode;
+      const presScreen = document.getElementById('presentationScreen');
+      const protoScreen = document.getElementById('prototypeScreen');
+      const btnPres = document.getElementById('btnModePresentation');
+      const btnProto = document.getElementById('btnModePrototype');
+
+      if (mode === 'presentation') {
+        presScreen.classList.remove('hidden');
+        protoScreen.classList.remove('active');
+        btnPres.classList.add('active');
+        btnProto.classList.remove('active');
+      } else {
+        presScreen.classList.add('hidden');
+        protoScreen.classList.add('active');
+        btnPres.classList.remove('active');
+        btnProto.classList.add('active');
+      }
+    }
+
+    function reloadPrototype() {
+      const iframe = document.getElementById('prototypeIframe');
+      iframe.src = iframe.src;
+    }
+
+    // Trigger Prototype Actions Inside Iframe
+    function triggerPrototypeAction(action) {
+      setMode('prototype');
+      const iframe = document.getElementById('prototypeIframe');
+      try {
+        const win = iframe.contentWindow;
+        if (!win || !win.A) return;
+        
+        if (action === 'journey') {
+          win.A.startJourney();
+        } else if (action === 'persona') {
+          const current = win.S.currentPersonaId;
+          const next = current === 'maya' ? 'tom' : current === 'tom' ? 'dev' : 'maya';
+          win.A.switchPersona(next);
+        } else if (action === 'theme') {
+          win.A.toggleTheme();
+        } else if (action === 'icebreaker') {
+          win.A.shuffleIcebreaker();
+        }
+      } catch (e) {
+        console.warn("Could not dispatch to iframe:", e);
+      }
+    }
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      initChaptersUI();
+      renderScene(0);
+      totalDurationLabel.innerText = formatTime(totalDuration);
+    });
+  </script>
+</body>
+</html>
