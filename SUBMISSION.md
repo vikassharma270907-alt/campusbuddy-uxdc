@@ -11,6 +11,7 @@
 ## 🔗 Quick Submission Links (Owner to Supply / Finalize)
 
 - **Interactive Prototype (Live Hosted URL):** [https://vikassharma270907-alt.github.io/campusbuddy-uxdc/](https://vikassharma270907-alt.github.io/campusbuddy-uxdc/)
+- **Cloud Deployment (Render Blueprint):** [https://render.com/deploy?repo=https://github.com/vikassharma270907-alt/campusbuddy-uxdc](https://render.com/deploy?repo=https://github.com/vikassharma270907-alt/campusbuddy-uxdc)
 - **GitHub Repository:** [https://github.com/vikassharma270907-alt/campusbuddy-uxdc](https://github.com/vikassharma270907-alt/campusbuddy-uxdc)
 - **Figma Design System & Community File:** `[INSERT FIGMA LINK HERE]`
 - **Video Walkthrough (3-Minute Loom / YouTube):** `[INSERT DEMO VIDEO LINK HERE]`
@@ -101,7 +102,7 @@ The hallmark of CampusBuddy is the **90-Second Micro-Connection Journey**:
 
 ### 5. Feasibility, Safety & Technical Implementation
 - **Zero-Build Production Prototype:** `campusbuddy.html` runs natively in any browser with zero installation, zero bundlers, and zero external runtime dependencies.
-- **Automated Verification:** 21 automated tests passing with 100% success rate across domain rules, capacity, state transitions, blocking, and markup integrity (`node --test tests/*.test.js`).
+- **Automated Verification:** 35 automated tests passing with 100% success rate across domain rules, capacity, state transitions, blocking, markup integrity, and production server health probes (`npm test`).
 - **Psychological & Physical Safety Guardrails:**
   - *General Public Campus Landmarks Only:* TFDL Commons, MacEwan Food Court, Science Theatres Concourse. No private dorm addresses.
   - *Zero Contact Information Exposure:* No personal phone numbers or private handles.
@@ -118,8 +119,9 @@ The hallmark of CampusBuddy is the **90-Second Micro-Connection Journey**:
 | **Capacity & Join Constraints** | Full moment prevention, duplicate join blocking, cancelled session blocking | 3 / 3 Passed | ✅ Verified |
 | **Invitation State Machine** | Pending-to-accepted transitions, finality enforcement, capacity checks, duplicate invite prevention | 4 / 4 Passed | ✅ Verified |
 | **Blocking & Privacy** | Pending invite auto-cancellation, mutual join prevention, invite prevention, unblock recovery | 4 / 4 Passed | ✅ Verified |
-| **Prototype Integrity** | Script compilation, meta tags, WCAG tokens, real-time stopwatch, action bindings | 7 / 7 Passed | ✅ Verified |
-| **Total Automated Tests** | **21 Total Test Cases** | **21 / 21 Passed (101ms)** | **100% Green** |
+| **Prototype Integrity** | File existence, HTML parity, script compilation, meta tags, WCAG tokens, stopwatch, landmarks | 9 / 9 Passed | ✅ Verified |
+| **Production HTTP Server** | Security headers, JSON health probes (/health, /healthz), path traversal guard, favicon, SPA fallback | 12 / 12 Passed | ✅ Verified |
+| **Total Automated Tests** | **35 Total Test Cases** | **35 / 35 Passed (196ms)** | **100% Green** |
 
 ---
 

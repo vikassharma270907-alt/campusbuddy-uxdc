@@ -59,6 +59,21 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // Dedicated /favicon.ico handler for browsers
+  if (reqPath === '/favicon.ico') {
+    const iconSvg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>`;
+    res.writeHead(200, {
+      'Content-Type': 'image/svg+xml',
+      'Cache-Control': 'public, max-age=86400'
+    });
+    if (req.method === 'HEAD') {
+      res.end();
+    } else {
+      res.end(iconSvg);
+    }
+    return;
+  }
+
   // First-class health check endpoints for Render and orchestration probes
   if (reqPath === '/health' || reqPath === '/healthz') {
     const payload = JSON.stringify({

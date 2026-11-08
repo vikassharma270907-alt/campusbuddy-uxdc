@@ -59,6 +59,13 @@ describe('CampusBuddy Production HTTP Server', () => {
     assert.ok(data.timestamp);
   });
 
+  test('GET /favicon.ico returns 200 OK with valid SVG icon payload', async () => {
+    const res = await get('/favicon.ico');
+    assert.equal(res.status, 200);
+    assert.match(res.headers['content-type'], /image\/svg\+xml/);
+    assert.match(res.body, /<svg/);
+  });
+
   test('GET /healthz returns 200 OK matching kubernetes/cloud standard', async () => {
     const res = await get('/healthz');
     assert.equal(res.status, 200);

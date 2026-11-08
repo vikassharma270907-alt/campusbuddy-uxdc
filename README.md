@@ -2,10 +2,11 @@
 > **"Your campus. Your people. Your moments."**  
 > *A low-pressure, moment-based micro-connection experience for university students.*
 
-[![Automated Core Tests](https://img.shields.io/badge/Tests-26%2F26%20Passing-success?style=flat-square)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc/actions)
+[![Automated Core Tests](https://img.shields.io/badge/Tests-35%2F35%20Passing-success?style=flat-square)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc/actions)
 [![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.2%20AA-blue?style=flat-square)](DESIGN.md)
 [![Theme Support](https://img.shields.io/badge/Theme-Light%20%26%20Dark%20Mode-emerald?style=flat-square)](campusbuddy.html)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-brightgreen?style=flat-square)](https://vikassharma270907-alt.github.io/campusbuddy-uxdc/)
+[![Deploy to Render](https://img.shields.io/badge/Deploy%20to-Render-46E3B7?style=flat-square&logo=render&logoColor=white)](https://render.com/deploy?repo=https://github.com/vikassharma270907-alt/campusbuddy-uxdc)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-black?style=flat-square&logo=github)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc)
 [![Event](https://img.shields.io/badge/UXDC%20Designathon-2026%20Experienced%20Track-purple?style=flat-square)](https://devpost.com)
 
@@ -40,21 +41,32 @@ CampusBuddy is built as an ultra-polished, dependency-free, standalone web proto
 ### Option A: Open the Live Hosted Web App (Recommended)
 👉 **[Launch CampusBuddy Live on GitHub Pages](https://vikassharma270907-alt.github.io/campusbuddy-uxdc/)**
 
-### Option B: Open Directly in Local Browser
+### Option B: Deploy with 1-Click to Render
+Deploy your own instance of CampusBuddy to Render's cloud infrastructure:
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/vikassharma270907-alt/campusbuddy-uxdc)
+
+Or via Render Blueprint:
+1. Navigate to **[Render Dashboard > Blueprints](https://dashboard.render.com/blueprints)**.
+2. Click **New Blueprint Instance** and connect `vikassharma270907-alt/campusbuddy-uxdc`.
+3. Render automatically provisions the secure Node.js production service (`campusbuddy-web`) with health probes (`/health`) and the CDN static site (`campusbuddy-app`).
+
+### Option C: Open Directly in Local Browser
 Double-click or drag-and-drop `campusbuddy.html` into Chrome, Safari, Firefox, or Edge:
 ```text
 file:///d:/UXDC Designathon/campusbuddy.html
 ```
 
-### Option B: Run via Local HTTP Server
-Using Python (built-in):
+### Option D: Run via Local HTTP Server
+Using the included hardened production Node.js server:
+```bash
+npm start
+# Server listens at http://localhost:8080 (includes /health, /healthz, and SPA fallback)
+```
+Or using Python (built-in):
 ```bash
 python -m http.server 8085 --directory "d:/UXDC Designathon"
 # Open http://localhost:8085/campusbuddy.html
-```
-Or using Node.js:
-```bash
-npx serve "d:/UXDC Designathon"
 ```
 
 ---
@@ -63,50 +75,67 @@ npx serve "d:/UXDC Designathon"
 
 CampusBuddy includes a comprehensive automated test suite built with Node's native test runner (`node:test` and `node:assert/strict`).
 
-To run all unit, domain-rule, and prototype integrity tests:
+To run all unit, domain-rule, prototype integrity, and server tests:
 ```bash
-node --test tests/*.test.js
+npm test
 ```
 
-### Verified Test Results (21/21 Passing):
+### Verified Test Results (35/35 Passing across 6 Suites):
 ```text
 ▶ CampusBuddy Match Scoring Rules
-  ✔ Exact activity match delivers maximum points across all 5 dimensions (0.71ms)
-  ✔ Partial match calculates exact design default weights (0.13ms)
-  ✔ Peer Jaccard similarity respects category, time, interest, course and style weights (0.27ms)
-✔ CampusBuddy Match Scoring Rules (1.81ms)
+  ✔ Exact activity match delivers maximum points across all 5 dimensions
+  ✔ Partial match calculates exact design default weights
+  ✔ Peer Jaccard similarity respects category, time, interest, course and style weights
+✔ CampusBuddy Match Scoring Rules (2.23ms)
 
 ▶ Capacity and Join Constraints
-  ✔ Cannot join when moment is full (0.33ms)
-  ✔ Cannot join twice (duplicate join prevention) (0.13ms)
-  ✔ Cannot join a cancelled or finished moment (0.13ms)
-✔ Capacity and Join Constraints (0.74ms)
+  ✔ Cannot join when moment is full
+  ✔ Cannot join twice (duplicate join prevention)
+  ✔ Cannot join a cancelled or finished moment
+✔ Capacity and Join Constraints (0.90ms)
 
 ▶ Invitation State Machine Transitions
-  ✔ Pending invitation transitions to accepted and updates participants (0.96ms)
-  ✔ Final invitation states cannot transition again (0.20ms)
-  ✔ Cannot accept invitation if moment reached capacity before response (0.17ms)
-  ✔ Duplicate pending invitations are prevented (0.27ms)
-✔ Invitation State Machine Transitions (1.81ms)
+  ✔ Pending invitation transitions to accepted and updates participants
+  ✔ Final invitation states cannot transition again
+  ✔ Cannot accept invitation if moment reached capacity before response
+  ✔ Duplicate pending invitations are prevented
+✔ Invitation State Machine Transitions (1.18ms)
 
 ▶ Blocking and Safety Constraints
-  ✔ Blocking cancels all pending mutual invitations (0.23ms)
-  ✔ Blocked users cannot join each other’s moments (0.11ms)
-  ✔ Blocked users cannot invite each other (0.12ms)
-  ✔ Unblocking removes block state correctly (0.09ms)
-✔ Blocking and Safety Constraints (0.69ms)
+  ✔ Blocking cancels all pending mutual invitations
+  ✔ Blocked users cannot join each other’s moments
+  ✔ Blocked users cannot invite each other
+  ✔ Unblocking removes block state correctly
+✔ Blocking and Safety Constraints (1.93ms)
 
 ▶ CampusBuddy Single-File Prototype Integrity
-  ✔ campusbuddy.html file exists and has healthy size (1.47ms)
-  ✔ All required meta tags, viewport, fonts, and title are present (0.19ms)
-  ✔ Extract and compile embedded JavaScript without syntax errors (2.50ms)
-  ✔ Theme toggle and CSS variable tokens are defined for Light and Dark modes (0.22ms)
-  ✔ The 90-Second Micro-Connection journey is implemented with real timer & flow (0.15ms)
-  ✔ Safe campus public spots are verified and disclaimers are present (0.15ms)
-  ✔ All required actions (A object) are defined (1.01ms)
-✔ CampusBuddy Single-File Prototype Integrity (6.65ms)
+  ✔ campusbuddy.html file exists and has healthy size
+  ✔ index.html and campusbuddy.html are identical in content
+  ✔ All required meta tags, viewport, fonts, and title are present
+  ✔ Extract and compile embedded JavaScript without syntax errors
+  ✔ Theme toggle and CSS variable tokens are defined for Light and Dark modes
+  ✔ The 90-Second Micro-Connection journey is implemented with real timer & flow
+  ✔ Safe campus public spots are verified and disclaimers are present
+  ✔ WCAG AA accessibility landmarks, ARIA attributes and roles are verified
+  ✔ All required actions (A object) are defined
+✔ CampusBuddy Single-File Prototype Integrity (9.52ms)
 
-ℹ tests 21 | suites 5 | pass 21 | fail 0 | cancelled 0 | duration_ms 101.3ms
+▶ CampusBuddy Production HTTP Server
+  ✔ GET / serves index.html with 200 OK and security headers
+  ✔ GET /health returns 200 OK with valid JSON status payload
+  ✔ GET /favicon.ico returns 200 OK with valid SVG icon payload
+  ✔ GET /healthz returns 200 OK matching kubernetes/cloud standard
+  ✔ HEAD /health returns 200 OK with empty body
+  ✔ POST / returns 405 Method Not Allowed
+  ✔ GET /.git/config returns 403 Forbidden
+  ✔ GET /nonexistent-image.png returns 404 Not Found instead of SPA fallback
+  ✔ Malformed URI sequence returns 400 Bad Request
+  ✔ GET /campusbuddy.html directly serves the standalone prototype
+  ✔ GET /DESIGN.md returns markdown with correct MIME type
+  ✔ GET /non-existent-route returns index.html fallback for SPA routing
+✔ CampusBuddy Production HTTP Server (50.43ms)
+
+ℹ tests 35 | suites 6 | pass 35 | fail 0 | cancelled 0 | duration_ms 196.1ms
 ```
 
 ---
