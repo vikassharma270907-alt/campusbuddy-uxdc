@@ -275,6 +275,7 @@
 
     @media (max-width: 767px) {
       .desktop-tabs { display: none !important; }
+      .desktop-tab-label { display: none; }
     }
 
     .tab-btn {
@@ -1644,27 +1645,30 @@
             <div class="row">
               <div>
                 <label for="c-c">Category</label>
-                <select id="c-c">${opts(Object.keys(CATS), "study")}</select>
+                <select id="c-c">${opts(Object.keys(CATS), d.c || "study")}</select>
               </div>
               <div>
                 <label for="c-day">Day</label>
-                <select id="c-day"><option>Today</option><option>Tomorrow</option></select>
+                <select id="c-day">
+                  <option value="Today"${(!d.day || d.day === "Today") ? " selected" : ""}>Today</option>
+                  <option value="Tomorrow"${d.day === "Tomorrow" ? " selected" : ""}>Tomorrow</option>
+                </select>
               </div>
               <div>
                 <label for="c-s">Time Slot</label>
-                <select id="c-s">${opts(SL, "Afternoon")}</select>
+                <select id="c-s">${opts(SL, d.s || "Afternoon")}</select>
               </div>
               <div>
                 <label for="c-du">Duration (minutes)</label>
-                <input id="c-du" type="number" value="45" min="15" max="180">
+                <input id="c-du" type="number" value="${d.du != null ? esc(d.du) : 45}" min="15" max="180">
               </div>
               <div>
                 <label for="c-l">Verified Campus Public Spot</label>
-                <select id="c-l">${opts(LOC)}</select>
+                <select id="c-l">${opts(LOC, d.loc || LOC[0])}</select>
               </div>
               <div>
-                <label for="c-m">Max Attendees</label>
-                <input id="c-m" type="number" value="3" min="2" max="8">
+                <label for="c-m">Max Attendees (2-8)</label>
+                <input id="c-m" type="number" value="${d.m != null ? esc(d.m) : 3}" min="2" max="8">
               </div>
             </div>
 
