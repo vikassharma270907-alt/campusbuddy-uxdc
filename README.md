@@ -2,7 +2,7 @@
 > **"Your campus. Your people. Your moments."**  
 > *A low-pressure, moment-based micro-connection experience for university students.*
 
-[![Automated Core Tests](https://img.shields.io/badge/Tests-87%2F87%20Passing-success?style=flat-square)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc/actions)
+[![Automated Core Tests](https://img.shields.io/badge/Tests-103%2F103%20Passing-success?style=flat-square)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc/actions)
 [![YouTube Demo](https://img.shields.io/badge/YouTube-Watch%20Demo-FF0000?style=flat-square&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=ImvvlRvdYWI)
 [![Video Walkthrough](https://img.shields.io/badge/Video%20Demo-Interactive%20Presentation-red?style=flat-square)](video_showcase.html)
 [![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.2%20AA-blue?style=flat-square)](DESIGN.md)
@@ -105,7 +105,7 @@ To run all unit, domain-rule, prototype integrity, and server tests:
 npm test
 ```
 
-### Verified Test Results (87/87 Passing across 8 Suites):
+### Verified Test Results (103/103 Passing across 8 Suites):
 ```text
 ▶ CampusBuddy Match Scoring Rules
   ✔ Exact activity match delivers maximum points across all 5 dimensions
@@ -214,7 +214,7 @@ npm test
   ✔ GET /non-existent-route returns index.html fallback for SPA routing
 ✔ CampusBuddy Production HTTP Server (124.73ms)
 
-ℹ tests 83 | suites 8 | pass 83 | fail 0 | cancelled 0 | duration_ms 262.75ms
+ℹ tests 103 | suites 8 | pass 103 | fail 0 | cancelled 0 | duration_ms 340.71ms
 ```
 
 ---

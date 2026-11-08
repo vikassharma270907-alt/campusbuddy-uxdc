@@ -10,12 +10,13 @@
 
 ## 🔗 Quick Submission Links (Owner to Supply / Finalize)
 
-- **Interactive Prototype (Live Hosted URL):** [https://vikassharma270907-alt.github.io/campusbuddy-uxdc/](https://vikassharma270907-alt.github.io/campusbuddy-uxdc/)
+- **Interactive Prototype (Vercel Live URL):** [https://campusbuddy-uxdc.vercel.app](https://campusbuddy-uxdc.vercel.app)
+- **Interactive Prototype (GitHub Pages Mirror):** [https://vikassharma270907-alt.github.io/campusbuddy-uxdc/](https://vikassharma270907-alt.github.io/campusbuddy-uxdc/)
 - **Cloud Deployment (Render Blueprint):** [https://render.com/deploy?repo=https://github.com/vikassharma270907-alt/campusbuddy-uxdc](https://render.com/deploy?repo=https://github.com/vikassharma270907-alt/campusbuddy-uxdc)
 - **GitHub Repository:** [https://github.com/vikassharma270907-alt/campusbuddy-uxdc](https://github.com/vikassharma270907-alt/campusbuddy-uxdc)
 - **Interactive Video Presentation & Showcase:** [https://vikassharma270907-alt.github.io/campusbuddy-uxdc/video_showcase.html](https://vikassharma270907-alt.github.io/campusbuddy-uxdc/video_showcase.html) (or `video_showcase.html` / `video.html`)
 - **Rendered 1080p Walkthrough Video:** `campusbuddy_showcase.mp4` (Full HD video with synchronized studio neural narration)
-- **Figma Design System & Community File:** `[INSERT FIGMA LINK HERE]`
+- **YouTube Demo:** [https://www.youtube.com/watch?v=ImvvlRvdYWI](https://www.youtube.com/watch?v=ImvvlRvdYWI)
 - **Team / Creator:** Vikas Sharma (Solo Submission — Product Design, UX Research & Full-Stack Development)
 
 ---
@@ -103,7 +104,7 @@ The hallmark of CampusBuddy is the **90-Second Micro-Connection Journey**:
 
 ### 5. Feasibility, Safety & Technical Implementation
 - **Zero-Build Production Prototype:** `campusbuddy.html` runs natively in any browser with zero installation, zero bundlers, and zero external runtime dependencies.
-- **Automated Verification:** 87 automated tests passing with 100% success rate across domain rules, capacity, state transitions, blocking, moment creation & public landmark constraints, markup integrity, and production server health probes (`npm test`).
+- **Automated Verification:** 103 automated tests passing with 100% success rate across domain rules, capacity, state transitions, blocking, moment creation & public landmark constraints, markup integrity, and production server health probes (`npm test`).
 - **Psychological & Physical Safety Guardrails:**
   - *General Public Campus Landmarks Only:* TFDL Commons, MacEwan Food Court, Science Theatres Concourse. No private dorm addresses. Strict runtime validation (`LOC.includes(loc)`) rejects unverified spots.
   - *Zero Contact Information Exposure:* No personal phone numbers or private handles.
@@ -120,11 +121,11 @@ The hallmark of CampusBuddy is the **90-Second Micro-Connection Journey**:
 | **Capacity & Join Constraints** | Full moment prevention, duplicate join blocking, cancelled session blocking | 3 / 3 Passed | ✅ Verified |
 | **Invitation State Machine** | Pending-to-accepted transitions, finality enforcement, capacity checks, duplicate invite prevention | 4 / 4 Passed | ✅ Verified |
 | **Blocking & Privacy** | Pending invite auto-cancellation, mutual join prevention, invite prevention, unblock recovery | 4 / 4 Passed | ✅ Verified |
-| **Moment Creation & Public Landmarks** | Strict public landmark verification, private address rejection, RFC 5545 iCal sanitization & line folding | 3 / 3 Passed | ✅ Verified |
+| **Moment Creation & Public Landmarks** | Strict public landmark verification, private address rejection, RFC 5545 iCal sanitization, title & duration boundaries | 8 / 8 Passed | ✅ Verified |
 | **E2E Smoke Journey** | 90-second study sprint, partner join, icebreaker shuffle, modal lifecycle, and state persistence | 2 / 2 Passed | ✅ Verified |
-| **Prototype Integrity** | File existence, HTML parity, script compilation, meta tags, WCAG tokens, stopwatch, landmarks, PWA manifest, service worker, spots directory, keyboard hotkeys, console check, Render blueprint, CSP meta tag, header navigation triggers, video showcase, power-user suite, TFDL indoor floorplan blueprint, student SSO simulation, and wellbeing analytics dashboard | 30 / 30 Passed | ✅ Verified |
-| **Production HTTP Server** | Security headers, JSON health probes (/health, /health.json, /healthz), path traversal guard, config & source protection (render.yaml, vercel.json, .coderabbit.yaml), gzip compression, OPTIONS 204, favicon, PWA routes, audio streaming, video streaming with byte ranges (200, 206, 416), dynamic .ics stream, /api/spots, SSE stream, wellbeing stats, SPA fallback | 38 / 38 Passed | ✅ Verified |
-| **Total Automated Tests** | **87 Total Test Cases Across 8 Suites** | **87 / 87 Passed (~274ms)** | **100% Green** |
+| **Prototype Integrity** | File existence, HTML parity, script compilation, meta tags, WCAG tokens, stopwatch, landmarks, PWA manifest, service worker, spots directory, keyboard hotkeys, console check, Render blueprint, CSP meta tag, header navigation triggers, video showcase, power-user suite, TFDL indoor floorplan blueprint, student SSO simulation, and animated persona switcher | 31 / 31 Passed | ✅ Verified |
+| **Production HTTP Server** | Security headers, JSON health probes (/health, /health.json, /healthz), path traversal guard, config & source protection (render.yaml, vercel.json, .coderabbit.yaml), gzip compression, OPTIONS 204, favicon, PWA routes, audio streaming, video streaming with byte ranges (200, 206, 416), dynamic .ics stream, /api/spots, SSE stream, wellbeing stats, SPA fallback | 48 / 48 Passed | ✅ Verified |
+| **Total Automated Tests** | **103 Total Test Cases Across 8 Suites** | **103 / 103 Passed (~340ms)** | **100% Green** |
 
 ---
 
