@@ -123,16 +123,16 @@ The hallmark of CampusBuddy is the **90-Second Micro-Connection Journey**:
 | **Moment Creation & Public Landmarks** | Strict public landmark verification, private address rejection, RFC 5545 iCal sanitization & line folding | 4 / 4 Passed | ✅ Verified |
 | **E2E Smoke Journey** | 90-second study sprint, partner join, icebreaker shuffle, modal lifecycle, and state persistence | 2 / 2 Passed | ✅ Verified |
 | **Prototype Integrity** | File existence, HTML parity, script compilation, meta tags, WCAG tokens, stopwatch, landmarks, PWA manifest, service worker, spots directory, keyboard hotkeys, console check, Render blueprint, CSP meta tag, header navigation triggers, video showcase integration | 18 / 18 Passed | ✅ Verified |
-| **Production HTTP Server** | Security headers, JSON health probes (/health, /healthz), path traversal guard, config & source protection (render.yaml, vercel.json, .coderabbit.yaml), gzip compression, OPTIONS 204, favicon, PWA routes, audio streaming, SPA fallback | 28 / 28 Passed | ✅ Verified |
-| **Total Automated Tests** | **68 Total Test Cases Across 8 Suites** | **68 / 68 Passed (~220ms)** | **100% Green** |
+| **Production HTTP Server** | Security headers, JSON health probes (/health, /healthz), path traversal guard, config & source protection (render.yaml, vercel.json, .coderabbit.yaml), gzip compression, OPTIONS 204, favicon, PWA routes, audio streaming, video streaming with byte ranges (200, 206, 416), SPA fallback | 31 / 31 Passed | ✅ Verified |
+| **Total Automated Tests** | **68 Total Test Cases Across 8 Suites** | **68 / 68 Passed (~350ms)** | **100% Green** |
 
 ---
 
 ## 🔮 Future Roadmap (Post-Designathon)
 
 1. **University SSO Integration:** Authenticate via university single sign-on (CAS / Shibboleth) to verify active student enrollment.
-2. **Interactive Campus Map Integration:** Integrate lightweight SVG floorplans of campus buildings (e.g. TFDL floors 1–6) highlighting public meeting clusters.
-3. **Institutional Wellbeing Analytics:** Anonymized, aggregated reporting for university wellness centers to identify peak campus disconnection hours without tracking individual students.
+2. **Institutional Wellbeing Analytics:** Anonymized, aggregated reporting for university wellness centers to identify peak campus disconnection hours without tracking individual students.
+3. **Multi-Campus Multi-Tenant Scaling:** Expand spatial radar coordinates and verified public landmarks to neighboring Calgary institutions (Mount Royal University & SAIT).
 
 ---
 

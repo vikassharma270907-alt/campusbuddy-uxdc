@@ -174,6 +174,43 @@ All text and UI component combinations strictly adhere to **WCAG 2.2 AA standard
 - **Copy:** Specific public campus landmark (e.g. `Taylor Family Digital Library (TFDL), Level 2 Commons`).
 - **Significance:** Assures both attendees that the meetup is situated in an open, monitored, well-lit campus space.
 
+### 3.7 UXDC 2026 Judge Guided Tour Banner (`.judge-tour-banner`)
+- **Purpose:** 1-tap evaluator orientation highlighting academic research, 90s sprint innovation, explainable matching, spatial radar map, and icebreaker roulette.
+- **Visuals:** Gold crown accent, collapsible step navigation (`1. Research & Personas` to `5. Icebreaker Roulette`), and dynamic rubric evaluation callout cards (`.tour-callout-card`).
+
+### 3.8 Interactive Campus Radar Map SVG (`.campus-map-container`)
+- **Purpose:** Spatial awareness of University of Calgary campus public landmarks.
+- **Visuals:** Architectural grid blueprint with Swann Mall green lawn, CTrain transit line, animated pulsating radar beacons, live moment counters, and an interactive Spot Detail Drawer with noise ratings, amenities, and 1-tap moment filtering/creation.
+
+### 3.9 Campus Disconnection & Activity Vibe Timeline (`.vibe-timeline-wrapper`)
+- **Purpose:** Addresses the 4 acute disconnection transition periods students face during the day.
+- **Periods:**
+  - 🌅 *Morning Focus (08:30 – 11:30 AM):* Quiet library desks, study groups, calculus revision.
+  - 🥪 *Midday Collab (11:30 AM – 02:00 PM):* High social energy, lunch together at MacEwan Food Court.
+  - 📚 *Study Sprint (02:00 – 05:00 PM):* Focused afternoon co-working & problem set prep.
+  - 🌇 *Wind-Down (05:00 – 08:30 PM):* Golden-hour photo walks & tabletop board games.
+- **Interactions:** 1-tap vibe filter buttons with active luminous border glow and real-time active student counters.
+
+### 3.10 Spot Landmark Compass Meeting Guide (`.landmark-guide-card`)
+- **Purpose:** Eliminates arrival anxiety by answering *"How do we find each other once we get there?"*
+- **Visuals:** Exact meeting area directions, buddy recognition tips (e.g. *"Look for the study notepad or CampusBuddy web check-in on the table"*), noise level indicator, and amenity badges (⚡ Power outlets, 📶 Eduroam/AirUC-Secure Wi-Fi).
+
+### 3.11 Dual Command Palette & Keyboard Shortcuts Studio (`.cmd-palette-box`)
+- **Purpose:** Power-user accessibility inspired by Linear, Raycast, and Notion (`Cmd+K` / `Ctrl+K` / `?`).
+- **Capabilities:** Instant fuzzy search to jump to tabs, start 90s sprints, toggle themes, switch sound effects, or switch simulated personas.
+
+### 3.12 Dynamic Island / Live Activity Capsule (`.live-capsule-island`)
+- **Purpose:** Persistent ambient awareness of confirmed upcoming meetups or active 90-second sprints.
+- **Visuals:** Floating pill capsule with pulsating status dot, countdown timer, location tag, and 1-tap quick action buttons.
+
+### 3.13 Student Persona Deep-Dive Sheet (`.profile-hero`, `.synergy-gauge`)
+- **Purpose:** Rich inspection sheet for peer profiles.
+- **Visuals:** Large initials avatar, online status indicator, academic schedule chips, study style badges, course overlap, and an algorithmic Peer Synergy gauge with 1-tap invitation sending.
+
+### 3.14 Synthesized Web Audio Haptic Feedback Engine
+- **Purpose:** Multi-sensory tactile feedback without bloated audio assets.
+- **Implementation:** Web Audio API oscillator synthesis generating clean, subtle chimes for taps, modal openings, sprint confirmations, and confetti celebrations, with a 1-tap mute toggle.
+
 ---
 
 ## 4. The 90-Second Micro-Connection Interaction Pattern

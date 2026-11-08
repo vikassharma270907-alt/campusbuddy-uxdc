@@ -40,8 +40,7 @@ const COMPRESSIBLE_EXTENSIONS = new Set(['.html', '.css', '.js', '.mjs', '.json'
 const BLOCKED_FILES = new Set(['render.yaml', 'vercel.json', 'package.json', 'package-lock.json', '.env', '.env.example', 'server.js', '.coderabbit.yaml']);
 const BLOCKED_DIRS = new Set(['tests', 'scripts', '.git', '.github', '.vscode', '.agents', 'node_modules', 'etc', 'proc', 'sys', 'dev']);
 
-function createServer() {
-  const srv = http.createServer((req, res) => {
+function handleRequest(req, res) {
     // Production security & isolation headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Vary', 'Accept-Encoding');
@@ -301,12 +300,13 @@ function createServer() {
         sendResponse(200, headers, content, reqExt);
       });
     });
-  });
+}
 
+function createServer() {
+  const srv = http.createServer(handleRequest);
   srv.on('error', (err) => {
     console.error('[CampusBuddy] HTTP Server Error:', err.message);
   });
-
   return srv;
 }
 
@@ -335,4 +335,8 @@ if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
   });
 }
 
-export { server, createServer, MIME_TYPES, PORT, HOST };
+export default function handler(req, res) {
+  return handleRequest(req, res);
+}
+
+export { server, createServer, MIME_TYPES, PORT, HOST, handleRequest };

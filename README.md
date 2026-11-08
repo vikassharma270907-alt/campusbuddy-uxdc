@@ -37,6 +37,20 @@ The core innovation of CampusBuddy is the **90-Second Journey**:
 
 ---
 
+## 📸 Award-Winning UI Showcase
+
+| Screen / Feature | Description |
+|---|---|
+| **🏆 UXDC 2026 Judge Guided Tour** | Interactive 5-step walkthrough with real-time rubric callouts for evaluators. |
+| **🗺️ Campus Radar Map SVG** | Interactive University of Calgary architectural blueprint with pulsating beacons and spot detail drawer. |
+| **🕒 Campus Vibe & Disconnection Timeline** | 4-phase daily transition tracker (Morning Focus, Midday Collab, Study Sprint, Wind-Down) with 1-tap filtering. |
+| **🧭 Spot Landmark Compass** | Grounded meeting navigation answering *"How do we spot each other in public?"* with amenities and noise ratings. |
+| **⚡ Command Palette (⌘K / Ctrl+K)** | Linear/Raycast-inspired power-user overlay for instant tab jumping, theme toggling, and persona switching. |
+| **🌓 OLED Obsidian & Daylight Slate** | Dual WCAG 2.2 AA accessible palettes with high-contrast typography and subtle luminous borders. |
+| **📱 Mobile Responsive Shell** | Fluid layout adapting from 1920px desktop down to 375px mobile viewports with sticky thumb navigation. |
+
+---
+
 ## 🚀 Quick Start (Zero Build Needed)
 
 CampusBuddy is built as an ultra-polished, dependency-free, standalone web prototype that runs instantly in any modern web browser.
