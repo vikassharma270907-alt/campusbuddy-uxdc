@@ -102,7 +102,7 @@ The hallmark of CampusBuddy is the **90-Second Micro-Connection Journey**:
 
 ### 5. Feasibility, Safety & Technical Implementation
 - **Zero-Build Production Prototype:** `campusbuddy.html` runs natively in any browser with zero installation, zero bundlers, and zero external runtime dependencies.
-- **Automated Verification:** 35 automated tests passing with 100% success rate across domain rules, capacity, state transitions, blocking, markup integrity, and production server health probes (`npm test`).
+- **Automated Verification:** 40 automated tests passing with 100% success rate across domain rules, capacity, state transitions, blocking, markup integrity, and production server health probes (`npm test`).
 - **Psychological & Physical Safety Guardrails:**
   - *General Public Campus Landmarks Only:* TFDL Commons, MacEwan Food Court, Science Theatres Concourse. No private dorm addresses.
   - *Zero Contact Information Exposure:* No personal phone numbers or private handles.
