@@ -286,7 +286,10 @@ export function createMoment(state, hostId, { title, category, day, slot, durati
   return { ok: true, act: newAct };
 }
 
-export const sanitizeIcs = str => String(str || "").replace(/[\\;,]/g, "\\$&").replace(/\r\n|\r|\n/g, "\\n");
+export const sanitizeIcs = str => String(str || "")
+  .replace(/<[^>]*>/g, '')
+  .replace(/[\\;,]/g, "\\$&")
+  .replace(/\r\n|\r|\n/g, "\\n");
 
 // ----------------- TEST SUITE -----------------
 
@@ -494,10 +497,78 @@ describe('Moment Creation & Public Landmark Constraints', () => {
     assert.deepEqual(res.act.ps, ["maya"]);
   });
 
-  test('RFC 5545 iCalendar sanitizer escapes delimiters and multiline CRLF sequences', () => {
-    const raw = "Special chars: , ; \\\r\nLine 2 with \nLine 3";
+  test('Moment creation enforces strict title, attendee, and duration boundary limits', () => {
+    const s = createInitialState();
+    // Title < 3 characters
+    const r1 = createMoment(s, "maya", { title: "ab", category: "study", duration: 30, maxAttendees: 4, location: LOC[0] });
+    assert.equal(r1.ok, false);
+    assert.match(r1.error, /at least 3 characters/i);
+
+    // Attendees < 2
+    const r2 = createMoment(s, "maya", { title: "Valid Title", category: "study", duration: 30, maxAttendees: 1, location: LOC[0] });
+    assert.equal(r2.ok, false);
+    assert.match(r2.error, /between 2 and 8/i);
+
+    // Attendees > 8
+    const r3 = createMoment(s, "maya", { title: "Valid Title", category: "study", duration: 30, maxAttendees: 9, location: LOC[0] });
+    assert.equal(r3.ok, false);
+    assert.match(r3.error, /between 2 and 8/i);
+
+    // Duration < 15
+    const r4 = createMoment(s, "maya", { title: "Valid Title", category: "study", duration: 10, maxAttendees: 4, location: LOC[0] });
+    assert.equal(r4.ok, false);
+    assert.match(r4.error, /between 15 and 180 minutes/i);
+
+    // Duration > 180
+    const r5 = createMoment(s, "maya", { title: "Valid Title", category: "study", duration: 240, maxAttendees: 4, location: LOC[0] });
+    assert.equal(r5.ok, false);
+    assert.match(r5.error, /between 15 and 180 minutes/i);
+  });
+
+  test('Self-invitation and self-blocking are explicitly prevented', () => {
+    const s = createInitialState();
+    const rInvite = sendInvitation(s, "maya", "maya", "a1");
+    assert.equal(rInvite.ok, false);
+    assert.match(rInvite.error, /cannot invite yourself/i);
+
+    const rBlock = blockUser(s, "maya", "maya");
+    assert.equal(rBlock.ok, false);
+    assert.match(rBlock.error, /cannot block yourself/i);
+  });
+
+  test('Recipient can decline invitation and sender receives notification', () => {
+    const s = createInitialState();
+    const inv = s.inv.find(i => i.id === "i1");
+    assert.equal(inv.s, "pending");
+    assert.equal(inv.t, "maya");
+
+    const res = respondInvitation(s, "i1", "declined", "maya");
+    assert.equal(res.ok, true);
+    assert.equal(inv.s, "declined");
+    assert.ok(s.notes.some(n => n.to === inv.f && n.txt.includes("can’t make")));
+  });
+
+  test('Sender can cancel pending invitation before response', () => {
+    const s = createInitialState();
+    const inv = s.inv.find(i => i.id === "i1");
+    assert.equal(inv.s, "pending");
+
+    const res = respondInvitation(s, "i1", "cancelled", inv.f);
+    assert.equal(res.ok, true);
+    assert.equal(inv.s, "cancelled");
+  });
+
+  test('Unauthorized user cannot accept or decline another student’s invitation', () => {
+    const s = createInitialState();
+    const res = respondInvitation(s, "i1", "accepted", "sam");
+    assert.equal(res.ok, false);
+    assert.match(res.error, /only the recipient can accept or decline/i);
+  });
+
+  test('RFC 5545 iCalendar sanitizer escapes delimiters, strips HTML tags, and formats CRLF', () => {
+    const raw = "Special chars: <script>alert(1)</script> , ; \\\r\nLine 2 with \nLine 3";
     const sanitized = sanitizeIcs(raw);
-    assert.equal(sanitized, "Special chars: \\, \\; \\\\\\nLine 2 with \\nLine 3");
+    assert.equal(sanitized, "Special chars: alert(1) \\, \\; \\\\\\nLine 2 with \\nLine 3");
   });
 });
 

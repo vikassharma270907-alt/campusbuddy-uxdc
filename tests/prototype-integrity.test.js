@@ -322,6 +322,58 @@ describe('CampusBuddy Single-File Prototype Integrity', () => {
     assert.match(htmlContent, /export_wellbeing/);
     assert.match(htmlContent, /Peak Campus Disconnection Gap Identified/);
   });
+
+  test('Interactive modal views, student profile drawer, and command palette render cleanly in VM', () => {
+    const scriptMatch = htmlContent.match(/<script>([\s\S]*?)<\/script>/);
+    assert.ok(scriptMatch, 'Must contain a <script> block');
+    const scriptCode = scriptMatch[1];
+
+    const sandbox = {
+      window: { scrollTo: () => {} },
+      document: {
+        documentElement: { setAttribute: () => {} },
+        querySelector: () => ({ innerHTML: '', classList: { add: () => {}, remove: () => {} }, setAttribute: () => {} }),
+        querySelectorAll: () => [],
+        addEventListener: () => {},
+        activeElement: null
+      },
+      navigator: { clipboard: { writeText: () => Promise.resolve() } },
+      localStorage: { getItem: () => null, setItem: () => {}, removeItem: () => {} },
+      console: { log: () => {}, warn: () => {}, error: () => {} },
+      setTimeout: () => 1,
+      setInterval: () => 1,
+      clearInterval: () => {},
+      clearTimeout: () => {},
+      URL: { createObjectURL: () => 'blob:mock', revokeObjectURL: () => {} },
+      Blob: class {},
+      AudioContext: class {
+        createOscillator() { return { type: '', frequency: { setValueAtTime: () => {} }, connect: () => {}, start: () => {}, stop: () => {} }; }
+        createGain() { return { gain: { setValueAtTime: () => {}, exponentialRampToValueAtTime: () => {} }, connect: () => {} }; }
+        get currentTime() { return 0; }
+        get destination() { return {}; }
+      }
+    };
+
+    const script = new vm.Script(scriptCode + '\n;({ S, view, modal });');
+    const { S, view, modal } = script.runInNewContext(sandbox);
+
+    // Verify detail modal
+    S.modal = 'a1';
+    assert.doesNotThrow(() => {
+      const modalHtml = modal();
+      assert.ok(typeof modalHtml === 'string' && modalHtml.length > 0);
+    });
+
+    // Verify all modal views
+    const modals = ['a1', 'spots', 'shortcuts', 'indoor', 'sso', 'wellbeing'];
+    modals.forEach(m => {
+      S.modal = m;
+      assert.doesNotThrow(() => {
+        const out = modal();
+        assert.ok(typeof out === 'string' && out.length > 0, `Modal "${m}" must return HTML markup`);
+      }, `Modal "${m}" threw an exception during modal()`);
+    });
+  });
 });
 
 

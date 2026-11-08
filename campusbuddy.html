@@ -4301,16 +4301,29 @@
               </div>
 
               <div class="top-actions">
-                <div class="persona-badge" title="Persona switcher">
-                  <span class="avatar-dot">${esc(currentUser.n[0])}</span>
+                <div class="persona-dropdown-container persona-badge" title="Switch Student Persona">
+                  <button class="persona-badge-btn ${S.personaMenuOpen ? 'active' : ''}" data-a="toggle_persona_menu" aria-expanded="${S.personaMenuOpen ? 'true' : 'false'}" aria-haspopup="listbox" title="Switch Student Persona (Maya, Dev, Ines, Tom, Zoe)">
+                    <span class="avatar-dot avatar-${esc(S.me)}">
+                      ${esc(currentUser.n[0])}
+                      <span class="avatar-pulse-beacon"></span>
+                    </span>
+                    <span class="persona-name-col">
+                      <span class="persona-name">${esc(currentUser.n)}</span>
+                      <span class="persona-role-chip">${esc(currentUser.role.split("·")[0].trim())}</span>
+                    </span>
+                    <span class="persona-chevron ${S.personaMenuOpen ? 'open' : ''}">▾</span>
+                  </button>
+
                   <label for="who" class="visually-hidden">Switch Persona</label>
-                  <select id="who" aria-label="Switch Persona" style="border:0;background:transparent;padding:0;margin:0;font-weight:600;font-size:13px;color:var(--ink);cursor:pointer;outline:none;">
+                  <select id="who" aria-label="Switch Persona" class="visually-hidden" tabindex="-1">
                     ${Object.keys(S.users).map(id => `
                       <option value="${id}" ${id === S.me ? "selected" : ""}>
                         ${esc(S.users[id].n)} (${esc(S.users[id].role.split("·")[0].trim())})
                       </option>
                     `).join("")}
                   </select>
+
+                  ${S.personaMenuOpen ? renderPersonaMenu() : ''}
                 </div>
 
                 <button class="btn sm ghost" data-a="modal" data-v="shortcuts" aria-label="Command Palette" title="Command Palette & Quick Actions (⌘K / ?)">
@@ -4438,6 +4451,34 @@
     // ACTION CONTROLLER (A)
     // =========================================================================
     const A = {
+      toggle_persona_menu() {
+        S.personaMenuOpen = !S.personaMenuOpen;
+        playChime('tap');
+        R();
+      },
+      close_persona_menu() {
+        if (S.personaMenuOpen) {
+          S.personaMenuOpen = false;
+          playChime('tap');
+          R();
+        }
+      },
+      switch_persona(id) {
+        if (!S.users[id]) return;
+        S.me = id;
+        S.tab = "today";
+        S.modal = null;
+        S.took = null;
+        S.err = "";
+        S.personaMenuOpen = false;
+        const whoEl = $("#who");
+        if (whoEl) whoEl.value = id;
+        playChime('success');
+        celebrate();
+        toast(`Switched persona to ${S.users[S.me].n} (${S.users[S.me].role.split("·")[0].trim()}). Feed updated.`);
+        save();
+        R();
+      },
       indoor_floor(fl) {
         S.indoorFloor = Number(fl);
         playChime('tap');
@@ -4513,9 +4554,7 @@
         } else if (type === "sound") {
           A.toggle_sound();
         } else if (type === "persona") {
-          S.me = val;
-          toast(`Switched to persona: ${S.users[val].n}`);
-          R();
+          A.switch_persona(val);
         } else if (type === "test_push") {
           A.test_push();
         }
@@ -5078,7 +5117,9 @@
 
         if (step === 1) {
           S.tab = "today";
-          toast("Step 1: User Research & Persona Context loaded.");
+          S.personaMenuOpen = true;
+          playChime('chime');
+          toast("Step 1: User Research & Persona Context loaded. Explore the 5 student profiles!");
         } else if (step === 2) {
           A.quick();
           toast("Step 2: 90-Second Sprint Flow started!");
@@ -5149,6 +5190,10 @@
 
     // Global Event Delegation
     document.addEventListener("click", e => {
+      if (S.personaMenuOpen && !e.target.closest(".persona-dropdown-container")) {
+        S.personaMenuOpen = false;
+        R();
+      }
       if (e.target.classList.contains("ov")) {
         A.modal_close();
         return;
@@ -5166,6 +5211,7 @@
         S.modal = null;
         S.took = null;
         S.err = "";
+        S.personaMenuOpen = false;
         toast(`Switched persona to ${S.users[S.me].n}`);
         R();
       } else if (e.target.dataset.f) {
@@ -5220,9 +5266,36 @@
         if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
 
         if (e.key === "Escape") {
+          if (S.personaMenuOpen) {
+            S.personaMenuOpen = false;
+            R();
+            return;
+          }
           if (S.modal) {
             A.modal_close();
           }
+          return;
+        }
+
+        if (S.personaMenuOpen) {
+          const userKeys = Object.keys(S.users);
+          const currentIndex = userKeys.indexOf(S.me);
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            const nextIndex = (currentIndex + 1) % userKeys.length;
+            A.switch_persona(userKeys[nextIndex]);
+            return;
+          }
+          if (e.key === "ArrowUp") {
+            e.preventDefault();
+            const prevIndex = (currentIndex - 1 + userKeys.length) % userKeys.length;
+            A.switch_persona(userKeys[prevIndex]);
+            return;
+          }
+        }
+
+        if (e.key.toLowerCase() === "p" && !e.ctrlKey && !e.metaKey) {
+          A.toggle_persona_menu();
           return;
         }
         if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {

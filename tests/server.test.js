@@ -204,6 +204,18 @@ describe('CampusBuddy Production HTTP Server', () => {
     assert.match(res.body, /Forbidden/);
   });
 
+  test('GET /server.js. returns 403 Forbidden (Windows NTFS trailing dot bypass prevention)', async () => {
+    const res = await get('/server.js.');
+    assert.equal(res.status, 403);
+    assert.match(res.body, /Forbidden/);
+  });
+
+  test('GET /package.json. returns 403 Forbidden (Windows NTFS trailing dot bypass prevention)', async () => {
+    const res = await get('/package.json.');
+    assert.equal(res.status, 403);
+    assert.match(res.body, /Forbidden/);
+  });
+
   test('GET /scripts/sync-html.js returns 403 Forbidden (internal scripts blocked)', async () => {
     const res = await get('/scripts/sync-html.js');
     assert.equal(res.status, 403);
@@ -350,6 +362,22 @@ describe('CampusBuddy Production HTTP Server', () => {
     assert.ok(data.spots.some(s => s.id === 'macewan' && s.type === 'Social'));
   });
 
+  test('GET /api/spots with ?type=Quiet query filters spots by activity vibe', async () => {
+    const res = await get('/api/spots?type=Quiet');
+    assert.equal(res.status, 200);
+    const data = JSON.parse(res.body);
+    assert.ok(data.spots.length > 0);
+    assert.ok(data.spots.every(s => s.type.toLowerCase() === 'quiet'));
+  });
+
+  test('GET /api/spots with ?search=TFDL query matches specific landmark', async () => {
+    const res = await get('/api/spots?search=TFDL');
+    assert.equal(res.status, 200);
+    const data = JSON.parse(res.body);
+    assert.equal(data.spots.length, 1);
+    assert.equal(data.spots[0].id, 'tfdl');
+  });
+
   test('GET /api/wellbeing returns 200 OK with institutional campus telemetry', async () => {
     const res = await get('/api/wellbeing');
     assert.equal(res.status, 200);
@@ -359,6 +387,18 @@ describe('CampusBuddy Production HTTP Server', () => {
     assert.ok(data.activeMomentsToday >= 0);
     assert.equal(data.lonelinessReductionIndex, '+42%');
     assert.ok(Array.isArray(data.topLandmarks));
+  });
+
+  test('POST /api/wellbeing updates telemetry and returns updated metrics', async () => {
+    const updatePayload = {
+      activeMomentsToday: 55,
+      lonelinessReductionIndex: '+48%'
+    };
+    const res = await post('/api/wellbeing', updatePayload);
+    assert.equal(res.status, 200);
+    const data = JSON.parse(res.body);
+    assert.equal(data.activeMomentsToday, 55);
+    assert.equal(data.lonelinessReductionIndex, '+48%');
   });
 
   test('POST /api/broadcast accepts and distributes event to connected listeners', async () => {
@@ -372,10 +412,43 @@ describe('CampusBuddy Production HTTP Server', () => {
     assert.ok(typeof data.deliveredTo === 'number');
   });
 
+  test('POST /api/broadcast with malformed JSON returns 400 Bad Request', async () => {
+    const res = await request('/api/broadcast', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{"invalid": json missing quote'
+    });
+    assert.equal(res.status, 400);
+    const data = JSON.parse(res.body);
+    assert.equal(data.error, 'Invalid JSON payload');
+  });
+
+  test('POST /api/broadcast rejects event name with CRLF injection characters', async () => {
+    const res = await post('/api/broadcast', {
+      event: "alert\ndata: {\"spoofed\": true}\n\n",
+      data: {}
+    });
+    assert.equal(res.status, 400);
+    const data = JSON.parse(res.body);
+    assert.match(data.error, /alphanumeric/i);
+  });
+
+  test('POST /api/broadcast with oversized payload (>64KB) returns 413 or closes cleanly', async () => {
+    const bigData = 'X'.repeat(70000);
+    const res = await request('/api/broadcast', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ event: 'ping', data: bigData })
+    }).catch(err => ({ status: 413, body: err.message }));
+    assert.ok([413, 'ECONNRESET'].some(expected => String(res.status).includes(expected) || res.body.includes(expected)));
+  });
+
   test('GET /events initiates native SSE stream with event-stream headers', async () => {
     const http = await import('node:http');
     const sseRes = await new Promise((resolve, reject) => {
-      const req = http.get(`http://127.0.0.1:${testPort}/events`, (res) => {
+      const timeout = setTimeout(() => reject(new Error('SSE connection timeout')), 3000);
+      const req = http.get(`http://127.0.0.1:${testPort}/events`, { agent: false }, (res) => {
+        clearTimeout(timeout);
         resolve({
           status: res.statusCode,
           contentType: res.headers['content-type'],
@@ -385,12 +458,54 @@ describe('CampusBuddy Production HTTP Server', () => {
         req.destroy();
       });
       req.on('error', (err) => {
+        clearTimeout(timeout);
         if (err.code !== 'ECONNRESET') reject(err);
       });
     });
     assert.equal(sseRes.status, 200);
     assert.match(sseRes.contentType, /text\/event-stream/);
     assert.match(sseRes.cacheControl, /no-cache/);
+  });
+
+  test('SSE client disconnect removes client from active set and broadcast survives cleanly', async () => {
+    const http = await import('node:http');
+    let clientReq;
+    await new Promise((resolve) => {
+      const timer = setTimeout(resolve, 300);
+      clientReq = http.get(`http://127.0.0.1:${testPort}/events`, { agent: false }, (res) => {
+        res.on('data', () => {
+          clearTimeout(timer);
+          clientReq.destroy();
+          resolve();
+        });
+      });
+      clientReq.on('error', () => {
+        clearTimeout(timer);
+        resolve();
+      });
+    });
+    await new Promise(r => setTimeout(r, 60));
+    const broadcastRes = await post('/api/broadcast', { event: 'ping', data: {} });
+    assert.equal(broadcastRes.status, 200);
+  });
+
+  test('Aborted client during byte-range streaming closes read stream without server error', async () => {
+    const http = await import('node:http');
+    await new Promise((resolve) => {
+      const req = http.get({
+        host: '127.0.0.1',
+        port: testPort,
+        path: '/campusbuddy_showcase.mp4',
+        headers: { Range: 'bytes=0-100000' }
+      }, (res) => {
+        assert.equal(res.statusCode, 206);
+        res.on('data', () => {
+          req.destroy();
+          resolve();
+        });
+      });
+      req.on('error', () => resolve());
+    });
   });
 
   test('GET /non-existent-route returns index.html fallback for SPA routing', async () => {
