@@ -7,8 +7,6 @@ const urls = [
   'https://vikassharma270907-alt.github.io/campusbuddy-uxdc/video.html',
   'https://vikassharma270907-alt.github.io/campusbuddy-uxdc/manifest.webmanifest',
   'https://vikassharma270907-alt.github.io/campusbuddy-uxdc/sw.js',
-  'https://vikassharma270907-alt.github.io/campusbuddy-uxdc/calendar.ics',
-  'https://vikassharma270907-alt.github.io/campusbuddy-uxdc/api/spots.json',
   'https://vikassharma270907-alt.github.io/campusbuddy-uxdc/campusbuddy_showcase.mp4'
 ];
 

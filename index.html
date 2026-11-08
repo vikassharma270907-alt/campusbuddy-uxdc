@@ -2751,9 +2751,9 @@
               <h2 style="margin:0 0 4px;">Your Campus Plans</h2>
               <p class="m" style="margin:0;">Track upcoming meetups and log private feedback on past interactions.</p>
             </div>
-            <a href="calendar.ics" download="campusbuddy.ics" class="btn sm g" style="text-decoration:none;" title="Download live .ics subscription feed">
+            <button class="btn sm g" data-a="export_calendar_feed" title="Download live .ics subscription feed">
               📅 Subscribe to Calendar (.ics feed)
-            </a>
+            </button>
           </div>
 
           <h3 style="margin-top:20px;">Upcoming Moments (${up.length})</h3>
@@ -3581,9 +3581,9 @@
                   ${unreadAlerts ? `<span class="badge" style="margin-left:2px;font-size:10px;padding:1px 5px;">${unreadAlerts}</span>` : ""}
                 </button>
 
-                <a class="btn sm ghost" href="calendar.ics" download="campusbuddy.ics" aria-label="Subscribe to Calendar Feed" title="Download or subscribe to live iCalendar (.ics) feed">
+                <button class="btn sm ghost" data-a="export_calendar_feed" aria-label="Subscribe to Calendar Feed" title="Download or subscribe to live iCalendar (.ics) feed">
                   📅<span class="desktop-tab-label"> iCal</span>
-                </a>
+                </button>
 
                 <button class="btn sm ghost" data-a="toggle_sound" aria-label="Toggle Sound" title="Toggle Synthesized Audio Feedback">
                   ${S.sound !== false ? '🔊' : '🔇'}
@@ -3952,6 +3952,60 @@
         } catch (e) {
           toast("Calendar invite exported.");
         }
+      },
+      export_calendar_feed() {
+        const pad = n => String(n).padStart(2, "0");
+        const formatIcsDate = d =>
+          `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
+
+        const now = new Date();
+        const dtStamp = formatIcsDate(now);
+        const sanitize = str => String(str || "").replace(/[\\;,]/g, "\\$&").replace(/\r\n|\r|\n/g, "\\n");
+
+        const lines = [
+          "BEGIN:VCALENDAR",
+          "VERSION:2.0",
+          "PRODID:-//CampusBuddy//UXDC 2026//EN",
+          "CALSCALE:GREGORIAN",
+          "METHOD:PUBLISH",
+          "X-WR-CALNAME:CampusBuddy Micro-Moments",
+          "X-WR-TIMEZONE:UTC",
+          "X-WR-CALDESC:Live public safe campus micro-connection moments"
+        ];
+
+        S.acts.forEach(a => {
+          const eventDate = new Date();
+          if (a.d === "Tomorrow") eventDate.setDate(eventDate.getDate() + 1);
+          const hour = a.s === "Morning" ? 10 : a.s === "Afternoon" ? 14 : 18;
+          eventDate.setHours(hour, 0, 0, 0);
+          const endDate = new Date(eventDate.getTime() + (a.dur || 45) * 60000);
+
+          lines.push(
+            "BEGIN:VEVENT",
+            `UID:cb-moment-${a.id}@campusbuddy.local`,
+            `DTSTAMP:${dtStamp}`,
+            `DTSTART:${formatIcsDate(eventDate)}`,
+            `DTEND:${formatIcsDate(endDate)}`,
+            `SUMMARY:${sanitize("CampusBuddy: " + a.t)}`,
+            `DESCRIPTION:${sanitize(a.desc + "\\n\\nVerified Spot: " + a.loc + "\\n\\nOrganized via CampusBuddy.")}`,
+            `LOCATION:${sanitize(a.loc)}`,
+            "STATUS:CONFIRMED",
+            "END:VEVENT"
+          );
+        });
+
+        lines.push("END:VCALENDAR");
+        const icsContent = lines.join("\r\n");
+        const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "campusbuddy-all-moments.ics";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        toast("📅 Full campus calendar feed (.ics) downloaded!");
       },
       join(id) {
         const a = S.acts.find(x => x.id === id);

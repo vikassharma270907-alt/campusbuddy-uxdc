@@ -1,0 +1,25 @@
+{
+  "campus": "University of Calgary",
+  "activeMomentsToday": 42,
+  "sprintSuccessRate": 0.91,
+  "topLandmarks": [
+    {
+      "name": "TFDL Commons",
+      "activeSpots": 18,
+      "vibe": "Morning Focus"
+    },
+    {
+      "name": "MacEwan Food Court",
+      "activeSpots": 14,
+      "vibe": "Midday Collab"
+    },
+    {
+      "name": "Science Theatres Concourse",
+      "activeSpots": 10,
+      "vibe": "Study Sprint"
+    }
+  ],
+  "disconnectionGapIdentified": "14:15 - 15:30 (Post-Lecture Void)",
+  "lonelinessReductionIndex": "+42%",
+  "updatedAt": "2026-11-08T20:44:54.744Z"
+}

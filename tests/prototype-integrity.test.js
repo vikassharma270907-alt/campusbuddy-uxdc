@@ -295,8 +295,7 @@ describe('CampusBuddy Single-File Prototype Integrity', () => {
   });
 
   test('Live iCalendar (.ics) subscription feed links are embedded in header and plans view', () => {
-    assert.match(htmlContent, /href="calendar\.ics"/);
-    assert.match(htmlContent, /download="campusbuddy\.ics"/);
+    assert.match(htmlContent, /export_calendar_feed/);
     assert.match(htmlContent, /Subscribe to Calendar/);
   });
 
