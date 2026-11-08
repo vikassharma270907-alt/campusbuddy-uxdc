@@ -22,3 +22,7 @@ temp_*/
 # Environment files
 .env
 .env.local
+
+# Tasteskill artifacts & deal histories
+.taste-skill/
+.taste-pro/

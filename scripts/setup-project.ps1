@@ -93,6 +93,20 @@ if (Test-Path -LiteralPath $PluginsBase) {
                         }
                     }
                 }
+
+                # Dual-alias for taste-skill canonical frontmatter name
+                if ($sName -eq 'taste-skill') {
+                    $aliasDest = Join-Path -Path $MasterSkills -ChildPath 'design-taste-frontend'
+                    if (-not (Test-Path -LiteralPath $aliasDest)) {
+                        try { New-Item -ItemType Junction -Path $aliasDest -Target $skillFolder.FullName -Force | Out-Null } catch {}
+                    }
+                    if (Test-Path -LiteralPath $eccSkillsDir) {
+                        $eAlias = Join-Path -Path $eccSkillsDir -ChildPath 'design-taste-frontend'
+                        if (-not (Test-Path -LiteralPath $eAlias)) {
+                            try { New-Item -ItemType Junction -Path $eAlias -Target $skillFolder.FullName -Force | Out-Null } catch {}
+                        }
+                    }
+                }
             }
         }
 

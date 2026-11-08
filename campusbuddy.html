@@ -1110,10 +1110,21 @@
     if (!S.theme) S.theme = "light";
     document.documentElement.setAttribute("data-theme", S.theme);
 
+    // Cross-tab real-time state synchronization
+    const syncChannel = (typeof window !== "undefined" && "BroadcastChannel" in window)
+      ? new BroadcastChannel("campusbuddy_sync")
+      : null;
+
     const save = () => {
       try {
         localStorage.setItem("cb_state_v2", JSON.stringify(S));
         localStorage.setItem("cb_theme", S.theme);
+        if (syncChannel) {
+          syncChannel.postMessage({
+            type: "SYNC",
+            state: { acts: S.acts, inv: S.inv, notes: S.notes, blocks: S.blocks }
+          });
+        }
       } catch (e) {}
     };
 
@@ -2193,12 +2204,29 @@
       modal(v) {
         S.modal = v || null;
         if (!v) S.took = null;
+        if (v && v !== "shortcuts") playChime('alert');
         R();
       },
       modal_close() {
         S.modal = null;
         S.took = null;
         R();
+      },
+      spot_filter(v) {
+        S.spotFilter = v;
+        R();
+      },
+      host_at_spot(spotName) {
+        S.tab = "create";
+        S.modal = null;
+        R();
+        setTimeout(() => {
+          const locEl = $("#c-l");
+          if (locEl && spotName) {
+            locEl.value = spotName;
+          }
+        }, 10);
+        toast(`Creating moment at ${spotName}`);
       },
       shuffle_starter() {
         S.starterOffset = (S.starterOffset || 0) + 1;
@@ -2560,12 +2588,65 @@
       }
     });
 
-    // Keyboard Accessibility (Esc closes modal)
-    document.addEventListener("keydown", e => {
-      if (e.key === "Escape" && S.modal) {
-        A.modal_close();
-      }
-    });
+    // BroadcastChannel sync listener
+    if (syncChannel) {
+      syncChannel.onmessage = event => {
+        if (event.data && event.data.type === "SYNC" && event.data.state) {
+          if (event.data.state.acts) S.acts = event.data.state.acts;
+          if (event.data.state.inv) S.inv = event.data.state.inv;
+          if (event.data.state.notes) S.notes = event.data.state.notes;
+          if (event.data.state.blocks) S.blocks = event.data.state.blocks;
+          R();
+        }
+      };
+    }
+
+    // Storage fallback for cross-tab sync & keyboard hotkeys
+    if (typeof window !== "undefined" && typeof window.addEventListener === "function") {
+      window.addEventListener("storage", e => {
+        if (e.key === "cb_state_v2" && e.newValue) {
+          try {
+            const ext = JSON.parse(e.newValue);
+            if (ext && ext.acts) {
+              S.acts = ext.acts;
+              if (ext.inv) S.inv = ext.inv;
+              if (ext.notes) S.notes = ext.notes;
+              if (ext.blocks) S.blocks = ext.blocks;
+              R();
+            }
+          } catch (err) {}
+        }
+      });
+
+      // Keyboard Accessibility (Esc, ?, S, T, 1-8)
+      window.addEventListener("keydown", e => {
+        const tag = (e.target && e.target.tagName) || "";
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+
+        if (e.key === "Escape") {
+          if (S.modal) {
+            A.modal_close();
+          }
+          return;
+        }
+        if (e.key === "?" || (e.shiftKey && e.key === "/")) {
+          A.modal("shortcuts");
+          return;
+        }
+        if (e.key.toLowerCase() === "s" && !e.ctrlKey && !e.metaKey) {
+          A.modal("spots");
+          return;
+        }
+        if (e.key.toLowerCase() === "t" && !e.ctrlKey && !e.metaKey) {
+          A.theme();
+          return;
+        }
+        const tabKeys = { "1": "today", "2": "discover", "3": "people", "4": "create", "5": "invites", "6": "plans", "7": "alerts", "8": "safety" };
+        if (tabKeys[e.key]) {
+          A.tab(tabKeys[e.key]);
+        }
+      });
+    }
 
     // Initial render
     R();
@@ -2579,7 +2660,7 @@
     }, 1000);
 
     // Register Service Worker for offline resilience
-    if ("serviceWorker" in navigator && window.location.protocol.startsWith("http")) {
+    if (typeof window !== "undefined" && typeof navigator !== "undefined" && "serviceWorker" in navigator && window.location && window.location.protocol && window.location.protocol.startsWith("http") && typeof window.addEventListener === "function") {
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("./sw.js").catch(() => {});
       });

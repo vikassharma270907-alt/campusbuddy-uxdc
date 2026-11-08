@@ -1110,10 +1110,21 @@
     if (!S.theme) S.theme = "light";
     document.documentElement.setAttribute("data-theme", S.theme);
 
+    // Cross-tab real-time state synchronization
+    const syncChannel = (typeof window !== "undefined" && "BroadcastChannel" in window)
+      ? new BroadcastChannel("campusbuddy_sync")
+      : null;
+
     const save = () => {
       try {
         localStorage.setItem("cb_state_v2", JSON.stringify(S));
         localStorage.setItem("cb_theme", S.theme);
+        if (syncChannel) {
+          syncChannel.postMessage({
+            type: "SYNC",
+            state: { acts: S.acts, inv: S.inv, notes: S.notes, blocks: S.blocks }
+          });
+        }
       } catch (e) {}
     };
 
@@ -1840,6 +1851,114 @@
     }
 
     function modal() {
+      if (S.modal === "spots") {
+        const filter = S.spotFilter || "all";
+        const filteredSpots = filter === "all" ? CAMPUS_SPOTS : CAMPUS_SPOTS.filter(s => s.vibeCat === filter);
+        return `
+          <div class="ov" role="dialog" aria-modal="true" aria-labelledby="spots-title">
+            <div class="modal-card" style="max-width:540px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span style="font-size:24px;">🏛️</span>
+                  <div>
+                    <h2 id="spots-title" style="margin:0;font-size:19px;">Verified Public Campus Spots</h2>
+                    <div class="small-meta" style="color:var(--mut);">Safety-first, open public zones across UCalgary</div>
+                  </div>
+                </div>
+                <button class="btn ghost sm" data-a="modal_close" aria-label="Close spots explorer" style="font-size:16px;">✕</button>
+              </div>
+
+              <!-- Filter Chips -->
+              <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px;">
+                ${[
+                  { id: "all", label: "All Spots (6)" },
+                  { id: "collab", label: "📚 Collaborative" },
+                  { id: "social", label: "☕ Social & Buzz" },
+                  { id: "quiet", label: "🤫 Deep Quiet" },
+                  { id: "outdoor", label: "🌲 Outdoor" }
+                ].map(f => `
+                  <button class="chip ${filter === f.id ? "on" : ""}" data-a="spot_filter" data-v="${f.id}" style="font-size:12px;padding:4px 10px;">
+                    ${f.label}
+                  </button>
+                `).join("")}
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:12px;max-height:55vh;overflow-y:auto;padding-right:4px;">
+                ${filteredSpots.map(sp => `
+                  <div class="card" style="border:1px solid var(--line);background:var(--card-muted);padding:14px;border-radius:var(--radius-md);">
+                    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;">
+                      <div style="font-weight:700;font-size:15px;color:var(--ink);">
+                        <span style="margin-right:6px;">${sp.icon}</span>${esc(sp.name)}
+                      </div>
+                      <span class="badge" style="background:var(--pine-subtle);color:var(--pine);white-space:nowrap;font-size:11px;">${esc(sp.badge)}</span>
+                    </div>
+                    <div class="small-meta" style="margin-bottom:6px;">
+                      <b>Vibe:</b> ${esc(sp.vibe)} · <b>Noise:</b> ${esc(sp.noise)}
+                    </div>
+                    <div class="small-meta" style="margin-bottom:6px;color:var(--mut);">
+                      🕒 <b>Hours:</b> ${esc(sp.hours)}
+                    </div>
+                    <div style="margin:6px 0;font-size:12.5px;color:var(--ink);background:var(--card);padding:8px;border-radius:6px;border-left:3px solid var(--pine);">
+                      🧭 <b>Directions:</b> ${esc(sp.directions)}
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;">
+                      ${sp.amenities.map(am => `<span style="font-size:11px;background:var(--bg-warm);padding:2px 8px;border-radius:4px;color:var(--mut);">✓ ${esc(am)}</span>`).join("")}
+                    </div>
+                    <div style="margin-top:10px;display:flex;justify-content:flex-end;">
+                      <button class="btn sm" data-a="host_at_spot" data-v="${esc(sp.name)}" style="font-size:12px;padding:6px 12px;">
+                        ➕ Host a moment here
+                      </button>
+                    </div>
+                  </div>
+                `).join("")}
+              </div>
+
+              <div style="margin-top:16px;display:flex;justify-content:flex-end;">
+                <button class="btn g sm" data-a="modal_close">Close Explorer</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (S.modal === "shortcuts") {
+        return `
+          <div class="ov" role="dialog" aria-modal="true" aria-labelledby="shortcuts-title">
+            <div class="modal-card" style="max-width:440px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span style="font-size:24px;">⌨️</span>
+                  <div>
+                    <h2 id="shortcuts-title" style="margin:0;font-size:19px;">Keyboard Shortcuts</h2>
+                    <div class="small-meta" style="color:var(--mut);">Accessible navigation & power-user hotkeys</div>
+                  </div>
+                </div>
+                <button class="btn ghost sm" data-a="modal_close" aria-label="Close shortcuts" style="font-size:16px;">✕</button>
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr auto;gap:8px;padding:8px 0;font-size:13.5px;border-bottom:1px solid var(--line);">
+                <span>Jump to Today tab</span><kbd class="kbd-key">1</kbd>
+                <span>Jump to Discover tab</span><kbd class="kbd-key">2</kbd>
+                <span>Jump to People tab</span><kbd class="kbd-key">3</kbd>
+                <span>Jump to Create tab</span><kbd class="kbd-key">4</kbd>
+                <span>Jump to Invites tab</span><kbd class="kbd-key">5</kbd>
+                <span>Jump to Plans tab</span><kbd class="kbd-key">6</kbd>
+                <span>Jump to Alerts tab</span><kbd class="kbd-key">7</kbd>
+                <span>Jump to Safety tab</span><kbd class="kbd-key">8</kbd>
+                <span>Toggle Light / Dark theme</span><kbd class="kbd-key">T</kbd>
+                <span>Explore Verified Campus Spots</span><kbd class="kbd-key">S</kbd>
+                <span>Show this shortcut help</span><kbd class="kbd-key">?</kbd>
+                <span>Close any dialog or modal</span><kbd class="kbd-key">Esc</kbd>
+              </div>
+
+              <div style="margin-top:16px;display:flex;justify-content:flex-end;">
+                <button class="btn g sm" data-a="modal_close">Got It</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
       const a = S.acts.find(x => x.id === S.modal);
       if (!a) return "";
       const starters = STARTERS[a.c] || STARTERS.study;
@@ -2085,12 +2204,29 @@
       modal(v) {
         S.modal = v || null;
         if (!v) S.took = null;
+        if (v && v !== "shortcuts") playChime('alert');
         R();
       },
       modal_close() {
         S.modal = null;
         S.took = null;
         R();
+      },
+      spot_filter(v) {
+        S.spotFilter = v;
+        R();
+      },
+      host_at_spot(spotName) {
+        S.tab = "create";
+        S.modal = null;
+        R();
+        setTimeout(() => {
+          const locEl = $("#c-l");
+          if (locEl && spotName) {
+            locEl.value = spotName;
+          }
+        }, 10);
+        toast(`Creating moment at ${spotName}`);
       },
       shuffle_starter() {
         S.starterOffset = (S.starterOffset || 0) + 1;
@@ -2452,12 +2588,65 @@
       }
     });
 
-    // Keyboard Accessibility (Esc closes modal)
-    document.addEventListener("keydown", e => {
-      if (e.key === "Escape" && S.modal) {
-        A.modal_close();
-      }
-    });
+    // BroadcastChannel sync listener
+    if (syncChannel) {
+      syncChannel.onmessage = event => {
+        if (event.data && event.data.type === "SYNC" && event.data.state) {
+          if (event.data.state.acts) S.acts = event.data.state.acts;
+          if (event.data.state.inv) S.inv = event.data.state.inv;
+          if (event.data.state.notes) S.notes = event.data.state.notes;
+          if (event.data.state.blocks) S.blocks = event.data.state.blocks;
+          R();
+        }
+      };
+    }
+
+    // Storage fallback for cross-tab sync & keyboard hotkeys
+    if (typeof window !== "undefined" && typeof window.addEventListener === "function") {
+      window.addEventListener("storage", e => {
+        if (e.key === "cb_state_v2" && e.newValue) {
+          try {
+            const ext = JSON.parse(e.newValue);
+            if (ext && ext.acts) {
+              S.acts = ext.acts;
+              if (ext.inv) S.inv = ext.inv;
+              if (ext.notes) S.notes = ext.notes;
+              if (ext.blocks) S.blocks = ext.blocks;
+              R();
+            }
+          } catch (err) {}
+        }
+      });
+
+      // Keyboard Accessibility (Esc, ?, S, T, 1-8)
+      window.addEventListener("keydown", e => {
+        const tag = (e.target && e.target.tagName) || "";
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+
+        if (e.key === "Escape") {
+          if (S.modal) {
+            A.modal_close();
+          }
+          return;
+        }
+        if (e.key === "?" || (e.shiftKey && e.key === "/")) {
+          A.modal("shortcuts");
+          return;
+        }
+        if (e.key.toLowerCase() === "s" && !e.ctrlKey && !e.metaKey) {
+          A.modal("spots");
+          return;
+        }
+        if (e.key.toLowerCase() === "t" && !e.ctrlKey && !e.metaKey) {
+          A.theme();
+          return;
+        }
+        const tabKeys = { "1": "today", "2": "discover", "3": "people", "4": "create", "5": "invites", "6": "plans", "7": "alerts", "8": "safety" };
+        if (tabKeys[e.key]) {
+          A.tab(tabKeys[e.key]);
+        }
+      });
+    }
 
     // Initial render
     R();
@@ -2471,7 +2660,7 @@
     }, 1000);
 
     // Register Service Worker for offline resilience
-    if ("serviceWorker" in navigator && window.location.protocol.startsWith("http")) {
+    if (typeof window !== "undefined" && typeof navigator !== "undefined" && "serviceWorker" in navigator && window.location && window.location.protocol && window.location.protocol.startsWith("http") && typeof window.addEventListener === "function") {
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("./sw.js").catch(() => {});
       });

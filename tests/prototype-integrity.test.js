@@ -163,5 +163,27 @@ describe('CampusBuddy Single-File Prototype Integrity', () => {
     assert.match(swContent, /addEventListener\('install'/);
     assert.match(swContent, /addEventListener\('fetch'/);
   });
+
+  test('Campus Spots Directory contains all 6 verified zones with rich metadata', () => {
+    assert.match(htmlContent, /CAMPUS_SPOTS\s*=\s*\[/);
+    assert.match(htmlContent, /Taylor Family Digital Library/);
+    assert.match(htmlContent, /MacEwan Student Centre/);
+    assert.match(htmlContent, /Science Theatres/);
+    assert.match(htmlContent, /Prairie Chicken Quad/);
+    assert.match(htmlContent, /Rozsa Centre/);
+    assert.match(htmlContent, /Gallagher Library/);
+    assert.match(htmlContent, /vibeCat:\s*"collab"/);
+    assert.match(htmlContent, /vibeCat:\s*"social"/);
+    assert.match(htmlContent, /vibeCat:\s*"quiet"/);
+    assert.match(htmlContent, /vibeCat:\s*"outdoor"/);
+  });
+
+  test('Cross-tab synchronization and keyboard navigation shortcuts are registered', () => {
+    assert.match(htmlContent, /new BroadcastChannel\("campusbuddy_sync"\)/);
+    assert.match(htmlContent, /window\.addEventListener\("storage"/);
+    assert.match(htmlContent, /window\.addEventListener\("keydown"/);
+    assert.match(htmlContent, /Keyboard Shortcuts/);
+    assert.match(htmlContent, /\.kbd-key/);
+  });
 });
 

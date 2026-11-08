@@ -72,7 +72,7 @@ describe('CampusBuddy End-to-End User Journey Smoke Suite', () => {
     };
 
     const sandbox = {
-      window: { scrollTo: () => {} },
+      window: { scrollTo: () => {}, addEventListener: () => {} },
       document: {
         documentElement: { setAttribute: () => {} },
         querySelector: (sel) => {
