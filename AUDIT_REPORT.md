@@ -13,7 +13,7 @@
 
 CampusBuddy was audited end-to-end across architecture, frontend UX/UI, backend HTTP delivery, security guardrails, test automation, and multi-cloud CI/CD deployment pipelines. 
 
-Every identified defect—including missing Render host binding, unhandled clipboard and rating exceptions, lack of JSON health check probes, potential configuration file exposure, and cross-platform Node script execution discrepancies—was resolved at root cause. Automated test coverage was increased from 21 unit tests to **51 full tests across 7 comprehensive test suites**, achieving a 100% green pass rate across Windows and Linux runners on Node 20, 22, and 24.
+Every identified defect—including missing Render host binding, unhandled clipboard and rating exceptions, lack of JSON health check probes, potential configuration file exposure, and cross-platform Node script execution discrepancies—was resolved at root cause. Automated test coverage was increased from 21 unit tests to **53 full tests across 7 comprehensive test suites**, achieving a 100% green pass rate across Windows and Linux runners on Node 20, 22, and 24.
 
 ---
 
@@ -35,12 +35,13 @@ Every identified defect—including missing Render host binding, unhandled clipb
 | **12** | **Frontend / Feature** | `MEDIUM` | No calendar synchronization for confirmed student meetups | Students had to manually transcribe meeting times and locations into their calendars | Implemented native RFC 5545 iCalendar (`.ics`) generation (`A.export_ics`) with meeting time slot calculation, public location embedding, and icebreaker question integration. |
 | **13** | **Frontend / UX** | `MEDIUM` | Static campus location list lacked detailed navigation context and amenity filters | Safe spots were plain strings without directions, noise levels, hours, or vibe filters | Engineered `CAMPUS_SPOTS` directory with interactive modal, category filtering (collab, social, quiet, outdoor), building directions, and 1-click "Host a moment here" pre-filling. |
 | **14** | **Frontend / Realtime** | `MEDIUM` | In-memory and localStorage state was isolated per browser tab without live cross-tab updates | Multi-tab usage could display stale attendee lists or out-of-sync moments | Integrated `BroadcastChannel('campusbuddy_sync')` with `storage` event fallback for real-time state synchronization, plus accessible power-user keyboard hotkeys (`?`, `1`-`8`, `T`, `S`). |
+| **15** | **Security & UX** | `MEDIUM` | Missing Cross-Origin-Opener-Policy, unhandled private storage SecurityError, and unhandled notification clearance | Header disparity between Vercel and Node servers, potential crash if localStorage is disabled, lack of notification dismissal | Added `Cross-Origin-Opener-Policy: same-origin`, wrapped theme localStorage in safe IIFE try-catch, added `clear_notes` action with UI button, added `clear_filters` reset button, and added test cases verifying 403 on `/vercel.json` and `/.coderabbit.yaml`. |
 
 ---
 
 ## 3. Test & Verification Evidence
 
-All 46 automated tests execute in under 200ms using Node's native test runner (`node:test` and `node:assert/strict`):
+All 53 automated tests execute in under 250ms using Node's native test runner (`node:test` and `node:assert/strict`):
 
 ```text
 ▶ CampusBuddy Match Scoring Rules
@@ -98,6 +99,8 @@ All 46 automated tests execute in under 200ms using Node's native test runner (`
   ✔ POST / returns 405 Method Not Allowed (2.69ms)
   ✔ GET /.git/config returns 403 Forbidden (1.73ms)
   ✔ GET /render.yaml returns 403 Forbidden (1.21ms)
+  ✔ GET /vercel.json returns 403 Forbidden (0.95ms)
+  ✔ GET /.coderabbit.yaml returns 403 Forbidden (0.88ms)
   ✔ GET /package-lock.json returns 403 Forbidden (1.08ms)
   ✔ GET /nonexistent-image.png returns 404 Not Found instead of SPA fallback (1.11ms)
   ✔ Malformed URI sequence returns 400 Bad Request (0.95ms)
@@ -107,9 +110,9 @@ All 46 automated tests execute in under 200ms using Node's native test runner (`
   ✔ GET /sw.js returns 200 OK with javascript MIME type (0.89ms)
   ✔ GET /DESIGN.md returns markdown with correct MIME type (0.84ms)
   ✔ GET /non-existent-route returns index.html fallback for SPA routing (1.20ms)
-✔ CampusBuddy Production HTTP Server (47.40ms)
+✔ CampusBuddy Production HTTP Server (56.30ms)
 
-ℹ tests 46 | suites 7 | pass 46 | fail 0 | cancelled 0 | duration_ms 184.5ms
+ℹ tests 53 | suites 7 | pass 53 | fail 0 | cancelled 0 | duration_ms 224.9ms
 ```
 
 ---

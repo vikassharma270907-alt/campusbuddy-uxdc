@@ -185,5 +185,23 @@ describe('CampusBuddy Single-File Prototype Integrity', () => {
     assert.match(htmlContent, /Keyboard Shortcuts/);
     assert.match(htmlContent, /\.kbd-key/);
   });
+
+  test('Zero console.log/console.debug in production prototype code', () => {
+    const scriptMatch = htmlContent.match(/<script>([\s\S]*?)<\/script>/);
+    assert.ok(scriptMatch, 'script tag must exist');
+    const scriptCode = scriptMatch[1];
+    const logMatches = scriptCode.match(/console\.(log|debug)\(/g);
+    assert.equal(logMatches, null, 'Production script must contain zero console.log or console.debug statements');
+  });
+
+  test('Render Blueprint specification defines both web service and static site', () => {
+    const renderPath = path.resolve(__dirname, '../render.yaml');
+    assert.ok(fs.existsSync(renderPath), 'render.yaml must exist');
+    const renderYaml = fs.readFileSync(renderPath, 'utf8');
+    assert.match(renderYaml, /name:\s*campusbuddy-web/);
+    assert.match(renderYaml, /name:\s*campusbuddy-app/);
+    assert.match(renderYaml, /healthCheckPath:\s*\/health/);
+  });
 });
+
 
