@@ -22,7 +22,7 @@ from playwright.async_api import async_playwright
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 SCREENSHOTS_DIR = ROOT_DIR / "assets" / "screenshots"
-PORT = 8089
+PORT = 8098
 BASE_URL = f"http://127.0.0.1:{PORT}"
 
 async def run_ui_verification():
@@ -34,10 +34,11 @@ async def run_ui_verification():
         ["node", "server.js"],
         cwd=str(ROOT_DIR),
         env={**os.environ, "PORT": str(PORT), "HOST": "127.0.0.1"},
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        shell=(os.name == 'nt')
     )
-    time.sleep(1.5)
+    time.sleep(2.0)
 
     console_errors = []
     
@@ -53,7 +54,7 @@ async def run_ui_verification():
             page.on("console", lambda msg: console_errors.append(msg.text) if msg.type in ["error"] else None)
             page.on("pageerror", lambda err: console_errors.append(str(err)))
 
-            res = await page.goto(f"{BASE_URL}/", wait_until="networkidle")
+            res = await page.goto(f"{BASE_URL}/", wait_until="domcontentloaded")
             assert res.status == 200, f"Expected 200 OK, got {res.status}"
             print("  ✓ Desktop index.html loaded successfully with 200 OK")
 
@@ -119,7 +120,14 @@ async def run_ui_verification():
 
             # --- Test 4: 90-Second Micro-Connection Sprint Timer ---
             print("\n[UI Audit] Test 4: Verifying 90-Second Sprint Micro-Connection Flow...")
-            await page.locator('[data-a="tab"][data-v="today"]').first.click()
+            home_btn = page.locator('[data-a="home"]').first
+            await home_btn.click()
+            await page.wait_for_timeout(300)
+
+            # Trigger 90-second study sprint
+            study_btn = page.locator('[data-a="study"], [data-a="quick"]').first
+            assert await study_btn.count() > 0, "Sprint trigger button not found on home tab"
+            await study_btn.click()
             await page.wait_for_timeout(500)
             
             clk_elem = page.locator("#clk")
@@ -127,6 +135,7 @@ async def run_ui_verification():
             clk_val = await clk_elem.inner_text()
             print(f"  ✓ 90-Second Sprint clock active: '{clk_val}'s elapsed")
             await page.screenshot(path=str(SCREENSHOTS_DIR / "03_today_sprint_active.png"))
+            print("  ✓ Captured: 03_today_sprint_active.png")
             print("  ✓ Captured: 03_today_sprint_active.png")
 
             # --- Test 5: Moment Creation Form Validation ---
@@ -172,18 +181,34 @@ async def run_ui_verification():
                 user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15"
             )
             mobile_page = await mobile_context.new_page()
-            await mobile_page.goto(f"{BASE_URL}/", wait_until="networkidle")
+            await mobile_page.goto(f"{BASE_URL}/", wait_until="domcontentloaded")
             
-            # Enter demo on mobile
+            # Enter demo from landing page on mobile
             mob_start = mobile_page.locator('[data-a="start"]').first
+            print(f"  • mob_start count: {await mob_start.count()}")
             if await mob_start.count() > 0:
                 await mob_start.click()
-                await mobile_page.wait_for_timeout(400)
+                await mobile_page.wait_for_timeout(500)
+
+            # Complete onboarding if shown on mobile
+            ob_btn = mobile_page.locator('[data-a="obdone"]').first
+            print(f"  • ob_btn count: {await ob_btn.count()}")
+            if await ob_btn.count() > 0:
+                await ob_btn.click()
+                await mobile_page.wait_for_timeout(500)
             
             # Verify bottom navigation bar exists and is visible on mobile
             nav_bar = mobile_page.locator("nav.mobile-bar")
-            assert await nav_bar.is_visible(), "Bottom nav bar .mobile-bar not visible on mobile viewport"
-            print("  ✓ Bottom navigation bar is fully visible and sticky on mobile")
+            print(f"  • nav_bar count: {await nav_bar.count()}")
+            if await nav_bar.count() > 0:
+                print(f"  • nav_bar is_visible: {await nav_bar.is_visible()}")
+                print(f"  • nav_bar box: {await nav_bar.bounding_box()}")
+                print(f"  • nav_bar display: {await nav_bar.evaluate('el => window.getComputedStyle(el).display')}")
+            else:
+                body_html = await mobile_page.locator("body").inner_html()
+                print(f"  • mobile body html snippet: {body_html[:300]}")
+            assert await nav_bar.is_visible(), "Bottom nav bar .mobile-bar not visible on mobile viewport after onboarding"
+            print("  ✓ Bottom mobile navigation bar is fully visible and sticky on mobile")
             
             await mobile_page.screenshot(path=str(SCREENSHOTS_DIR / "06_mobile_viewport.png"))
             print("  ✓ Captured: 06_mobile_viewport.png")
@@ -193,11 +218,16 @@ async def run_ui_verification():
             print("\n[UI Audit] Test 8: Validating Tablet Viewport (768x1024)...")
             tablet_context = await browser.new_context(viewport={"width": 768, "height": 1024})
             tablet_page = await tablet_context.new_page()
-            await tablet_page.goto(f"{BASE_URL}/", wait_until="networkidle")
+            await tablet_page.goto(f"{BASE_URL}/", wait_until="domcontentloaded")
             
             tab_start = tablet_page.locator('[data-a="start"]').first
             if await tab_start.count() > 0:
                 await tab_start.click()
+                await tablet_page.wait_for_timeout(300)
+
+            tab_ob_btn = tablet_page.locator('[data-a="obdone"]').first
+            if await tab_ob_btn.count() > 0:
+                await tab_ob_btn.click()
                 await tablet_page.wait_for_timeout(400)
 
             # Verify desktop tabs on tablet

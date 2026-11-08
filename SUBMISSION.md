@@ -103,7 +103,7 @@ The hallmark of CampusBuddy is the **90-Second Micro-Connection Journey**:
 
 ### 5. Feasibility, Safety & Technical Implementation
 - **Zero-Build Production Prototype:** `campusbuddy.html` runs natively in any browser with zero installation, zero bundlers, and zero external runtime dependencies.
-- **Automated Verification:** 65 automated tests passing with 100% success rate across domain rules, capacity, state transitions, blocking, moment creation & public landmark constraints, markup integrity, and production server health probes (`npm test`).
+- **Automated Verification:** 68 automated tests passing with 100% success rate across domain rules, capacity, state transitions, blocking, moment creation & public landmark constraints, markup integrity, and production server health probes (`npm test`).
 - **Psychological & Physical Safety Guardrails:**
   - *General Public Campus Landmarks Only:* TFDL Commons, MacEwan Food Court, Science Theatres Concourse. No private dorm addresses. Strict runtime validation (`LOC.includes(loc)`) rejects unverified spots.
   - *Zero Contact Information Exposure:* No personal phone numbers or private handles.
@@ -124,7 +124,7 @@ The hallmark of CampusBuddy is the **90-Second Micro-Connection Journey**:
 | **E2E Smoke Journey** | 90-second study sprint, partner join, icebreaker shuffle, modal lifecycle, and state persistence | 2 / 2 Passed | ✅ Verified |
 | **Prototype Integrity** | File existence, HTML parity, script compilation, meta tags, WCAG tokens, stopwatch, landmarks, PWA manifest, service worker, spots directory, keyboard hotkeys, console check, Render blueprint, CSP meta tag, header navigation triggers, video showcase integration | 18 / 18 Passed | ✅ Verified |
 | **Production HTTP Server** | Security headers, JSON health probes (/health, /healthz), path traversal guard, config & source protection (render.yaml, vercel.json, .coderabbit.yaml), gzip compression, OPTIONS 204, favicon, PWA routes, audio streaming, SPA fallback | 28 / 28 Passed | ✅ Verified |
-| **Total Automated Tests** | **65 Total Test Cases Across 8 Suites** | **65 / 65 Passed (~220ms)** | **100% Green** |
+| **Total Automated Tests** | **68 Total Test Cases Across 8 Suites** | **68 / 68 Passed (~220ms)** | **100% Green** |
 
 ---
 

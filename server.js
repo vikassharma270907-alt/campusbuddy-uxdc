@@ -30,7 +30,9 @@ const MIME_TYPES = {
   '.webmanifest': 'application/manifest+json; charset=utf-8',
   '.ics': 'text/calendar; charset=utf-8',
   '.mp3': 'audio/mpeg',
-  '.wav': 'audio/wav'
+  '.wav': 'audio/wav',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm'
 };
 
 const STATIC_EXTENSIONS = new Set(Object.keys(MIME_TYPES));
@@ -243,6 +245,47 @@ function createServer() {
         ? 'no-cache, no-store, must-revalidate'
         : 'public, max-age=86400, stale-while-revalidate=604800';
 
+      // RFC 7233 byte-range request support (smooth video and audio streaming/seeking)
+      const rangeHeader = req.headers.range;
+      if (rangeHeader && rangeHeader.startsWith('bytes=')) {
+        const parts = rangeHeader.replace(/bytes=/, '').split('-');
+        const start = parseInt(parts[0], 10);
+        const end = parts[1] ? parseInt(parts[1], 10) : stats.size - 1;
+
+        if (isNaN(start) || isNaN(end) || start > end || start >= stats.size) {
+          res.writeHead(416, {
+            'Content-Range': `bytes */${stats.size}`,
+            'Content-Type': 'text/plain; charset=utf-8'
+          });
+          res.end('416 Range Not Satisfiable');
+          return;
+        }
+
+        const chunksize = (end - start) + 1;
+        const rangeHeaders = {
+          'Content-Range': `bytes ${start}-${end}/${stats.size}`,
+          'Accept-Ranges': 'bytes',
+          'Content-Length': chunksize,
+          'Content-Type': contentType,
+          'Cache-Control': cacheControl
+        };
+
+        res.writeHead(206, rangeHeaders);
+        if (req.method === 'HEAD') {
+          res.end();
+        } else {
+          const stream = fs.createReadStream(filePath, { start, end });
+          stream.on('error', () => {
+            if (!res.headersSent) {
+              res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+              res.end('500 Internal Server Error');
+            }
+          });
+          stream.pipe(res);
+        }
+        return;
+      }
+
       fs.readFile(filePath, (readErr, content) => {
         if (readErr) {
           res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
@@ -252,7 +295,8 @@ function createServer() {
 
         const headers = {
           'Content-Type': contentType,
-          'Cache-Control': cacheControl
+          'Cache-Control': cacheControl,
+          'Accept-Ranges': 'bytes'
         };
         sendResponse(200, headers, content, reqExt);
       });

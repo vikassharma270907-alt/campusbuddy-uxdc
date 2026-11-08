@@ -15,7 +15,8 @@ from playwright.async_api import async_playwright
 ROOT_DIR = Path(__file__).resolve().parent.parent
 AUDIO_FILE = ROOT_DIR / "assets" / "audio" / "campusbuddy_3min_voice.mp3"
 OUTPUT_MP4 = ROOT_DIR / "campusbuddy_showcase.mp4"
-PROTOTYPE_URL = f"file:///{str(ROOT_DIR / 'campusbuddy.html').replace(os.sep, '/')}"
+PORT = 8085
+PROTOTYPE_URL = f"http://127.0.0.1:{PORT}/"
 
 async def smooth_mouse_move(page, selector, steps=15):
     """Smoothly moves cursor to an element to simulate natural presentation pointer."""
@@ -35,17 +36,27 @@ async def run_walkthrough():
     temp_video_dir = Path(tempfile.mkdtemp(prefix="cb_record_"))
     print(f"Temporary recording directory: {temp_video_dir}", flush=True)
     print(f"Audio file: {AUDIO_FILE} ({AUDIO_FILE.stat().st_size} bytes)", flush=True)
+    print(f"Starting Node.js HTTP server on port {PORT}...", flush=True)
+    server_process = subprocess.Popen(
+        ["node", "server.js"],
+        cwd=str(ROOT_DIR),
+        env={**os.environ, "PORT": str(PORT), "HOST": "127.0.0.1"},
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE
+    )
+    await asyncio.sleep(1.5)
     print(f"Launching Playwright Chromium (1920x1080)...", flush=True)
     print(f"Loading Prototype: {PROTOTYPE_URL}", flush=True)
 
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        context = await browser.new_context(
-            viewport={"width": 1920, "height": 1080},
-            record_video_dir=str(temp_video_dir),
-            record_video_size={"width": 1920, "height": 1080}
-        )
-        page = await context.new_page()
+    try:
+        async with async_playwright() as p:
+            browser = await p.chromium.launch(headless=True)
+            context = await browser.new_context(
+                viewport={"width": 1920, "height": 1080},
+                record_video_dir=str(temp_video_dir),
+                record_video_size={"width": 1920, "height": 1080}
+            )
+            page = await context.new_page()
 
         # 1. Landing & Problem Introduction (0:00 - 0:24)
         print("Act 1: Landing Page & Problem Framing (0:00 - 0:24)...", flush=True)
@@ -229,6 +240,9 @@ async def run_walkthrough():
         shutil.rmtree(temp_video_dir, ignore_errors=True)
     except Exception:
         pass
+    finally:
+        if server_process:
+            server_process.terminate()
 
 if __name__ == "__main__":
     asyncio.run(run_walkthrough())

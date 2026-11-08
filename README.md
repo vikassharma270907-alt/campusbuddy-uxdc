@@ -2,7 +2,7 @@
 > **"Your campus. Your people. Your moments."**  
 > *A low-pressure, moment-based micro-connection experience for university students.*
 
-[![Automated Core Tests](https://img.shields.io/badge/Tests-65%2F65%20Passing-success?style=flat-square)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc/actions)
+[![Automated Core Tests](https://img.shields.io/badge/Tests-68%2F68%20Passing-success?style=flat-square)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc/actions)
 [![Video Walkthrough](https://img.shields.io/badge/Video%20Demo-Interactive%20Presentation-red?style=flat-square)](video_showcase.html)
 [![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.2%20AA-blue?style=flat-square)](DESIGN.md)
 [![Theme Support](https://img.shields.io/badge/Theme-Light%20%26%20Dark%20Mode-emerald?style=flat-square)](campusbuddy.html)
