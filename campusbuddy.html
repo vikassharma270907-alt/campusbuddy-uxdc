@@ -1001,11 +1001,10 @@
       gap: 12px;
       background: var(--card);
       border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
-      padding: 10px 14px;
+      border-radius: var(--radius-full);
+      padding: 6px 12px 6px 8px;
       margin: 8px 0 16px;
       box-shadow: var(--shadow-sm);
-      flex-wrap: wrap;
     }
     .capsule-badge {
       display: inline-flex;
@@ -1025,19 +1024,57 @@
       line-height: 1;
     }
     .capsule-content {
-      font-size: 13.5px;
-      font-weight: 600;
-      color: var(--ink);
       display: flex;
       align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      gap: 10px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+    .capsule-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-shrink: 0;
+      max-width: 320px;
+    }
+    .capsule-meta {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--mut);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
     }
     .capsule-actions {
       display: flex;
       gap: 6px;
       align-items: center;
       flex-shrink: 0;
+    }
+    @media (max-width: 767px) {
+      .live-activity-capsule {
+        border-radius: var(--radius-lg);
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 10px 12px;
+      }
+      .capsule-content {
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .capsule-title, .capsule-meta {
+        white-space: normal;
+        max-width: 100%;
+      }
+      .capsule-actions {
+        justify-content: flex-end;
+      }
     }
 
     /* ==========================================================================
@@ -2204,13 +2241,12 @@
         const elapsed = Math.floor((Date.now() - S.t0) / 1000);
         return `
           <aside class="live-activity-capsule" role="status" aria-label="Live Sprint Active">
-            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0;flex:1 1 auto;">
+            <div class="capsule-content">
               <span class="capsule-badge" style="background:var(--sun-subtle);color:var(--sun);border-color:var(--sun);">
                 <span class="pulse-dot" style="background:var(--sun);"></span> 90s Sprint Active
               </span>
-              <span class="capsule-content">
-                <b>${elapsed}s elapsed</b> · Finding your top study match at UCalgary
-              </span>
+              <span class="capsule-title">${elapsed}s elapsed</span>
+              <span class="capsule-meta">Finding your top study match at UCalgary</span>
             </div>
             <div class="capsule-actions">
               <button class="btn sm" data-a="tab" data-v="study" style="font-size:12px;padding:4px 10px;">View Best Match</button>
@@ -2224,13 +2260,12 @@
 
       return `
         <aside class="live-activity-capsule" role="status" aria-label="Upcoming Meetup">
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0;flex:1 1 auto;">
+          <div class="capsule-content">
             <span class="capsule-badge">
               <span class="pulse-dot"></span> Next Plan
             </span>
-            <span class="capsule-content">
-              <b>${esc(myNext.t)}</b> · 📍 ${esc(myNext.loc.split(',')[0])} (${esc(myNext.d)} ${esc(myNext.s)})
-            </span>
+            <span class="capsule-title">${esc(myNext.t)}</span>
+            <span class="capsule-meta">📍 ${esc(myNext.loc.split(',')[0])} (${esc(myNext.d)} ${esc(myNext.s)})</span>
           </div>
           <div class="capsule-actions">
             <button class="btn sm g" data-a="modal" data-v="${myNext.id}" style="font-size:12px;padding:4px 10px;">Meeting Details</button>
