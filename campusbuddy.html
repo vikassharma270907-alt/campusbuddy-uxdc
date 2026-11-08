@@ -1065,7 +1065,7 @@
     // Seed state populated with realistic fictional student personas and moments
     const seed = () => ({
       mode: null,
-      theme: localStorage.getItem("cb_theme") || "light",
+      theme: (function() { try { return localStorage.getItem("cb_theme") || "light"; } catch (e) { return "light"; } })(),
       me: "maya",
       tab: "today",
       onboarded: false,
@@ -1567,7 +1567,10 @@
           ${l.length ? l.map(x => card(x)).join("") : `
             <div class="card" style="text-align:center;padding:36px;">
               <p class="m">No campus moments match these filters.</p>
-              <button class="btn sm" data-a="tab" data-v="create">Create a moment now</button>
+              <div style="display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap;">
+                <button class="btn sm g" data-a="clear_filters">Reset filters</button>
+                <button class="btn sm" data-a="tab" data-v="create">Create a moment now</button>
+              </div>
             </div>
           `}
         `;
@@ -1742,7 +1745,10 @@
       if (t === "alerts") {
         const userNotes = S.notes.filter(n => n.to === S.me);
         return `
-          <h2>Campus Notifications</h2>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <h2 style="margin:0;">Campus Notifications</h2>
+            ${userNotes.length ? `<button class="btn ghost sm" data-a="clear_notes">Clear all</button>` : ""}
+          </div>
           <p class="m">Updates regarding your moments and invitations.</p>
           ${userNotes.length ? userNotes.map(n => `
             <div class="card" style="display:flex;align-items:center;gap:12px;">
@@ -2179,7 +2185,9 @@
         S.tab = v;
         S.err = "";
         S.modal = null;
-        window.scrollTo(0, 0);
+        if (typeof window !== "undefined" && typeof window.scrollTo === "function") {
+          window.scrollTo(0, 0);
+        }
         R();
       },
       chip(v) {
@@ -2502,8 +2510,14 @@
 
         S.err = "";
         S.draft = null;
+        playChime('success');
         toast("Moment posted to campus!");
         S.tab = "discover";
+        R();
+      },
+      clear_notes() {
+        S.notes = S.notes.filter(n => n.to !== S.me);
+        toast("Notifications cleared.");
         R();
       },
       vis() {

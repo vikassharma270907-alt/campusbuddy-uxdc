@@ -10,10 +10,12 @@
     "sync": "node scripts/sync-html.js",
     "lint": "node --check server.js tests/core-rules.test.js tests/prototype-integrity.test.js tests/server.test.js tests/e2e-smoke.test.js scripts/sync-html.js",
     "type-check": "node --check server.js tests/core-rules.test.js tests/prototype-integrity.test.js tests/server.test.js tests/e2e-smoke.test.js scripts/sync-html.js",
-    "test": "node --test tests/core-rules.test.js tests/prototype-integrity.test.js tests/server.test.js tests/e2e-smoke.test.js",
+    "test": "npm run sync && node --test tests/core-rules.test.js tests/prototype-integrity.test.js tests/server.test.js tests/e2e-smoke.test.js",
     "build": "npm run sync && node -e \"console.log('Production build check passed.');\"",
-    "check": "npm run lint && npm test",
-    "ci": "npm run lint && npm run type-check && npm test && npm run build"
+    "check": "npm run sync && npm run lint && npm test",
+    "ci": "npm run sync && npm run lint && npm run type-check && npm test && npm run build",
+    "render:deploy": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/antigravity-render.ps1",
+    "render:push": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/antigravity-render.ps1 -Push"
   },
   "keywords": [
     "uxdc-2026",
