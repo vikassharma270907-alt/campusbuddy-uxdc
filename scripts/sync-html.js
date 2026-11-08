@@ -15,6 +15,31 @@ if (!fs.existsSync(src)) {
   process.exit(1);
 }
 
+// Safety check: Prevent accidental overwriting if index.html was directly edited and is significantly newer
+const args = process.argv.slice(2);
+const forceSync = args.includes('--force');
+const fromIndex = args.includes('--from-index');
+
+if (fs.existsSync(dst)) {
+  const srcStat = fs.statSync(src);
+  const dstStat = fs.statSync(dst);
+  const srcRaw = fs.readFileSync(src, 'utf8');
+  const dstRaw = fs.readFileSync(dst, 'utf8');
+
+  if (srcRaw !== dstRaw && dstStat.mtimeMs > srcStat.mtimeMs + 3000 && !forceSync && !fromIndex) {
+    console.warn('[CampusBuddy Sync] Warning: index.html has modifications and is newer than campusbuddy.html.');
+    console.warn('  Run with --force to overwrite index.html, or --from-index to propagate index.html -> campusbuddy.html.');
+  }
+
+  if (fromIndex) {
+    let contentFromIndex = dstRaw.replace(/\r\n/g, '\n');
+    fs.writeFileSync(src, contentFromIndex, 'utf8');
+    fs.writeFileSync(dst, contentFromIndex, 'utf8');
+    console.log(`[CampusBuddy Sync] Propagated index.html -> campusbuddy.html (${contentFromIndex.length} bytes).`);
+    process.exit(0);
+  }
+}
+
 // Normalize to LF across both files so Windows git checkouts maintain exact byte-for-byte parity
 let content = fs.readFileSync(src, 'utf8');
 content = content.replace(/\r\n/g, '\n');

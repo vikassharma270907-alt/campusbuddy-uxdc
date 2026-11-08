@@ -5,6 +5,13 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: render-deploy
+  cancel-in-progress: false
+
 jobs:
   validate-and-deploy:
     name: Validate Blueprint & Trigger Render Deploy
@@ -17,6 +24,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22.x'
+
+      - name: Run Test Suite & Secret Audit Quality Gate
+        run: npm run check
 
       - name: Validate Render Blueprint Specification
         run: |
@@ -37,7 +47,7 @@ jobs:
         run: |
           if [ -n "$RENDER_DEPLOY_HOOK_URL" ]; then
             echo "Triggering Render deployment via deploy hook..."
-            curl -f -X POST "$RENDER_DEPLOY_HOOK_URL"
+            curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL"
             echo "Render deploy hook triggered successfully."
           else
             echo "RENDER_DEPLOY_HOOK_URL secret is not set. Render will auto-deploy via GitHub integration or 1-click Blueprint."

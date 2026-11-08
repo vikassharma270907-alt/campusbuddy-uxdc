@@ -29,6 +29,9 @@ jobs:
         with:
           node-version: '22.x'
 
+      - name: Run Quality Gate & Tests
+        run: npm run check
+
       - name: Build & Sync Prototype
         run: npm run build
 

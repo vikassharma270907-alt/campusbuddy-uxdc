@@ -3208,10 +3208,10 @@
               <h3 style="color:var(--pine);">★ Recommended Match for You</h3>
               <span class="small-meta">Calculated via explainable criteria</span>
             </div>
-            ${card(c[0], true)}
+            ${card(c[0], true, 0)}
             ${c.length > 1 ? `
               <h3 style="margin-top:24px;">Other Open Study Sessions</h3>
-              ${c.slice(1).map(x => card(x, false)).join("")}
+              ${c.slice(1).map((x, idx) => card(x, false, idx + 1)).join("")}
             ` : ""}
           ` : mySlotStudy.length ? `
             <div class="card" style="border-left:4.5px solid var(--pine);padding:22px;">
@@ -3295,10 +3295,10 @@
               <h2>Recommended Moments Today</h2>
               <button class="btn ghost sm" data-a="tab" data-v="discover">View all</button>
             </div>
-            ${rec.length ? rec.map(x => card(x)).join("") : `<p class="m">No open moments found right now. Be the first to create one!</p>`}
+            ${rec.length ? rec.map((x, idx) => card(x, false, idx)).join("") : `<p class="m">No open moments found right now. Be the first to create one!</p>`}
 
             <h2>Your Confirmed Upcoming Moments</h2>
-            ${soon.length ? soon.map(x => card(x)).join("") : `
+            ${soon.length ? soon.map((x, idx) => card(x, false, idx)).join("") : `
               <div class="card" style="text-align:center;padding:24px 16px;">
                 <p class="m">You haven’t joined any moments yet today.</p>
                 <button class="btn sm g" data-a="tab" data-v="discover">Browse moments on campus</button>
@@ -3309,7 +3309,7 @@
               <h2>Peers You Might Click With</h2>
               <button class="btn ghost sm" data-a="tab" data-v="people">See more peers</button>
             </div>
-            ${ppl.map(pcard).join("")}
+            ${ppl.map((p, idx) => pcard(p, idx)).join("")}
           </div>
         `;
       }
@@ -3365,7 +3365,7 @@
               <option value="time"${f.sort === "time" ? " selected" : ""}>Soonest first</option>
             </select>
           </div>
-          ${l.length ? l.map(x => card(x)).join("") : `
+          ${l.length ? l.map((x, idx) => card(x, false, idx)).join("") : `
             <div class="card" style="text-align:center;padding:36px;">
               <p class="m">No campus moments match these filters.</p>
               <div style="display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap;">
@@ -3389,7 +3389,7 @@
           <p class="m">
             Ranked by shared courses, free hours, and mutual interests. Only students with public visibility appear here.
           </p>
-          ${peers.map(pcard).join("")}
+          ${peers.map((p, idx) => pcard(p, idx)).join("")}
         `;
       }
 
@@ -4666,7 +4666,10 @@
         const dtEnd = formatIcsDate(endDate);
         const dtStamp = formatIcsDate(new Date());
 
-        const sanitize = str => String(str || "").replace(/[\\;,]/g, "\\$&").replace(/\r\n|\r|\n/g, "\\n");
+        const sanitize = str => String(str || "")
+          .replace(/<[^>]*>/g, '')
+          .replace(/[\\;,]/g, "\\$&")
+          .replace(/\r\n|\r|\n/g, "\\n");
 
         const icsContent = [
           "BEGIN:VCALENDAR",
@@ -4709,7 +4712,10 @@
 
         const now = new Date();
         const dtStamp = formatIcsDate(now);
-        const sanitize = str => String(str || "").replace(/[\\;,]/g, "\\$&").replace(/\r\n|\r|\n/g, "\\n");
+        const sanitize = str => String(str || "")
+          .replace(/<[^>]*>/g, '')
+          .replace(/[\\;,]/g, "\\$&")
+          .replace(/\r\n|\r|\n/g, "\\n");
 
         const lines = [
           "BEGIN:VCALENDAR",
