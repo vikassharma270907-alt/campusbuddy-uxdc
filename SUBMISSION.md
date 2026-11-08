@@ -120,9 +120,9 @@ The hallmark of CampusBuddy is the **90-Second Micro-Connection Journey**:
 | **Invitation State Machine** | Pending-to-accepted transitions, finality enforcement, capacity checks, duplicate invite prevention | 4 / 4 Passed | ✅ Verified |
 | **Blocking & Privacy** | Pending invite auto-cancellation, mutual join prevention, invite prevention, unblock recovery | 4 / 4 Passed | ✅ Verified |
 | **E2E Smoke Journey** | 90-second study sprint, partner join, icebreaker shuffle, modal lifecycle, and state persistence | 2 / 2 Passed | ✅ Verified |
-| **Prototype Integrity** | File existence, HTML parity, script compilation, meta tags, WCAG tokens, stopwatch, landmarks | 9 / 9 Passed | ✅ Verified |
-| **Production HTTP Server** | Security headers, JSON health probes (/health, /healthz), path traversal guard, config protection, favicon, SPA fallback | 15 / 15 Passed | ✅ Verified |
-| **Total Automated Tests** | **40 Total Test Cases Across 7 Suites** | **40 / 40 Passed (172ms)** | **100% Green** |
+| **Prototype Integrity** | File existence, HTML parity, script compilation, meta tags, WCAG tokens, stopwatch, landmarks, PWA manifest, service worker | 10 / 10 Passed | ✅ Verified |
+| **Production HTTP Server** | Security headers, JSON health probes (/health, /healthz), path traversal guard, config protection, favicon, PWA routes, SPA fallback | 17 / 17 Passed | ✅ Verified |
+| **Total Automated Tests** | **43 Total Test Cases Across 7 Suites** | **43 / 43 Passed (186ms)** | **100% Green** |
 
 ---
 
@@ -130,8 +130,7 @@ The hallmark of CampusBuddy is the **90-Second Micro-Connection Journey**:
 
 1. **University SSO Integration:** Authenticate via university single sign-on (CAS / Shibboleth) to verify active student enrollment.
 2. **Interactive Campus Map Integration:** Integrate lightweight SVG floorplans of campus buildings (e.g. TFDL floors 1–6) highlighting public meeting clusters.
-3. **Calendar Protocol Export:** Generate standard `.ics` calendar invitation attachments upon moment confirmation.
-4. **Institutional Wellbeing Analytics:** Anonymized, aggregated reporting for university wellness centers to identify peak campus disconnection hours without tracking individual students.
+3. **Institutional Wellbeing Analytics:** Anonymized, aggregated reporting for university wellness centers to identify peak campus disconnection hours without tracking individual students.
 
 ---
 

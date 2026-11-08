@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>CampusBuddy · Your campus. Your people. Your moments.</title>
   <meta name="description" content="CampusBuddy connects university students for short, low-pressure, public campus study and social meetups in under 90 seconds.">
+  <meta name="theme-color" content="#0a635a">
+  <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,44 +14,45 @@
   <style>
     /* ==========================================================================
        DESIGN SYSTEM TOKENS (LIGHT & DARK MODE - WCAG AA / AAA COMPLIANT)
+       Linear / Vercel / Raycast-inspired Obsidian & Charcoal Theme
        ========================================================================== */
     :root {
       --font-display: "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --font-body: "Figtree", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-      /* Light Theme Palette */
-      --bg: #f4f7f8;
+      /* Light Theme: Architectural Minimal Zinc */
+      --bg: #f8fafc;
       --card: #ffffff;
-      --card-muted: #edf2f4;
-      --ink: #0d1e26;
-      --ink-secondary: #2c424e;
-      --mut: #496370;
-      --line: #cbd8dc;
-      --line-subtle: #e2ebee;
+      --card-muted: #f1f5f9;
+      --ink: #090a0f;
+      --ink-secondary: #334155;
+      --mut: #64748b;
+      --line: #e2e8f0;
+      --line-subtle: #edf2f7;
 
       /* Semantic Brand Colors (Min 4.5:1 text, 3:1 UI components) */
-      --pine: #0a635a;
-      --pine-hover: #074e47;
-      --pine-subtle: #e6f4f2;
+      --pine: #090a0f;
+      --pine-hover: #1e293b;
+      --pine-subtle: #f1f5f9;
       --onp: #ffffff;
 
       --sun: #d97706;
       --sun-subtle: #fef3c7;
       --sun-ink: #78350f;
 
-      --blue: #1d4ed8;
+      --blue: #2563eb;
       --blue-subtle: #eff6ff;
 
-      --red: #b91c1c;
-      --red-subtle: #fef2f2;
-      --red-ink: #7f1d1d;
+      --red: #dc2626;
+      --red-subtle: #fee2e2;
+      --red-ink: #991b1b;
 
-      --green: #15803d;
+      --green: #16a34a;
       --green-subtle: #f0fdf4;
 
-      --shadow-sm: 0 1px 2px rgba(13, 30, 38, 0.05);
-      --shadow-md: 0 4px 12px rgba(13, 30, 38, 0.08);
-      --shadow-lg: 0 12px 28px rgba(13, 30, 38, 0.12);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
 
       --radius-sm: 8px;
       --radius-md: 12px;
@@ -62,74 +65,74 @@
 
     @media (prefers-color-scheme: dark) {
       :root:not([data-theme="light"]) {
-        --bg: #091216;
-        --card: #111e24;
-        --card-muted: #172830;
-        --ink: #eaf2f5;
-        --ink-secondary: #c0d3dc;
-        --mut: #8da4af;
-        --line: #223741;
-        --line-subtle: #192a32;
+        --bg: #090a0f;
+        --card: #131620;
+        --card-muted: #1a1e2c;
+        --ink: #f8fafc;
+        --ink-secondary: #cbd5e1;
+        --mut: #94a3b8;
+        --line: rgba(255, 255, 255, 0.09);
+        --line-subtle: rgba(255, 255, 255, 0.05);
 
-        --pine: #2dd4bf;
-        --pine-hover: #14b8a6;
-        --pine-subtle: #092c28;
-        --onp: #04211e;
+        --pine: #f8fafc;
+        --pine-hover: #e2e8f0;
+        --pine-subtle: rgba(255, 255, 255, 0.1);
+        --onp: #090a0f;
 
         --sun: #fbbf24;
-        --sun-subtle: #2d2006;
-        --sun-ink: #fef3c7;
+        --sun-subtle: rgba(251, 191, 36, 0.14);
+        --sun-ink: #090a0f;
 
-        --blue: #60a5fa;
-        --blue-subtle: #0f2442;
+        --blue: #38bdf8;
+        --blue-subtle: rgba(56, 189, 248, 0.14);
 
         --red: #f87171;
-        --red-subtle: #301111;
-        --red-ink: #fee2e2;
+        --red-subtle: rgba(248, 113, 113, 0.14);
+        --red-ink: #fca5a5;
 
         --green: #4ade80;
-        --green-subtle: #0d2815;
+        --green-subtle: rgba(74, 222, 128, 0.14);
 
-        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-        --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.55);
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+        --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
+        --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.09);
 
         color-scheme: dark;
       }
     }
 
     :root[data-theme="dark"] {
-      --bg: #091216;
-      --card: #111e24;
-      --card-muted: #172830;
-      --ink: #eaf2f5;
-      --ink-secondary: #c0d3dc;
-      --mut: #8da4af;
-      --line: #223741;
-      --line-subtle: #192a32;
+      --bg: #090a0f;
+      --card: #131620;
+      --card-muted: #1a1e2c;
+      --ink: #f8fafc;
+      --ink-secondary: #cbd5e1;
+      --mut: #94a3b8;
+      --line: rgba(255, 255, 255, 0.09);
+      --line-subtle: rgba(255, 255, 255, 0.05);
 
-      --pine: #2dd4bf;
-      --pine-hover: #14b8a6;
-      --pine-subtle: #092c28;
-      --onp: #04211e;
+      --pine: #f8fafc;
+      --pine-hover: #e2e8f0;
+      --pine-subtle: rgba(255, 255, 255, 0.1);
+      --onp: #090a0f;
 
       --sun: #fbbf24;
-      --sun-subtle: #2d2006;
-      --sun-ink: #fef3c7;
+      --sun-subtle: rgba(251, 191, 36, 0.14);
+      --sun-ink: #090a0f;
 
-      --blue: #60a5fa;
-      --blue-subtle: #0f2442;
+      --blue: #38bdf8;
+      --blue-subtle: rgba(56, 189, 248, 0.14);
 
       --red: #f87171;
-      --red-subtle: #301111;
-      --red-ink: #fee2e2;
+      --red-subtle: rgba(248, 113, 113, 0.14);
+      --red-ink: #fca5a5;
 
       --green: #4ade80;
-      --green-subtle: #0d2815;
+      --green-subtle: rgba(74, 222, 128, 0.14);
 
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-      --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.55);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+      --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
+      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.09);
 
       color-scheme: dark;
     }
@@ -150,6 +153,7 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+      transition: background-color 0.2s ease, color 0.2s ease;
     }
 
     @media (min-width: 768px) {
@@ -182,11 +186,15 @@
     header {
       position: sticky;
       top: 0;
-      background: var(--bg);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(9, 10, 15, 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       z-index: 40;
       border-bottom: 1px solid var(--line);
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+    :root:not([data-theme="dark"]) header {
+      background: rgba(248, 250, 252, 0.85);
     }
     .top-bar {
       display: flex;
@@ -206,14 +214,16 @@
       border: 0;
       padding: 0;
       font: 800 22px var(--font-display);
-      color: var(--pine);
+      color: var(--ink);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
       text-decoration: none;
+      letter-spacing: -0.02em;
+      transition: opacity 0.15s ease;
     }
-    .logo-btn:hover { opacity: 0.9; }
+    .logo-btn:hover { opacity: 0.85; }
 
     .top-actions {
       display: flex;
@@ -232,6 +242,10 @@
       padding: 4px 10px 4px 6px;
       font-size: 13px;
       color: var(--ink);
+      transition: border-color 0.15s ease;
+    }
+    .persona-badge:focus-within, .persona-badge:hover {
+      border-color: var(--mut);
     }
     .avatar-dot {
       width: 24px;
@@ -244,6 +258,7 @@
       display: grid;
       place-items: center;
       text-transform: uppercase;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
     }
 
     /* Navigation Tabs */
@@ -257,6 +272,10 @@
     }
     .desktop-tabs::-webkit-scrollbar { display: none; }
 
+    @media (max-width: 767px) {
+      .desktop-tabs { display: none !important; }
+    }
+
     .tab-btn {
       background: transparent;
       border: 1px solid transparent;
@@ -266,7 +285,7 @@
       border-radius: var(--radius-full);
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.15s ease;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -274,6 +293,7 @@
     .tab-btn:hover {
       background: var(--card-muted);
       color: var(--ink);
+      border-color: var(--line);
     }
     .tab-btn.on {
       background: var(--pine);
@@ -288,16 +308,21 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: var(--card);
+      background: rgba(19, 22, 32, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border-top: 1px solid var(--line);
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       z-index: 50;
       padding-bottom: env(safe-area-inset-bottom, 0px);
-      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.2);
+    }
+    :root:not([data-theme="dark"]) .mobile-bar {
+      background: rgba(255, 255, 255, 0.92);
     }
     @media (min-width: 768px) {
-      .mobile-bar { display: none; }
+      .mobile-bar { display: none !important; }
     }
     .mobile-nav-item {
       display: flex;
@@ -312,10 +337,11 @@
       font-weight: 600;
       cursor: pointer;
       position: relative;
-      transition: color 0.15s;
+      transition: color 0.15s ease, transform 0.15s ease;
+      min-height: 48px;
     }
     .mobile-nav-item.on {
-      color: var(--pine);
+      color: var(--ink);
     }
     .mobile-nav-item svg {
       width: 20px;
@@ -330,7 +356,7 @@
       align-items: center;
       justify-content: center;
       background: var(--sun);
-      color: var(--sun-ink);
+      color: #090a0f;
       border-radius: var(--radius-full);
       padding: 0 6px;
       font-size: 11px;
@@ -362,30 +388,34 @@
       font: 600 15px var(--font-body);
       cursor: pointer;
       text-decoration: none;
-      transition: background-color 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
+      transition: background-color 0.15s ease, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.15s ease, box-shadow 0.15s ease;
       min-height: 44px;
       user-select: none;
     }
     .btn:hover {
       background: var(--pine-hover);
+      transform: translateY(-1px);
     }
     .btn:active {
-      transform: scale(0.98);
+      transform: scale(0.97);
     }
     .btn.g {
       background: transparent;
-      color: var(--pine);
-      border-color: var(--pine);
+      color: var(--ink);
+      border-color: var(--line);
     }
     .btn.g:hover {
-      background: var(--pine-subtle);
+      background: var(--card-muted);
+      border-color: var(--mut);
     }
     .btn.r {
-      background: var(--red);
+      background: #dc2626;
       color: #ffffff;
+      border-color: #dc2626;
     }
     .btn.r:hover {
-      background: #991b1b;
+      background: #b91c1c;
+      border-color: #b91c1c;
     }
     .btn.ghost {
       background: transparent;
@@ -401,7 +431,7 @@
     .btn.sm {
       padding: 6px 12px;
       font-size: 13.5px;
-      min-height: 34px;
+      min-height: 36px;
       border-radius: var(--radius-sm);
     }
     .btn:disabled {
@@ -418,10 +448,16 @@
       padding: 20px;
       margin: 14px 0;
       box-shadow: var(--shadow-sm);
-      transition: border-color 0.15s ease;
+      transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+      position: relative;
     }
     .card:hover {
-      border-color: var(--mut);
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: var(--shadow-md);
+    }
+    :root:not([data-theme="dark"]) .card:hover {
+      border-color: #cbd5e1;
     }
     .tile {
       display: grid;
@@ -436,11 +472,35 @@
       }
     }
 
+    /* Campus Pulse Metrics Bar */
+    .campus-pulse-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-full);
+      padding: 9px 18px;
+      margin: 14px 0 20px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: var(--mut);
+      box-shadow: var(--shadow-sm);
+    }
+    .pulse-stat {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .pulse-stat b {
+      color: var(--ink);
+    }
+
     /* Time Callout Box */
     .when-box {
-      background: var(--sun-subtle);
-      border: 1px solid var(--sun);
-      color: var(--sun-ink);
+      background: var(--card-muted);
+      border: 1px solid var(--line);
+      color: var(--ink);
       border-radius: var(--radius-md);
       text-align: center;
       padding: 10px 4px;
@@ -453,6 +513,7 @@
       align-items: center;
       justify-content: center;
       gap: 2px;
+      transition: border-color 0.15s ease;
     }
     .when-box .day {
       font-size: 14px;
@@ -460,7 +521,7 @@
     .when-box .slot {
       font-size: 11px;
       font-weight: 700;
-      opacity: 0.9;
+      color: var(--mut);
     }
 
     /* Chips */
@@ -477,6 +538,7 @@
       font-weight: 500;
       margin: 3px 4px 3px 0;
       line-height: 1.2;
+      transition: all 0.15s ease;
     }
     .chip.status-open {
       background: var(--green-subtle);
@@ -491,8 +553,8 @@
     }
     .chip.status-joined {
       background: var(--pine-subtle);
-      border-color: var(--pine);
-      color: var(--pine);
+      border-color: var(--line);
+      color: var(--ink);
       font-weight: 700;
     }
     button.chip {
@@ -503,8 +565,9 @@
       font-family: inherit;
     }
     button.chip:hover {
-      border-color: var(--pine);
-      background: var(--pine-subtle);
+      border-color: var(--mut);
+      background: var(--card-muted);
+      color: var(--ink);
     }
     button.chip.on {
       background: var(--pine);
@@ -517,20 +580,20 @@
     .fit-box {
       margin: 12px 0;
       padding: 10px 14px;
-      background: var(--pine-subtle);
+      background: var(--card-muted);
       border-left: 3.5px solid var(--pine);
       border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
       font-size: 13.5px;
       line-height: 1.45;
     }
     .fit-box b {
-      color: var(--pine);
+      color: var(--ink);
       font-size: 14px;
     }
     .fit-reasons-list {
       margin: 4px 0 0;
       padding-left: 18px;
-      color: var(--ink);
+      color: var(--ink-secondary);
     }
     .fit-reasons-list li {
       margin-bottom: 2px;
@@ -541,7 +604,7 @@
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      color: var(--pine);
+      color: var(--blue);
       font-weight: 600;
       font-size: 13px;
       margin: 4px 0;
@@ -560,8 +623,15 @@
       margin: 6px 0 14px;
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
     input:focus, select:focus, textarea:focus {
-      border-color: var(--pine);
+      border-color: var(--ink);
       box-shadow: 0 0 0 3px var(--pine-subtle);
       outline: none;
     }
@@ -587,23 +657,25 @@
       width: auto;
       margin: 0;
       padding: 8px 12px;
+      padding-right: 34px;
     }
 
     /* 90-Second Sprint Flow Elements */
     .sprint-header {
-      background: linear-gradient(135deg, var(--pine-subtle) 0%, var(--card) 100%);
-      border: 1.5px solid var(--pine);
+      background: var(--card);
+      border: 1px solid var(--line);
       border-radius: var(--radius-lg);
       padding: 20px;
       margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
     }
     .timer-pill {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: var(--card);
-      border: 1px solid var(--pine);
-      color: var(--pine);
+      background: var(--card-muted);
+      border: 1px solid var(--line);
+      color: var(--ink);
       font: 700 15px var(--font-display);
       padding: 4px 12px;
       border-radius: var(--radius-full);
@@ -615,7 +687,12 @@
       background: #22c55e;
       border-radius: 50%;
       box-shadow: 0 0 8px #22c55e;
-      animation: pulse 1.5s infinite;
+      animation: pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      display: inline-block;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 2px currentColor); }
+      50% { opacity: 0.6; transform: scale(1.15); filter: drop-shadow(0 0 8px currentColor); }
     }
     @keyframes pulse {
       0%, 100% { transform: scale(1); opacity: 1; }
@@ -637,29 +714,33 @@
       font-weight: 600;
     }
     .step-pill.active {
-      color: var(--pine);
+      color: var(--ink);
     }
 
     /* Modals & Overlays */
     .ov {
       position: fixed;
       inset: 0;
-      background: rgba(9, 18, 22, 0.72);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
+      background: rgba(4, 5, 8, 0.78);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       display: grid;
       place-items: center;
       z-index: 100;
       padding: 16px;
-      animation: fadeIn 0.15s ease-out;
+      animation: fadeIn 0.2s ease-out;
     }
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
     }
+    @keyframes modalPop {
+      0% { opacity: 0; transform: scale(0.95) translateY(12px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
     .modal-card {
       background: var(--card);
-      border: 1.5px solid var(--line);
+      border: 1px solid var(--line);
       border-radius: var(--radius-lg);
       padding: 28px;
       max-width: 480px;
@@ -667,6 +748,7 @@
       box-shadow: var(--shadow-lg);
       max-height: 90vh;
       overflow-y: auto;
+      animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
     .success-celebrate {
       display: flex;
@@ -687,14 +769,34 @@
       flex-shrink: 0;
     }
 
+    /* Celebration Confetti Particles */
+    .celebrate-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+      overflow: hidden;
+    }
+    .confetti-particle {
+      position: absolute;
+      top: -10px;
+      border-radius: 2px;
+      animation: confettiFall linear forwards;
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(105vh) rotate(540deg); opacity: 0; }
+    }
+
     /* Toast Notification */
     #toast {
       position: fixed;
       left: 50%;
       bottom: calc(24px + env(safe-area-inset-bottom, 0px));
       transform: translateX(-50%) translateY(16px);
-      background: var(--ink);
-      color: var(--bg);
+      background: var(--card);
+      color: var(--ink);
+      border: 1px solid var(--line);
       padding: 11px 20px;
       border-radius: var(--radius-full);
       box-shadow: var(--shadow-lg);
@@ -724,9 +826,9 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: var(--pine-subtle);
-      color: var(--pine);
-      border: 1px solid var(--pine);
+      background: var(--card-muted);
+      color: var(--ink);
+      border: 1px solid var(--line);
       border-radius: var(--radius-full);
       padding: 4px 12px;
       font-size: 13px;
@@ -745,6 +847,19 @@
       gap: 10px;
       flex-wrap: wrap;
       margin-bottom: 20px;
+    }
+
+    /* Accessible Utilities */
+    .visually-hidden {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
     }
 
     /* Accessible Focus Ring */
@@ -1229,6 +1344,21 @@
             <h2>${esc(g)}, ${esc(u.n)}</h2>
             <p class="m">Your campus. Your people. Your moments.</p>
 
+            <div class="campus-pulse-bar" role="region" aria-label="Campus Activity Pulse">
+              <div class="pulse-stat">
+                <span class="pulse-dot" style="background:#22c55e;color:#22c55e;"></span>
+                <span><b>${open.length}</b> moments open today</span>
+              </div>
+              <div class="pulse-stat">
+                <span style="color:var(--sun);">⚡</span>
+                <span><b>~42s</b> avg match speed</span>
+              </div>
+              <div class="pulse-stat">
+                <span style="color:var(--blue);">🛡️</span>
+                <span><b>6</b> verified public spots</span>
+              </div>
+            </div>
+
             <div style="display:flex;gap:10px;margin:16px 0 24px;flex-wrap:wrap;">
               <button class="btn" data-a="study" style="box-shadow:var(--shadow-md);">
                 ⚡ Find someone to study with (<90s)
@@ -1244,7 +1374,7 @@
                   <b style="color:var(--sun-ink);">📬 You have ${pend.length} pending meetup invitation${pend.length > 1 ? "s" : ""}</b>
                   <div class="small-meta" style="color:var(--sun-ink);">Peers are hoping to connect with you.</div>
                 </div>
-                <button class="btn sm" data-a="tab" data-v="invites" style="background:var(--sun-ink);color:#fff;">Review Invitations</button>
+                <button class="btn sm" data-a="tab" data-v="invites" style="background:var(--sun);color:#090a0f;font-weight:700;">Review Invitations</button>
               </div>
             ` : ""}
 
@@ -1348,10 +1478,10 @@
             ${S.err ? `<div class="card" style="background:var(--red-subtle);border-color:var(--red);color:var(--red);padding:10px 14px;font-weight:600;margin-bottom:14px;">${esc(S.err)}</div>` : ""}
 
             <label for="c-t">Moment Title</label>
-            <input id="c-t" maxlength="60" placeholder="e.g. Calculus problem set review in TFDL">
+            <input id="c-t" maxlength="60" value="${esc(d.t || '')}" placeholder="e.g. Calculus problem set review in TFDL">
 
             <label for="c-ds">Description</label>
-            <textarea id="c-ds" rows="2" maxlength="140" placeholder="e.g. Working through Chapter 4 problems. Come say hi!"></textarea>
+            <textarea id="c-ds" rows="2" maxlength="140" placeholder="e.g. Working through Chapter 4 problems. Come say hi!">${esc(d.desc || '')}</textarea>
 
             <div class="row">
               <div>
@@ -1381,7 +1511,7 @@
             </div>
 
             <label for="c-tg">Topic Tags (optional, comma-separated)</label>
-            <input id="c-tg" placeholder="e.g. calculus, linear algebra, biology">
+            <input id="c-tg" value="${esc(d.tags || '')}" placeholder="e.g. calculus, linear algebra, biology">
 
             <button class="btn" data-a="create" style="margin-top:10px;">Post this moment to campus</button>
           </div>
@@ -1443,6 +1573,7 @@
             ${card(a)}
             <div style="display:flex;gap:8px;margin-top:-6px;margin-bottom:16px;flex-wrap:wrap;">
               <button class="btn sm g" data-a="modal" data-v="${a.id}">View meeting details</button>
+              <button class="btn sm g" data-a="export_ics" data-v="${a.id}">📅 Export .ics</button>
               <button class="btn sm g" data-a="done" data-v="${a.id}">Demo: Mark as completed</button>
               ${a.host === S.me ? `
                 <button class="btn sm r" data-a="cancel" data-v="${a.id}">Cancel moment</button>
@@ -1515,7 +1646,7 @@
             <h3>Block a User</h3>
             <p class="m">Blocked users cannot see your moments or send you invitations. Any existing pending invitations are immediately cancelled.</p>
             <div style="display:flex;gap:8px;max-width:380px;">
-              <select id="bl" style="margin:0;">
+              <select id="bl" aria-label="Select student to block" style="margin:0;">
                 ${oth.map(i => `<option value="${i}">${esc(S.users[i].n)} (${esc(S.users[i].role)})</option>`).join("")}
               </select>
               <button class="btn sm r" data-a="block">Block</button>
@@ -1567,6 +1698,28 @@
     // =========================================================================
     // CONFIRMATION MODAL (THE 90-SECOND JOURNEY DESTINATION)
     // =========================================================================
+        function celebrate() {
+      if (typeof document === "undefined" || !document.createElement || !document.body) return;
+      if (typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const c = document.createElement("div");
+      c.className = "celebrate-container";
+      c.setAttribute("aria-hidden", "true");
+      const colors = ["#f8fafc", "#38bdf8", "#fbbf24", "#4ade80", "#a855f7"];
+      for (let i = 0; i < 32; i++) {
+        const p = document.createElement("div");
+        p.className = "confetti-particle";
+        const x = Math.random() * 100;
+        const dur = 0.8 + Math.random() * 1.2;
+        const delay = Math.random() * 0.25;
+        const size = 5 + Math.random() * 6;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        p.style.cssText = `left:${x}vw;width:${size}px;height:${size}px;background:${color};animation-duration:${dur}s;animation-delay:${delay}s;`;
+        c.appendChild(p);
+      }
+      document.body.appendChild(c);
+      setTimeout(() => { if (c && c.remove) c.remove(); }, 2200);
+    }
+
     function modal() {
       const a = S.acts.find(x => x.id === S.modal);
       if (!a) return "";
@@ -1613,6 +1766,7 @@
             <div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;">
               <button class="btn" data-a="modal_close" style="flex:1;">Done</button>
               <button class="btn g" data-a="copy_details" data-v="${a.id}">Copy meeting details</button>
+              <button class="btn g" data-a="export_ics" data-v="${a.id}">📅 Add to Calendar (.ics)</button>
               <button class="btn ghost" data-a="tab" data-v="plans">View all plans</button>
             </div>
           </div>
@@ -1708,7 +1862,7 @@
 
             <nav class="desktop-tabs" aria-label="Main Navigation">
               ${navTabs.map(tab => `
-                <button class="tab-btn ${S.tab === tab.id ? "on" : ""}" data-a="tab" data-v="${tab.id}">
+                <button class="tab-btn ${S.tab === tab.id ? "on" : ""}" data-a="tab" data-v="${tab.id}" aria-current="${S.tab === tab.id ? 'page' : 'false'}">
                   <span>${tab.label}</span>
                   ${tab.badge ? `<span class="badge">${tab.badge}</span>` : ""}
                 </button>
@@ -1729,7 +1883,7 @@
             { id: "invites", label: "Invites", icon: navTabs[4].icon, badge: pendingCount },
             { id: "plans", label: "Plans", icon: navTabs[5].icon }
           ].map(tab => `
-            <button class="mobile-nav-item ${S.tab === tab.id ? "on" : ""}" data-a="tab" data-v="${tab.id}">
+            <button class="mobile-nav-item ${S.tab === tab.id ? "on" : ""}" data-a="tab" data-v="${tab.id}" aria-current="${S.tab === tab.id ? 'page' : 'false'}">
               ${tab.icon}
               <span>${tab.label}</span>
               ${tab.badge ? `<span class="badge" style="position:absolute;top:4px;right:18%;">${tab.badge}</span>` : ""}
@@ -1834,6 +1988,68 @@
           } else {
             toast("Details: " + a.t + " at " + a.loc);
           }
+        }
+      },
+      export_ics(id) {
+        const a = S.acts.find(x => x.id === id);
+        if (!a) return toast("Moment not found.");
+
+        const starters = STARTERS[a.c] || STARTERS.study;
+        const starterIdx = (a.id.charCodeAt(a.id.length - 1) + (S.starterOffset || 0)) % starters.length;
+        const icebreaker = starters[starterIdx] || "";
+
+        const eventDate = new Date();
+        if (a.d === "Tomorrow") {
+          eventDate.setDate(eventDate.getDate() + 1);
+        }
+
+        const hour = a.s === "Morning" ? 10 : a.s === "Afternoon" ? 14 : 18;
+        eventDate.setHours(hour, 0, 0, 0);
+
+        const endDate = new Date(eventDate.getTime() + (a.dur || 45) * 60000);
+
+        const pad = n => String(n).padStart(2, "0");
+        const formatIcsDate = d =>
+          `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
+
+        const dtStart = formatIcsDate(eventDate);
+        const dtEnd = formatIcsDate(endDate);
+        const dtStamp = formatIcsDate(new Date());
+
+        const sanitize = str => String(str || "").replace(/[\\;,]/g, "\\$&").replace(/\n/g, "\\n");
+
+        const icsContent = [
+          "BEGIN:VCALENDAR",
+          "VERSION:2.0",
+          "PRODID:-//CampusBuddy//UXDC 2026//EN",
+          "CALSCALE:GREGORIAN",
+          "METHOD:PUBLISH",
+          "BEGIN:VEVENT",
+          `UID:cb-${a.id}-${Date.now()}@campusbuddy.local`,
+          `DTSTAMP:${dtStamp}`,
+          `DTSTART:${dtStart}`,
+          `DTEND:${dtEnd}`,
+          `SUMMARY:${sanitize("CampusBuddy: " + a.t)}`,
+          `DESCRIPTION:${sanitize(a.desc + "\n\nVerified Spot: " + a.loc + "\nIcebreaker: " + icebreaker + "\n\nOrganized with CampusBuddy.")}`,
+          `LOCATION:${sanitize(a.loc)}`,
+          "STATUS:CONFIRMED",
+          "END:VEVENT",
+          "END:VCALENDAR"
+        ].join("\r\n");
+
+        try {
+          const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = `campusbuddy-${a.id}.ics`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          setTimeout(() => URL.revokeObjectURL(url), 2000);
+          toast("Calendar invite (.ics) downloaded!");
+        } catch (e) {
+          toast("Calendar invite exported.");
         }
       },
       join(id) {
@@ -2132,6 +2348,13 @@
         clk.textContent = Math.floor((Date.now() - S.t0) / 1000);
       }
     }, 1000);
+
+    // Register Service Worker for offline resilience
+    if ("serviceWorker" in navigator && window.location.protocol.startsWith("http")) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
   </script>
 </body>
 </html>

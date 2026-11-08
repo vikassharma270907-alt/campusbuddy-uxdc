@@ -31,76 +31,81 @@ Every identified defect—including missing Render host binding, unhandled clipb
 | **8** | **Frontend / Browser** | `LOW` | Direct browser navigation to `/health` or deep routes logged 404 for `/favicon.ico` | Favicon was defined only as inline SVG data URI in `index.html` header | Added native `/favicon.ico` route in `server.js` serving SVG icon with `200 OK` and 24-hour client cache headers. |
 | **9** | **CI / Pipeline** | `HIGH` | CI matrix did not execute clean installs, syntax lints, or production build verification | `.github/workflows/ci.yml` lacked `npm install`, linting, type-checking, and build gates | Overhauled workflow with multi-OS runner (Ubuntu + Windows), Node matrix (20, 22, 24), explicit bash shell, deliverables existence checks, and live `/health` curl probe. |
 | **10** | **QA / Testing** | `HIGH` | No automated end-to-end user journey test suite | Tests only covered isolated scoring formulas without asserting the full 90-second user flow | Developed `tests/e2e-smoke.test.js` validating the entire 90-second sprint from landing to match recommendation, attendee join, icebreaker shuffle, plans verification, and localStorage serialization. |
+| **11** | **Frontend / Offline** | `MEDIUM` | Offline fragility on intermittent campus Wi-Fi (e.g. library stacks, basement study zones) | No Service Worker or Progressive Web App manifest existed | Implemented `manifest.webmanifest` and `sw.js` with stale-while-revalidate caching and standalone PWA display mode. |
+| **12** | **Frontend / Feature** | `MEDIUM` | No calendar synchronization for confirmed student meetups | Students had to manually transcribe meeting times and locations into their calendars | Implemented native RFC 5545 iCalendar (`.ics`) generation (`A.export_ics`) with meeting time slot calculation, public location embedding, and icebreaker question integration. |
 
 ---
 
 ## 3. Test & Verification Evidence
 
-All 40 automated tests execute in under 200ms using Node's native test runner (`node:test` and `node:assert/strict`):
+All 43 automated tests execute in under 200ms using Node's native test runner (`node:test` and `node:assert/strict`):
 
 ```text
 ▶ CampusBuddy Match Scoring Rules
-  ✔ Exact activity match delivers maximum points across all 5 dimensions (0.62ms)
-  ✔ Partial match calculates exact design default weights (0.11ms)
-  ✔ Peer Jaccard similarity respects category, time, interest, course and style weights (0.24ms)
-✔ CampusBuddy Match Scoring Rules (1.68ms)
+  ✔ Exact activity match delivers maximum points across all 5 dimensions (1.15ms)
+  ✔ Partial match calculates exact design default weights (0.20ms)
+  ✔ Peer Jaccard similarity respects category, time, interest, course and style weights (0.51ms)
+✔ CampusBuddy Match Scoring Rules (3.00ms)
 
 ▶ Capacity and Join Constraints
-  ✔ Cannot join when moment is full (0.31ms)
-  ✔ Cannot join twice (duplicate join prevention) (0.32ms)
-  ✔ Cannot join a cancelled or finished moment (0.19ms)
-✔ Capacity and Join Constraints (1.19ms)
+  ✔ Cannot join when moment is full (0.65ms)
+  ✔ Cannot join twice (duplicate join prevention) (0.23ms)
+  ✔ Cannot join a cancelled or finished moment (0.24ms)
+✔ Capacity and Join Constraints (1.42ms)
 
 ▶ Invitation State Machine Transitions
-  ✔ Pending invitation transitions to accepted and updates participants (0.39ms)
-  ✔ Final invitation states cannot transition again (0.32ms)
-  ✔ Cannot accept invitation if moment reached capacity before response (0.41ms)
-  ✔ Duplicate pending invitations are prevented (0.46ms)
-✔ Invitation State Machine Transitions (1.92ms)
+  ✔ Pending invitation transitions to accepted and updates participants (0.52ms)
+  ✔ Final invitation states cannot transition again (0.29ms)
+  ✔ Cannot accept invitation if moment reached capacity before response (0.30ms)
+  ✔ Duplicate pending invitations are prevented (0.65ms)
+✔ Invitation State Machine Transitions (2.20ms)
 
 ▶ Blocking and Safety Constraints
-  ✔ Blocking cancels all pending mutual invitations (0.28ms)
-  ✔ Blocked users cannot join each other’s moments (0.14ms)
-  ✔ Blocked users cannot invite each other (0.86ms)
-  ✔ Unblocking removes block state correctly (0.13ms)
-✔ Blocking and Safety Constraints (1.54ms)
+  ✔ Blocking cancels all pending mutual invitations (0.60ms)
+  ✔ Blocked users cannot join each other’s moments (0.29ms)
+  ✔ Blocked users cannot invite each other (1.30ms)
+  ✔ Unblocking removes block state correctly (0.24ms)
+✔ Blocking and Safety Constraints (2.70ms)
 
 ▶ CampusBuddy End-to-End User Journey Smoke Suite
-  ✔ E2E Gate 1: HTTP server serves production index.html and health endpoint (12.05ms)
-  ✔ E2E Gate 2: Full 90-Second Sprint & Application Lifecycle Flow (2.96ms)
-✔ CampusBuddy End-to-End User Journey Smoke Suite (31.31ms)
+  ✔ E2E Gate 1: HTTP server serves production index.html and health endpoint (14.54ms)
+  ✔ E2E Gate 2: Full 90-Second Sprint & Application Lifecycle Flow (4.41ms)
+✔ CampusBuddy End-to-End User Journey Smoke Suite (36.02ms)
 
 ▶ CampusBuddy Single-File Prototype Integrity
-  ✔ campusbuddy.html file exists and has healthy size (1.14ms)
-  ✔ index.html and campusbuddy.html are identical in content (1.07ms)
-  ✔ All required meta tags, viewport, fonts, and title are present (0.54ms)
-  ✔ Extract and compile embedded JavaScript without syntax errors (2.67ms)
-  ✔ Theme toggle and CSS variable tokens are defined for Light and Dark modes (0.25ms)
-  ✔ The 90-Second Micro-Connection journey is implemented with real timer & flow (0.22ms)
-  ✔ Safe campus public spots are verified and disclaimers are present (0.17ms)
-  ✔ WCAG AA accessibility landmarks, ARIA attributes and roles are verified (0.35ms)
-  ✔ All required actions (A object) are defined (1.47ms)
-✔ CampusBuddy Single-File Prototype Integrity (9.16ms)
+  ✔ campusbuddy.html file exists and has healthy size (1.42ms)
+  ✔ index.html and campusbuddy.html are identical in content (0.74ms)
+  ✔ All required meta tags, viewport, fonts, and title are present (0.22ms)
+  ✔ Extract and compile embedded JavaScript without syntax errors (2.24ms)
+  ✔ Theme toggle and CSS variable tokens are defined for Light and Dark modes (0.23ms)
+  ✔ The 90-Second Micro-Connection journey is implemented with real timer & flow (0.19ms)
+  ✔ Safe campus public spots are verified and disclaimers are present (0.16ms)
+  ✔ WCAG AA accessibility landmarks, ARIA attributes and roles are verified (0.19ms)
+  ✔ All required actions (A object) are defined (2.07ms)
+  ✔ Progressive Web App (PWA) manifest and service worker exist with valid configuration (0.92ms)
+✔ CampusBuddy Single-File Prototype Integrity (9.64ms)
 
 ▶ CampusBuddy Production HTTP Server
-  ✔ GET / serves index.html with 200 OK and security headers (24.00ms)
-  ✔ GET /health returns 200 OK with valid JSON status payload (1.44ms)
-  ✔ GET /favicon.ico returns 200 OK with valid SVG icon payload (0.89ms)
-  ✔ GET /healthz returns 200 OK matching kubernetes/cloud standard (0.92ms)
-  ✔ HEAD /health returns 200 OK with empty body (1.12ms)
-  ✔ POST / returns 405 Method Not Allowed (2.14ms)
-  ✔ GET /.git/config returns 403 Forbidden (1.81ms)
-  ✔ GET /render.yaml returns 403 Forbidden (0.77ms)
-  ✔ GET /package-lock.json returns 403 Forbidden (0.79ms)
-  ✔ GET /nonexistent-image.png returns 404 Not Found instead of SPA fallback (1.12ms)
-  ✔ Malformed URI sequence returns 400 Bad Request (0.82ms)
-  ✔ Null-byte sequence returns 400 Bad Request (0.71ms)
-  ✔ GET /campusbuddy.html directly serves the standalone prototype (1.56ms)
-  ✔ GET /DESIGN.md returns markdown with correct MIME type (1.15ms)
-  ✔ GET /non-existent-route returns index.html fallback for SPA routing (1.25ms)
-✔ CampusBuddy Production HTTP Server (44.52ms)
+  ✔ GET / serves index.html with 200 OK and security headers (27.08ms)
+  ✔ GET /health returns 200 OK with valid JSON status payload (1.58ms)
+  ✔ GET /favicon.ico returns 200 OK with valid SVG icon payload (0.99ms)
+  ✔ GET /healthz returns 200 OK matching kubernetes/cloud standard (1.04ms)
+  ✔ HEAD /health returns 200 OK with empty body (1.20ms)
+  ✔ POST / returns 405 Method Not Allowed (2.48ms)
+  ✔ GET /.git/config returns 403 Forbidden (2.02ms)
+  ✔ GET /render.yaml returns 403 Forbidden (0.92ms)
+  ✔ GET /package-lock.json returns 403 Forbidden (0.94ms)
+  ✔ GET /nonexistent-image.png returns 404 Not Found instead of SPA fallback (0.97ms)
+  ✔ Malformed URI sequence returns 400 Bad Request (0.75ms)
+  ✔ Null-byte sequence returns 400 Bad Request (0.56ms)
+  ✔ GET /campusbuddy.html directly serves the standalone prototype (1.96ms)
+  ✔ GET /manifest.webmanifest returns 200 OK with correct MIME type (1.37ms)
+  ✔ GET /sw.js returns 200 OK with javascript MIME type (1.01ms)
+  ✔ GET /DESIGN.md returns markdown with correct MIME type (1.01ms)
+  ✔ GET /non-existent-route returns index.html fallback for SPA routing (1.31ms)
+✔ CampusBuddy Production HTTP Server (52.18ms)
 
-ℹ tests 40 | suites 7 | pass 40 | fail 0 | cancelled 0 | duration_ms 172.8ms
+ℹ tests 43 | suites 7 | pass 43 | fail 0 | cancelled 0 | duration_ms 186.6ms
 ```
 
 ---

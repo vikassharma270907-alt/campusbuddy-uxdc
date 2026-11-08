@@ -16,6 +16,9 @@ Thumbs.db
 *.log
 .npm/
 
+# Temporary research or build clones
+temp_*/
+
 # Environment files
 .env
 .env.local
