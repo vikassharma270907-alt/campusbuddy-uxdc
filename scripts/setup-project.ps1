@@ -23,6 +23,7 @@ $MasterContext7 = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\pl
 $MasterMagic = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\plugins\magic'
 $MasterStrix = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\plugins\strix'
 $MasterAgentSkills = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\plugins\agent-skills'
+$MasterTaste = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\plugins\taste-skill'
 $MasterSkills = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\skills'
 $ProjectsJsonPath = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\projects.json'
 
@@ -179,6 +180,65 @@ if (Test-Path -LiteralPath $MasterMagic) {
         $dstAgent = Join-Path -Path $eccAgentsDir -ChildPath 'magic-designer.md'
         if (-not (Test-Path -LiteralPath $dstAgent)) {
             Copy-Item -LiteralPath $magicAgentSrc -Destination $dstAgent -Force
+        }
+    }
+}
+
+# 2d. Sync Tasteskill Anti-Slop Design System (Skills, Agent, Rules, Workflows) into Master ECC & Global Registries
+if (Test-Path -LiteralPath $MasterTaste) {
+    $tasteSkillSrc = Join-Path -Path $MasterTaste -ChildPath 'skills\taste-skill'
+    if (Test-Path -LiteralPath $tasteSkillSrc) {
+        $eccSkillsDir = Join-Path -Path $MasterEcc -ChildPath 'skills'
+        $gDests = @(
+            (Join-Path -Path $MasterSkills -ChildPath 'design-taste-frontend'),
+            (Join-Path -Path $MasterSkills -ChildPath 'taste-skill')
+        )
+        foreach ($gd in $gDests) {
+            if (-not (Test-Path -LiteralPath $gd)) {
+                try {
+                    New-Item -ItemType Junction -Path $gd -Target $tasteSkillSrc -Force | Out-Null
+                } catch {
+                    Copy-Item -LiteralPath $tasteSkillSrc -Destination $gd -Recurse -Force
+                }
+            }
+        }
+        if (Test-Path -LiteralPath $eccSkillsDir) {
+            $eDests = @(
+                (Join-Path -Path $eccSkillsDir -ChildPath 'design-taste-frontend'),
+                (Join-Path -Path $eccSkillsDir -ChildPath 'taste-skill')
+            )
+            foreach ($ed in $eDests) {
+                if (-not (Test-Path -LiteralPath $ed)) {
+                    try {
+                        New-Item -ItemType Junction -Path $ed -Target $tasteSkillSrc -Force | Out-Null
+                    } catch {
+                        Copy-Item -LiteralPath $tasteSkillSrc -Destination $ed -Recurse -Force
+                    }
+                }
+            }
+        }
+    }
+    # Sync agent
+    $tasteAgentSrc = Join-Path -Path $MasterTaste -ChildPath 'agents\taste-designer.md'
+    $eccAgentsDir = Join-Path -Path $MasterEcc -ChildPath 'agents'
+    if ((Test-Path -LiteralPath $tasteAgentSrc) -and (Test-Path -LiteralPath $eccAgentsDir)) {
+        $dstAgent = Join-Path -Path $eccAgentsDir -ChildPath 'taste-designer.md'
+        Copy-Item -LiteralPath $tasteAgentSrc -Destination $dstAgent -Force
+    }
+    # Sync rule
+    $tasteRuleSrc = Join-Path -Path $MasterTaste -ChildPath 'rules\taste-design.md'
+    $eccRulesDir = Join-Path -Path $MasterEcc -ChildPath 'rules'
+    if ((Test-Path -LiteralPath $tasteRuleSrc) -and (Test-Path -LiteralPath $eccRulesDir)) {
+        $dstRule = Join-Path -Path $eccRulesDir -ChildPath 'taste-design.md'
+        Copy-Item -LiteralPath $tasteRuleSrc -Destination $dstRule -Force
+    }
+    # Sync workflows
+    $tasteWfSrc = Join-Path -Path $MasterTaste -ChildPath 'workflows'
+    $eccWfDir = Join-Path -Path $MasterEcc -ChildPath 'workflows'
+    if ((Test-Path -LiteralPath $tasteWfSrc) -and (Test-Path -LiteralPath $eccWfDir)) {
+        Get-ChildItem -LiteralPath $tasteWfSrc -Filter "*.md" | ForEach-Object {
+            $dstWf = Join-Path -Path $eccWfDir -ChildPath $_.Name
+            Copy-Item -LiteralPath $_.FullName -Destination $dstWf -Force
         }
     }
 }
@@ -559,10 +619,11 @@ jobs:
     }
 
     Write-Host "[Antigravity Full-Power] Successfully configured: $Resolved" -ForegroundColor Green
-    Write-Host "  - Skills: 481+ (ECC + GSD + CodeRabbit + Firebase + Ralph + Laya + Graphify + Ponytail + Agent-Reach + Lemo-Opuscar + Agent-Skills + Context7 + SkillSpector + Strix)"
-    Write-Host "  - Agents: 114+ (Domain Specialists + GSD Spec Planners/Executors + Code-Reviewer + Security-Auditor + Skill-Inspector + Test-Engineer + Film-Director)"
-    Write-Host "  - Rules: 134+ (TDD, Security, Immutability, CodeRabbit Quality Gates, SkillSpector Safety, Context7 Docs, Strix Pentesting, Ponytail, Ralph, GSD, Agent-Reach, Film-Rules, Agent-Skills)"
-    Write-Host "  - Workflows: 112+ (/skillspector, /spec, /ship, /webperf, /test, /review, /planning, /reach, autonomous pipelines)"
+    Write-Host "  - Skills: 483+ (ECC + GSD + CodeRabbit + Firebase + Ralph + Laya + Graphify + Ponytail + Agent-Reach + Lemo-Opuscar + Agent-Skills + Context7 + SkillSpector + Strix + Tasteskill)"
+    Write-Host "  - Agents: 115+ (Domain Specialists + GSD Spec Planners/Executors + Code-Reviewer + Security-Auditor + Skill-Inspector + Test-Engineer + Film-Director + Taste-Designer)"
+    Write-Host "  - Rules: 135+ (TDD, Security, Immutability, CodeRabbit Quality Gates, SkillSpector Safety, Context7 Docs, Strix Pentesting, Ponytail, Ralph, GSD, Agent-Reach, Film-Rules, Agent-Skills, Taste-Design)"
+    Write-Host "  - Workflows: 114+ (/skillspector, /taste, /taste-gate, /spec, /ship, /webperf, /test, /review, /planning, /reach, autonomous pipelines)"
+    Write-Host "  - Tasteskill Anti-Slop Design Engine: Active (figma.com & x.ai visual bar, design-taste-frontend skill, taste-designer agent, dealer scripts, finish gate, /taste & /taste-gate)"
     Write-Host "  - Strix Autonomous Pentesting: Active (9 security skills, OWASP Top 10, API testing, PoC exploit validation, strix 1.7.0 CLI)"
     Write-Host "  - NVIDIA SkillSpector: Active (71 vulnerability patterns, pre-install static vetting, semantic source review, skillspector MCP server)"
     Write-Host "  - Context7 Live Docs: Active (resolve-library-id, query-docs, ctx7 CLI, docs-researcher agent, auto-grounding for all libraries)"
