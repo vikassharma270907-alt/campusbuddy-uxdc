@@ -3,6 +3,7 @@
 > *A low-pressure, moment-based micro-connection experience for university students.*
 
 [![Automated Core Tests](https://img.shields.io/badge/Tests-87%2F87%20Passing-success?style=flat-square)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc/actions)
+[![YouTube Demo](https://img.shields.io/badge/YouTube-Watch%20Demo-FF0000?style=flat-square&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=ImvvlRvdYWI)
 [![Video Walkthrough](https://img.shields.io/badge/Video%20Demo-Interactive%20Presentation-red?style=flat-square)](video_showcase.html)
 [![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.2%20AA-blue?style=flat-square)](DESIGN.md)
 [![Theme Support](https://img.shields.io/badge/Theme-Light%20%26%20Dark%20Mode-emerald?style=flat-square)](campusbuddy.html)
@@ -89,6 +90,7 @@ python -m http.server 8085 --directory "d:/UXDC Designathon"
 
 ### Option E: Experience the Interactive Video Walkthrough
 Watch the complete project demonstration with studio-grade neural voiceover narration, animated UI scenes, real-time stopwatch, multi-persona switcher, and cool grey & dark theme:
+👉 **[Watch Live on YouTube (1080p Walkthrough)](https://www.youtube.com/watch?v=ImvvlRvdYWI)**  
 👉 **[Launch Interactive Video Presentation](https://vikassharma270907-alt.github.io/campusbuddy-uxdc/video_showcase.html)** (or open `video_showcase.html` / `video.html` locally).  
 *Offline Full HD Rendered Video file:* `campusbuddy_showcase.mp4` (1080p MP4 with synchronized voiceover).
 
