@@ -10,10 +10,10 @@
 
 ## 🔗 Quick Submission Links (Owner to Supply / Finalize)
 
-- **Interactive Prototype:** [Open `campusbuddy.html` in workspace or hosted preview]
+- **Interactive Prototype:** [Open `campusbuddy.html` or `index.html`]
+- **GitHub Repository:** [https://github.com/vikassharma270907-alt/campusbuddy-uxdc](https://github.com/vikassharma270907-alt/campusbuddy-uxdc)
 - **Figma Design System & Community File:** `[INSERT FIGMA LINK HERE]`
 - **Video Walkthrough (3-Minute Loom / YouTube):** `[INSERT DEMO VIDEO LINK HERE]`
-- **GitHub Repository:** `[INSERT GITHUB REPOSITORY LINK HERE]`
 - **Team Members:** `[INSERT TEAM MEMBER NAMES & UCALGARY / INSTITUTION ROLES]`
 
 ---

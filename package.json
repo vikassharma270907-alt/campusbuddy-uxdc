@@ -7,9 +7,9 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "test": "node --test tests/*.test.js",
-    "check": "node --test tests/*.test.js",
-    "ci": "node --test tests/*.test.js"
+    "test": "node --test tests/core-rules.test.js tests/prototype-integrity.test.js tests/server.test.js",
+    "check": "node --test tests/core-rules.test.js tests/prototype-integrity.test.js tests/server.test.js",
+    "ci": "node --test tests/core-rules.test.js tests/prototype-integrity.test.js tests/server.test.js"
   },
   "keywords": [
     "uxdc-2026",

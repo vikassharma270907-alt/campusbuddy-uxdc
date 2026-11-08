@@ -2,9 +2,11 @@
 > **"Your campus. Your people. Your moments."**  
 > *A low-pressure, moment-based micro-connection experience for university students.*
 
-[![Automated Core Tests](https://img.shields.io/badge/Tests-21%2F21%20Passing-success?style=flat-square)](file:///d:/UXDC%20Designathon/tests/core-rules.test.js)
-[![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.2%20AA-blue?style=flat-square)](file:///d:/UXDC%20Designathon/DESIGN.md)
-[![Theme Support](https://img.shields.io/badge/Theme-Light%20%26%20Dark%20Mode-emerald?style=flat-square)](file:///d:/UXDC%20Designathon/campusbuddy.html)
+[![Automated Core Tests](https://img.shields.io/badge/Tests-26%2F26%20Passing-success?style=flat-square)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc/actions)
+[![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.2%20AA-blue?style=flat-square)](DESIGN.md)
+[![Theme Support](https://img.shields.io/badge/Theme-Light%20%26%20Dark%20Mode-emerald?style=flat-square)](campusbuddy.html)
+[![Live Demo](https://img.shields.io/badge/Deploy-Render%20Web%20Service-informational?style=flat-square)](https://campusbuddy-web.onrender.com)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-black?style=flat-square&logo=github)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc)
 [![Event](https://img.shields.io/badge/UXDC%20Designathon-2026%20Experienced%20Track-purple?style=flat-square)](https://devpost.com)
 
 ---
