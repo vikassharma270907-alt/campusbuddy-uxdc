@@ -5,7 +5,7 @@
 [![Automated Core Tests](https://img.shields.io/badge/Tests-26%2F26%20Passing-success?style=flat-square)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc/actions)
 [![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.2%20AA-blue?style=flat-square)](DESIGN.md)
 [![Theme Support](https://img.shields.io/badge/Theme-Light%20%26%20Dark%20Mode-emerald?style=flat-square)](campusbuddy.html)
-[![Live Demo](https://img.shields.io/badge/Deploy-Render%20Web%20Service-informational?style=flat-square)](https://campusbuddy-web.onrender.com)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-brightgreen?style=flat-square)](https://vikassharma270907-alt.github.io/campusbuddy-uxdc/)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-black?style=flat-square&logo=github)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc)
 [![Event](https://img.shields.io/badge/UXDC%20Designathon-2026%20Experienced%20Track-purple?style=flat-square)](https://devpost.com)
 
@@ -37,7 +37,10 @@ The core innovation of CampusBuddy is the **90-Second Journey**:
 
 CampusBuddy is built as an ultra-polished, dependency-free, standalone web prototype that runs instantly in any modern web browser.
 
-### Option A: Open Directly in Browser
+### Option A: Open the Live Hosted Web App (Recommended)
+👉 **[Launch CampusBuddy Live on GitHub Pages](https://vikassharma270907-alt.github.io/campusbuddy-uxdc/)**
+
+### Option B: Open Directly in Local Browser
 Double-click or drag-and-drop `campusbuddy.html` into Chrome, Safari, Firefox, or Edge:
 ```text
 file:///d:/UXDC Designathon/campusbuddy.html

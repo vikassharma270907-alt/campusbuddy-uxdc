@@ -10,7 +10,7 @@
 
 ## 🔗 Quick Submission Links (Owner to Supply / Finalize)
 
-- **Interactive Prototype:** [Open `campusbuddy.html` or `index.html`]
+- **Interactive Prototype (Live Hosted URL):** [https://vikassharma270907-alt.github.io/campusbuddy-uxdc/](https://vikassharma270907-alt.github.io/campusbuddy-uxdc/)
 - **GitHub Repository:** [https://github.com/vikassharma270907-alt/campusbuddy-uxdc](https://github.com/vikassharma270907-alt/campusbuddy-uxdc)
 - **Figma Design System & Community File:** `[INSERT FIGMA LINK HERE]`
 - **Video Walkthrough (3-Minute Loom / YouTube):** `[INSERT DEMO VIDEO LINK HERE]`
