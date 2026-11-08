@@ -27,6 +27,7 @@ assets/audio/*
 
 # Python Artifacts
 __pycache__/
+**/__pycache__/
 *.pyc
 
 # Temporary research or build clones
