@@ -36,11 +36,13 @@ const MIME_TYPES = {
 const STATIC_EXTENSIONS = new Set(Object.keys(MIME_TYPES));
 const COMPRESSIBLE_EXTENSIONS = new Set(['.html', '.css', '.js', '.mjs', '.json', '.svg', '.txt', '.md', '.webmanifest', '.ics']);
 const BLOCKED_FILES = new Set(['render.yaml', 'vercel.json', 'package.json', 'package-lock.json', '.env', '.env.example', 'server.js', '.coderabbit.yaml']);
-const BLOCKED_DIRS = new Set(['tests', 'scripts', '.git', '.github', '.vscode', '.agents']);
+const BLOCKED_DIRS = new Set(['tests', 'scripts', '.git', '.github', '.vscode', '.agents', 'node_modules', 'etc', 'proc', 'sys', 'dev']);
 
 function createServer() {
   const srv = http.createServer((req, res) => {
     // Production security & isolation headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Vary', 'Accept-Encoding');
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'SAMEORIGIN');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
@@ -57,7 +59,8 @@ function createServer() {
       res.writeHead(204, {
         'Allow': 'GET, HEAD, OPTIONS',
         'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS',
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': '*'
       });
       res.end();
       return;
@@ -94,6 +97,13 @@ function createServer() {
     if (reqPath.includes('\0')) {
       res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
       res.end(JSON.stringify({ error: 'Bad Request: Null byte detected in URI' }));
+      return;
+    }
+
+    // Security guard: Detect directory traversal sequences
+    if (rawUrl.includes('..') || reqPath.includes('..')) {
+      res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('403 Forbidden');
       return;
     }
 
@@ -138,7 +148,7 @@ function createServer() {
       reqPath = '/index.html';
     }
 
-    const normalized = path.normalize(reqPath).replace(/^(\.\.[/\\])+/, '');
+    const normalized = path.normalize(reqPath);
     const segments = normalized.split(/[/\\]/).filter(Boolean);
 
     // Security guard: Block direct access to hidden files and internal directories
@@ -173,6 +183,9 @@ function createServer() {
       const acceptEncoding = req.headers['accept-encoding'] || '';
       const canGzip = acceptEncoding.includes('gzip') && COMPRESSIBLE_EXTENSIONS.has(ext);
 
+      headers['Vary'] = 'Accept-Encoding';
+      headers['Access-Control-Allow-Origin'] = '*';
+
       if (req.method === 'HEAD') {
         if (canGzip) headers['Content-Encoding'] = 'gzip';
         res.writeHead(statusCode, headers);
@@ -201,7 +214,7 @@ function createServer() {
     fs.stat(filePath, (err, stats) => {
       if (err || !stats.isFile()) {
         // If the request targeted a specific static file with an extension, return 404 instead of HTML fallback
-        if (reqExt && STATIC_EXTENSIONS.has(reqExt) && reqExt !== '.html') {
+        if (reqExt && reqExt !== '.html') {
           res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
           res.end('404 Not Found');
           return;
