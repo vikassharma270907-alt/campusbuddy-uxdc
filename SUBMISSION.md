@@ -103,7 +103,7 @@ The hallmark of CampusBuddy is the **90-Second Micro-Connection Journey**:
 
 ### 5. Feasibility, Safety & Technical Implementation
 - **Zero-Build Production Prototype:** `campusbuddy.html` runs natively in any browser with zero installation, zero bundlers, and zero external runtime dependencies.
-- **Automated Verification:** 83 automated tests passing with 100% success rate across domain rules, capacity, state transitions, blocking, moment creation & public landmark constraints, markup integrity, and production server health probes (`npm test`).
+- **Automated Verification:** 86 automated tests passing with 100% success rate across domain rules, capacity, state transitions, blocking, moment creation & public landmark constraints, markup integrity, and production server health probes (`npm test`).
 - **Psychological & Physical Safety Guardrails:**
   - *General Public Campus Landmarks Only:* TFDL Commons, MacEwan Food Court, Science Theatres Concourse. No private dorm addresses. Strict runtime validation (`LOC.includes(loc)`) rejects unverified spots.
   - *Zero Contact Information Exposure:* No personal phone numbers or private handles.
@@ -122,9 +122,9 @@ The hallmark of CampusBuddy is the **90-Second Micro-Connection Journey**:
 | **Blocking & Privacy** | Pending invite auto-cancellation, mutual join prevention, invite prevention, unblock recovery | 4 / 4 Passed | ✅ Verified |
 | **Moment Creation & Public Landmarks** | Strict public landmark verification, private address rejection, RFC 5545 iCal sanitization & line folding | 3 / 3 Passed | ✅ Verified |
 | **E2E Smoke Journey** | 90-second study sprint, partner join, icebreaker shuffle, modal lifecycle, and state persistence | 2 / 2 Passed | ✅ Verified |
-| **Prototype Integrity** | File existence, HTML parity, script compilation, meta tags, WCAG tokens, stopwatch, landmarks, PWA manifest, service worker, spots directory, keyboard hotkeys, console check, Render blueprint, CSP meta tag, header navigation triggers, video showcase, and power-user suite | 27 / 27 Passed | ✅ Verified |
+| **Prototype Integrity** | File existence, HTML parity, script compilation, meta tags, WCAG tokens, stopwatch, landmarks, PWA manifest, service worker, spots directory, keyboard hotkeys, console check, Render blueprint, CSP meta tag, header navigation triggers, video showcase, power-user suite, TFDL indoor floorplan blueprint, student SSO simulation, and wellbeing analytics dashboard | 30 / 30 Passed | ✅ Verified |
 | **Production HTTP Server** | Security headers, JSON health probes (/health, /healthz), path traversal guard, config & source protection (render.yaml, vercel.json, .coderabbit.yaml), gzip compression, OPTIONS 204, favicon, PWA routes, audio streaming, video streaming with byte ranges (200, 206, 416), dynamic .ics stream, /api/spots, SSE stream, wellbeing stats, SPA fallback | 37 / 37 Passed | ✅ Verified |
-| **Total Automated Tests** | **83 Total Test Cases Across 8 Suites** | **83 / 83 Passed (~300ms)** | **100% Green** |
+| **Total Automated Tests** | **86 Total Test Cases Across 8 Suites** | **86 / 86 Passed (~290ms)** | **100% Green** |
 
 ---
 

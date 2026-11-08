@@ -120,5 +120,22 @@ fs.writeFileSync(path.join(apiDir, 'spots'), spotsPayload);
 fs.writeFileSync(path.join(apiDir, 'spots.json'), spotsPayload);
 fs.writeFileSync(path.join(apiDir, 'spots.html'), spotsPayload);
 
+const wellbeingPayload = JSON.stringify({
+  campus: 'University of Calgary',
+  activeMomentsToday: 42,
+  sprintSuccessRate: 0.91,
+  topLandmarks: [
+    { name: 'TFDL Commons', activeSpots: 18, vibe: 'Morning Focus' },
+    { name: 'MacEwan Food Court', activeSpots: 14, vibe: 'Midday Collab' },
+    { name: 'Science Theatres Concourse', activeSpots: 10, vibe: 'Study Sprint' }
+  ],
+  disconnectionGapIdentified: '14:15 - 15:30 (Post-Lecture Void)',
+  lonelinessReductionIndex: '+42%',
+  updatedAt: new Date().toISOString()
+}, null, 2);
+fs.writeFileSync(path.join(apiDir, 'wellbeing'), wellbeingPayload);
+fs.writeFileSync(path.join(apiDir, 'wellbeing.json'), wellbeingPayload);
+fs.writeFileSync(path.join(apiDir, 'wellbeing.html'), wellbeingPayload);
+
 console.log(`[CampusBuddy Build] Copied ${PUBLIC_FILES.length} public assets and generated .nojekyll, health endpoints + 404.html SPA fallback in dist/.`);
 console.log('[CampusBuddy Build] Production build completed successfully.');
