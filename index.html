@@ -178,7 +178,7 @@
 
     /* Layout Container */
     .wrap {
-      max-width: 1040px;
+      max-width: 1140px;
       margin: 0 auto;
       padding: 0 16px;
     }
@@ -230,7 +230,17 @@
       display: flex;
       align-items: center;
       gap: 5px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+    }
+    .top-actions .btn.sm {
+      padding: 5px 8px;
+      min-height: 32px;
+      font-size: 12px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .top-actions .desktop-tab-label {
+      display: none;
     }
 
     .persona-badge {
