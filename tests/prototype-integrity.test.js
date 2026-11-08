@@ -96,7 +96,7 @@ describe('CampusBuddy Single-File Prototype Integrity', () => {
     const expectedActions = [
       'home', 'theme', 'quick', 'study', 'sl', 'start', 'tab',
       'chip', 'obdone', 'modal', 'modal_close', 'shuffle_starter',
-      'copy_details', 'join', 'invite', 'resp', 'leave', 'cancel',
+      'copy_details', 'export_ics', 'join', 'invite', 'resp', 'leave', 'cancel',
       'done', 'fbp', 'fb', 'clear_filters', 'tpl', 'create', 'vis', 'block',
       'unblock', 'report', 'reset'
     ];
@@ -105,6 +105,21 @@ describe('CampusBuddy Single-File Prototype Integrity', () => {
       const regex = new RegExp(`\\b${act}\\s*\\(`);
       assert.ok(regex.test(htmlContent), `Action handler "${act}" should exist in A`);
     });
+  });
+
+  test('Progressive Web App (PWA) manifest and service worker exist with valid configuration', () => {
+    const manifestPath = path.resolve(__dirname, '../manifest.webmanifest');
+    assert.ok(fs.existsSync(manifestPath), 'manifest.webmanifest must exist');
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    assert.equal(manifest.name, 'CampusBuddy');
+    assert.equal(manifest.display, 'standalone');
+    assert.ok(manifest.icons && manifest.icons.length > 0);
+
+    const swPath = path.resolve(__dirname, '../sw.js');
+    assert.ok(fs.existsSync(swPath), 'sw.js service worker must exist');
+    const swContent = fs.readFileSync(swPath, 'utf8');
+    assert.match(swContent, /addEventListener\('install'/);
+    assert.match(swContent, /addEventListener\('fetch'/);
   });
 });
 

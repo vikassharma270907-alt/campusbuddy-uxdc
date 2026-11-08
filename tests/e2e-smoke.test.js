@@ -90,8 +90,12 @@ describe('CampusBuddy End-to-End User Journey Smoke Suite', () => {
         },
         querySelectorAll: () => [],
         addEventListener: () => {},
+        createElement: () => ({ click: () => {}, href: '', download: '' }),
+        body: { appendChild: () => {}, removeChild: () => {} },
         activeElement: null
       },
+      Blob,
+      URL: { createObjectURL: () => 'blob:mock', revokeObjectURL: () => {} },
       localStorage: {
         getItem: (k) => (k === 'cb_state_v2' ? storedState : null),
         setItem: (k, v) => {
@@ -144,8 +148,9 @@ describe('CampusBuddy End-to-End User Journey Smoke Suite', () => {
     assert.equal(S.modal, 'a1', 'Confirmation modal opened for moment a1');
     assert.ok(typeof S.took === 'number' && S.took >= 0, 'Measured connection duration recorded');
 
-    // 5. Icebreaker shuffle
+    // 5. Icebreaker shuffle & iCalendar export
     A.shuffle_starter('study');
+    assert.doesNotThrow(() => A.export_ics('a1'), 'export_ics generates ics file without errors');
 
     // 6. Close Modal and navigate to Plans
     A.modal_close();

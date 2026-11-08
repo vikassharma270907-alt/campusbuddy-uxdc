@@ -2,9 +2,11 @@
 > **"Your campus. Your people. Your moments."**  
 > *A low-pressure, moment-based micro-connection experience for university students.*
 
-[![Automated Core Tests](https://img.shields.io/badge/Tests-40%2F40%20Passing-success?style=flat-square)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc/actions)
+[![Automated Core Tests](https://img.shields.io/badge/Tests-43%2F43%20Passing-success?style=flat-square)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc/actions)
 [![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.2%20AA-blue?style=flat-square)](DESIGN.md)
 [![Theme Support](https://img.shields.io/badge/Theme-Light%20%26%20Dark%20Mode-emerald?style=flat-square)](campusbuddy.html)
+[![PWA Ready](https://img.shields.io/badge/PWA-Offline%20Ready-teal?style=flat-square)](manifest.webmanifest)
+[![Calendar Sync](https://img.shields.io/badge/Calendar-.ICS%20Export-orange?style=flat-square)](campusbuddy.html)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-brightgreen?style=flat-square)](https://vikassharma270907-alt.github.io/campusbuddy-uxdc/)
 [![Deploy to Render](https://img.shields.io/badge/Deploy%20to-Render-46E3B7?style=flat-square&logo=render&logoColor=white)](https://render.com/deploy?repo=https://github.com/vikassharma270907-alt/campusbuddy-uxdc)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-black?style=flat-square&logo=github)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc)
@@ -80,33 +82,38 @@ To run all unit, domain-rule, prototype integrity, and server tests:
 npm test
 ```
 
-### Verified Test Results (35/35 Passing across 6 Suites):
+### Verified Test Results (43/43 Passing across 7 Suites):
 ```text
 ▶ CampusBuddy Match Scoring Rules
   ✔ Exact activity match delivers maximum points across all 5 dimensions
   ✔ Partial match calculates exact design default weights
   ✔ Peer Jaccard similarity respects category, time, interest, course and style weights
-✔ CampusBuddy Match Scoring Rules (2.23ms)
+✔ CampusBuddy Match Scoring Rules (2.99ms)
 
 ▶ Capacity and Join Constraints
   ✔ Cannot join when moment is full
   ✔ Cannot join twice (duplicate join prevention)
   ✔ Cannot join a cancelled or finished moment
-✔ Capacity and Join Constraints (0.90ms)
+✔ Capacity and Join Constraints (1.41ms)
 
 ▶ Invitation State Machine Transitions
   ✔ Pending invitation transitions to accepted and updates participants
   ✔ Final invitation states cannot transition again
   ✔ Cannot accept invitation if moment reached capacity before response
   ✔ Duplicate pending invitations are prevented
-✔ Invitation State Machine Transitions (1.18ms)
+✔ Invitation State Machine Transitions (2.19ms)
 
 ▶ Blocking and Safety Constraints
   ✔ Blocking cancels all pending mutual invitations
   ✔ Blocked users cannot join each other’s moments
   ✔ Blocked users cannot invite each other
   ✔ Unblocking removes block state correctly
-✔ Blocking and Safety Constraints (1.93ms)
+✔ Blocking and Safety Constraints (2.70ms)
+
+▶ CampusBuddy End-to-End User Journey Smoke Suite
+  ✔ E2E Gate 1: HTTP server serves production index.html and health endpoint
+  ✔ E2E Gate 2: Full 90-Second Sprint & Application Lifecycle Flow
+✔ CampusBuddy End-to-End User Journey Smoke Suite (36.01ms)
 
 ▶ CampusBuddy Single-File Prototype Integrity
   ✔ campusbuddy.html file exists and has healthy size
@@ -118,7 +125,8 @@ npm test
   ✔ Safe campus public spots are verified and disclaimers are present
   ✔ WCAG AA accessibility landmarks, ARIA attributes and roles are verified
   ✔ All required actions (A object) are defined
-✔ CampusBuddy Single-File Prototype Integrity (9.52ms)
+  ✔ Progressive Web App (PWA) manifest and service worker exist with valid configuration
+✔ CampusBuddy Single-File Prototype Integrity (9.63ms)
 
 ▶ CampusBuddy Production HTTP Server
   ✔ GET / serves index.html with 200 OK and security headers
@@ -128,14 +136,19 @@ npm test
   ✔ HEAD /health returns 200 OK with empty body
   ✔ POST / returns 405 Method Not Allowed
   ✔ GET /.git/config returns 403 Forbidden
+  ✔ GET /render.yaml returns 403 Forbidden
+  ✔ GET /package-lock.json returns 403 Forbidden
   ✔ GET /nonexistent-image.png returns 404 Not Found instead of SPA fallback
   ✔ Malformed URI sequence returns 400 Bad Request
+  ✔ Null-byte sequence returns 400 Bad Request
   ✔ GET /campusbuddy.html directly serves the standalone prototype
+  ✔ GET /manifest.webmanifest returns 200 OK with correct MIME type
+  ✔ GET /sw.js returns 200 OK with javascript MIME type
   ✔ GET /DESIGN.md returns markdown with correct MIME type
   ✔ GET /non-existent-route returns index.html fallback for SPA routing
-✔ CampusBuddy Production HTTP Server (50.43ms)
+✔ CampusBuddy Production HTTP Server (52.18ms)
 
-ℹ tests 35 | suites 6 | pass 35 | fail 0 | cancelled 0 | duration_ms 196.1ms
+ℹ tests 43 | suites 7 | pass 43 | fail 0 | cancelled 0 | duration_ms 186.6ms
 ```
 
 ---

@@ -131,6 +131,21 @@ describe('CampusBuddy Production HTTP Server', () => {
     assert.match(res.body, /CampusBuddy/);
   });
 
+  test('GET /manifest.webmanifest returns 200 OK with correct MIME type', async () => {
+    const res = await get('/manifest.webmanifest');
+    assert.equal(res.status, 200);
+    assert.match(res.headers['content-type'], /application\/manifest\+json/);
+    const data = JSON.parse(res.body);
+    assert.equal(data.name, 'CampusBuddy');
+  });
+
+  test('GET /sw.js returns 200 OK with javascript MIME type', async () => {
+    const res = await get('/sw.js');
+    assert.equal(res.status, 200);
+    assert.match(res.headers['content-type'], /application\/javascript/);
+    assert.match(res.body, /addEventListener/);
+  });
+
   test('GET /DESIGN.md returns markdown with correct MIME type', async () => {
     const res = await get('/DESIGN.md');
     assert.equal(res.status, 200);
