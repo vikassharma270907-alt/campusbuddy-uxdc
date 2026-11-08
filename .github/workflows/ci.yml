@@ -2,7 +2,7 @@ name: CampusBuddy CI & Quality Gate
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, 'fix/**', 'feat/**' ]
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:

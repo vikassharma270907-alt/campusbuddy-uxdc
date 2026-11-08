@@ -217,6 +217,14 @@ describe('CampusBuddy Single-File Prototype Integrity', () => {
     assert.match(htmlContent, /data-a="tab" data-v="safety"/);
     assert.match(htmlContent, /data-a="tab" data-v="alerts"/);
   });
+
+  test('Interactive video showcase player exists and links to campusbuddy prototype', () => {
+    const videoPath = path.resolve(__dirname, '../video.html');
+    assert.ok(fs.existsSync(videoPath), 'video.html must exist');
+    const videoContent = fs.readFileSync(videoPath, 'utf8');
+    assert.match(videoContent, /id="prototypeIframe"/);
+    assert.match(videoContent, /src="campusbuddy\.html"/);
+  });
 });
 
 

@@ -2057,7 +2057,27 @@
       // Landing / Hero screen if demo not explicitly entered
       if (!S.mode) {
         $("#app").innerHTML = `
-          <div class="wrap hero-section">
+          <header>
+            <div class="wrap">
+              <div class="top-bar">
+                <div class="brand-col">
+                  <button class="logo-btn" data-a="home">
+                    <span>CampusBuddy</span>
+                  </button>
+                  <span class="badge-subtle">Fictional Demo</span>
+                </div>
+                <div class="top-actions">
+                  <button class="btn sm ghost" data-a="theme" aria-label="Toggle theme" title="Toggle Light/Dark Theme">
+                    ${S.theme === "dark" ? "☀️ Light" : "🌙 Dark"}
+                  </button>
+                  <button class="btn sm" data-a="start">
+                    Enter Demo
+                  </button>
+                </div>
+              </div>
+            </div>
+          </header>
+          <main class="wrap hero-section" style="padding-top:24px;">
             <div class="hero-tag">UXDC Designathon 2026 · Experienced Track</div>
             <h1>Your campus.<br>Your people.<br>Your moments.</h1>
             <p class="hero-sub">
@@ -2074,7 +2094,7 @@
             <div class="small-meta" style="color:var(--mut);">
               Note: Fictional student personas and campus mock data for design prototype evaluation.
             </div>
-          </div>
+          </main>
         `;
         return;
       }

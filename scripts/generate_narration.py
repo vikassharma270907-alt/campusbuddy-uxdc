@@ -6,15 +6,16 @@ using edge-tts neural voice (en-US-AndrewMultilingualNeural).
 
 import asyncio
 import os
+import subprocess
 import edge_tts
 from pathlib import Path
 
-# Voice selection: Andrew Multilingual Neural - Warm, Confident, Authentic, Clear
 VOICE = "en-US-AndrewMultilingualNeural"
 RATE = "+0%"
 PITCH = "+0Hz"
 
-OUTPUT_DIR = Path("assets/audio")
+ROOT_DIR = Path(__file__).resolve().parent.parent
+OUTPUT_DIR = ROOT_DIR / "assets" / "audio"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 CHAPTERS = [
@@ -119,21 +120,56 @@ CHAPTERS = [
     }
 ]
 
-async def generate_chapter_audio(chapter):
-    filename = OUTPUT_DIR / f"{chapter['id']}.mp3"
-    print(f"Generating voice for: {chapter['title']} -> {filename}...")
-    comm = edge_tts.Communicate(chapter["text"], voice=VOICE, rate=RATE, pitch=PITCH)
-    await comm.save(str(filename))
-    size = filename.stat().st_size
-    print(f"  Done! ({size} bytes)")
-    return filename
+JUDGING_3MIN_SCRIPT = """
+Judges, welcome to CampusBuddy: Your campus, your people, your moments.
+University campuses are full of people, but students often feel intensely disconnected during small, mundane moments — like having nobody to study with before an exam. Existing social networks subject students to endless algorithmic feeds and superficial metrics. CampusBuddy takes a radically different approach: micro-moments.
+Notice the stopwatch in the top right. It is ticking in real time. We are challenging ourselves to solve Maya's disconnection in under 90 seconds. Maya is an incoming first-year biology commuter student. In one glance, she sees her top recommendation: Calculus revision, hosted by Dev at the Taylor Family Digital Library commons.
+CampusBuddy provides an explainable match score of 75 percent: study together is one of her go-to activities, she is free today afternoon, and they share calculus coursework.
+With a single tap on Join this moment, she is confirmed in just 14 seconds — well under our 90-second threshold. There is no awkward back-and-forth messaging. She sees the verified public campus landmark, who is attending, and an instant conversation icebreaker to break the ice upon arrival.
+To prove that this isn't a static mockup, CampusBuddy includes an interactive persona switcher in the header. When we switch to Tom, an analytical sophomore math student, we experience the platform from his perspective. In the People tab, classmates are ranked by multi-dimensional Jaccard similarity and shared courses.
+Switching back to Maya, her Invites tab displays a notification badge. Maya accepts Tom's coffee chat invitation with one tap. Notice the reactive state machine at work: the invitation transitions from pending to accepted, attendee capacities decrement in real time, and a confirmation toast fires smoothly without a page reload.
+Under the Discover tab, students can browse and filter moments across categories like Co-working, Lunch, Coffee, and Campus Walks. Every moment enforces a strict capacity limit between 2 and 8 people to prevent crowd anxiety. Full sessions automatically lock joining to protect comfort.
+As human factors researchers know, psychological safety is the foundation of student connection. In the Safety tab, CampusBuddy implements four strict guardrails: general public campus spots only, zero contact detail sharing, an instant profile visibility toggle to browse privately, and mutual blocking that immediately cancels pending invites. Crucially, reports are logged for university audit without falsely claiming instant automated moderation.
+Under the Plans tab, students view upcoming sessions or submit 100 percent private feedback after meetups to refine future matching without public popularity metrics.
+Finally, notice how our unique, accessible cool grey and dark theme provides high-contrast comfort, with a one-tap toggle to daylight mode.
+Built with pure dependency-free web engineering, backed by 60 automated tests, CampusBuddy transforms downtime into genuine human connection. Thank you!
+""".strip()
 
-async def main():
-    print(f"Starting neural narration generation using voice: {VOICE}")
-    tasks = [generate_chapter_audio(ch) for ch in CHAPTERS]
-    results = await asyncio.gather(*tasks)
-    print("\nAll 7 chapters synthesized successfully!")
-    print(f"Saved in: {OUTPUT_DIR.resolve()}")
+async def generate_audio():
+    print(f"Generating voiceover audio tracks with voice: {VOICE}")
+    
+    # 1. Generate Chapters 1-7
+    for ch in CHAPTERS:
+        out_file = OUTPUT_DIR / f"{ch['id']}.mp3"
+        print(f"Generating: {ch['title']} -> {out_file.name}...")
+        comm = edge_tts.Communicate(ch["text"], voice=VOICE, rate=RATE, pitch=PITCH)
+        await comm.save(str(out_file))
+        print(f"  Saved {out_file.name} ({out_file.stat().st_size} bytes)")
+
+    # 2. Concat 1-7 into master audio
+    concat_txt = OUTPUT_DIR / "concat_list.txt"
+    with open(concat_txt, "w", encoding="utf-8") as f:
+        for ch in CHAPTERS:
+            f.write(f"file '{ch['id']}.mp3'\n")
+    
+    master_mp3 = OUTPUT_DIR / "campusbuddy_master_narration.mp3"
+    print(f"Concatenating chapters into {master_mp3.name}...")
+    subprocess.run([
+        "ffmpeg", "-y", "-f", "concat", "-safe", "0",
+        "-i", str(concat_txt),
+        "-c", "copy",
+        str(master_mp3)
+    ], check=True, capture_output=True)
+    print(f"  Master audio generated ({master_mp3.stat().st_size} bytes)")
+
+    # 3. Generate 3-min judging track
+    judge_mp3 = OUTPUT_DIR / "campusbuddy_3min_voice.mp3"
+    print(f"Generating 3-min judging voiceover -> {judge_mp3.name}...")
+    comm3 = edge_tts.Communicate(JUDGING_3MIN_SCRIPT, voice=VOICE, rate="+3%", pitch=PITCH)
+    await comm3.save(str(judge_mp3))
+    print(f"  Saved 3-min voiceover ({judge_mp3.stat().st_size} bytes)")
+
+    print("\nAll audio tracks successfully generated in assets/audio/!")
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(generate_audio())
