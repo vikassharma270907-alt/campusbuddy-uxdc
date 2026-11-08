@@ -102,9 +102,9 @@ The hallmark of CampusBuddy is the **90-Second Micro-Connection Journey**:
 
 ### 5. Feasibility, Safety & Technical Implementation
 - **Zero-Build Production Prototype:** `campusbuddy.html` runs natively in any browser with zero installation, zero bundlers, and zero external runtime dependencies.
-- **Automated Verification:** 53 automated tests passing with 100% success rate across domain rules, capacity, state transitions, blocking, markup integrity, and production server health probes (`npm test`).
+- **Automated Verification:** 60 automated tests passing with 100% success rate across domain rules, capacity, state transitions, blocking, moment creation & public landmark constraints, markup integrity, and production server health probes (`npm test`).
 - **Psychological & Physical Safety Guardrails:**
-  - *General Public Campus Landmarks Only:* TFDL Commons, MacEwan Food Court, Science Theatres Concourse. No private dorm addresses.
+  - *General Public Campus Landmarks Only:* TFDL Commons, MacEwan Food Court, Science Theatres Concourse. No private dorm addresses. Strict runtime validation (`LOC.includes(loc)`) rejects unverified spots.
   - *Zero Contact Information Exposure:* No personal phone numbers or private handles.
   - *Instant Mutual Blocking:* Blocking instantly cancels pending invites and mutually hides moments.
   - *Transparent Moderation Disclosure:* Clear UI statement that reports are logged for administrative audit without claiming artificial live moderation.
@@ -119,10 +119,11 @@ The hallmark of CampusBuddy is the **90-Second Micro-Connection Journey**:
 | **Capacity & Join Constraints** | Full moment prevention, duplicate join blocking, cancelled session blocking | 3 / 3 Passed | ✅ Verified |
 | **Invitation State Machine** | Pending-to-accepted transitions, finality enforcement, capacity checks, duplicate invite prevention | 4 / 4 Passed | ✅ Verified |
 | **Blocking & Privacy** | Pending invite auto-cancellation, mutual join prevention, invite prevention, unblock recovery | 4 / 4 Passed | ✅ Verified |
+| **Moment Creation & Public Landmarks** | Strict public landmark verification, private address rejection, RFC 5545 iCal sanitization | 3 / 3 Passed | ✅ Verified |
 | **E2E Smoke Journey** | 90-second study sprint, partner join, icebreaker shuffle, modal lifecycle, and state persistence | 2 / 2 Passed | ✅ Verified |
-| **Prototype Integrity** | File existence, HTML parity, script compilation, meta tags, WCAG tokens, stopwatch, landmarks, PWA manifest, service worker, spots directory, keyboard hotkeys, console check, Render blueprint | 15 / 15 Passed | ✅ Verified |
-| **Production HTTP Server** | Security headers, JSON health probes (/health, /healthz), path traversal guard, config & source protection, gzip compression, OPTIONS 204, favicon, PWA routes, SPA fallback | 22 / 22 Passed | ✅ Verified |
-| **Total Automated Tests** | **53 Total Test Cases Across 7 Suites** | **53 / 53 Passed (~224ms)** | **100% Green** |
+| **Prototype Integrity** | File existence, HTML parity, script compilation, meta tags, WCAG tokens, stopwatch, landmarks, PWA manifest, service worker, spots directory, keyboard hotkeys, console check, Render blueprint, CSP meta tag, header navigation triggers | 17 / 17 Passed | ✅ Verified |
+| **Production HTTP Server** | Security headers, JSON health probes (/health, /healthz), path traversal guard, config & source protection (render.yaml, vercel.json, .coderabbit.yaml), gzip compression, OPTIONS 204, favicon, PWA routes, SPA fallback | 24 / 24 Passed | ✅ Verified |
+| **Total Automated Tests** | **60 Total Test Cases Across 8 Suites** | **60 / 60 Passed (~224ms)** | **100% Green** |
 
 ---
 

@@ -162,6 +162,9 @@ describe('CampusBuddy Single-File Prototype Integrity', () => {
     const swContent = fs.readFileSync(swPath, 'utf8');
     assert.match(swContent, /addEventListener\('install'/);
     assert.match(swContent, /addEventListener\('fetch'/);
+    assert.match(swContent, /networkRes\.clone\(\)/);
+    assert.match(swContent, /campusbuddy-v\d+/);
+    assert.match(swContent, /event\.request\.mode === 'navigate'/);
   });
 
   test('Campus Spots Directory contains all 6 verified zones with rich metadata', () => {
@@ -201,6 +204,18 @@ describe('CampusBuddy Single-File Prototype Integrity', () => {
     assert.match(renderYaml, /name:\s*campusbuddy-web/);
     assert.match(renderYaml, /name:\s*campusbuddy-app/);
     assert.match(renderYaml, /healthCheckPath:\s*\/health/);
+  });
+
+  test('Content Security Policy meta tag is configured with defense-in-depth directives', () => {
+    assert.match(htmlContent, /<meta http-equiv="Content-Security-Policy"/);
+    assert.match(htmlContent, /default-src 'self'/);
+    assert.match(htmlContent, /script-src 'self' 'unsafe-inline'/);
+    assert.match(htmlContent, /connect-src 'self'/);
+  });
+
+  test('Persistent safety and alerts quick-access navigation triggers are present in header', () => {
+    assert.match(htmlContent, /data-a="tab" data-v="safety"/);
+    assert.match(htmlContent, /data-a="tab" data-v="alerts"/);
   });
 });
 

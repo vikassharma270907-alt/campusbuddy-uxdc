@@ -7,6 +7,9 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -48,5 +51,31 @@ jobs:
           test -f AUDIT_REPORT.md || (echo "Missing AUDIT_REPORT.md" && exit 1)
           test -f package.json || (echo "Missing package.json" && exit 1)
 
-      - name: Run Full CI Quality Gate (Lint, Typecheck, Test Suite & Sync)
+      - name: Run Full CI Quality Gate (Lint, Typecheck, Test Suite, Sync & Dist Build)
         run: npm run ci
+
+      - name: Verify Production Dist Assets
+        run: |
+          test -d dist || (echo "Missing dist directory" && exit 1)
+          test -f dist/index.html || (echo "Missing dist/index.html" && exit 1)
+          test -f dist/campusbuddy.html || (echo "Missing dist/campusbuddy.html" && exit 1)
+          test -f dist/manifest.webmanifest || (echo "Missing dist/manifest.webmanifest" && exit 1)
+          test -f dist/sw.js || (echo "Missing dist/sw.js" && exit 1)
+
+  deploy-render:
+    name: Trigger Render Deployment
+    needs: verify-campusbuddy
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Check & Trigger Render Deploy Hook
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -n "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "Triggering Render deployment webhook..."
+            curl -f -X POST "$RENDER_DEPLOY_HOOK_URL" || echo "Warning: Deploy hook request returned non-200"
+            echo "Render deploy hook triggered successfully."
+          else
+            echo "RENDER_DEPLOY_HOOK_URL secret not set; skipping webhook. (Render auto-deploys via connected Git repository)."
+          fi

@@ -28,7 +28,7 @@ services:
     plan: free
     region: oregon
     buildCommand: npm run build
-    publishPath: .
+    publishPath: dist
     routes:
       - type: rewrite
         source: /*

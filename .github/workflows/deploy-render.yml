@@ -22,7 +22,7 @@ jobs:
         run: |
           test -f render.yaml || (echo "render.yaml not found" && exit 1)
           node -e "
-            import fs from 'node:fs';
+            const fs = require('node:fs');
             const content = fs.readFileSync('render.yaml', 'utf8');
             if (!content.includes('campusbuddy-web') || !content.includes('campusbuddy-app')) {
               console.error('Invalid render.yaml content');

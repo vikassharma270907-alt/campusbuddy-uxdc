@@ -1,5 +1,5 @@
 // CampusBuddy Service Worker - Offline Cache for Campus Wi-Fi Resilience
-const CACHE_NAME = 'campusbuddy-v1';
+const CACHE_NAME = 'campusbuddy-v2';
 const PRECACHE_ASSETS = [
   './',
   './index.html',
@@ -37,20 +37,26 @@ self.addEventListener('fetch', (event) => {
       if (cached) {
         // Return cached and update cache in background
         fetch(event.request).then((networkRes) => {
-          if (networkRes && networkRes.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkRes));
+          if (networkRes && networkRes.status === 200 && (networkRes.type === 'basic' || networkRes.type === 'cors')) {
+            const cloned = networkRes.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cloned));
           }
         }).catch(() => {});
         return cached;
       }
       return fetch(event.request).then((networkRes) => {
-        if (!networkRes || networkRes.status !== 200 || networkRes.type !== 'basic') {
+        if (!networkRes || networkRes.status !== 200 || (networkRes.type !== 'basic' && networkRes.type !== 'cors')) {
           return networkRes;
         }
         const cloned = networkRes.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cloned));
         return networkRes;
-      }).catch(() => caches.match('./index.html'));
+      }).catch(() => {
+        if (event.request.mode === 'navigate') {
+          return caches.match('./index.html');
+        }
+        return caches.match(event.request);
+      });
     })
   );
 });

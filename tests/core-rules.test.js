@@ -260,6 +260,34 @@ export function unblockUser(state, blockerId, targetId) {
   return { ok: true };
 }
 
+export function createMoment(state, hostId, { title, category, day, slot, duration, location, maxAttendees }) {
+  if (!title || title.trim().length < 3) return { ok: false, error: "Give your moment a title of at least 3 characters." };
+  if (!(maxAttendees >= 2 && maxAttendees <= 8)) return { ok: false, error: "Attendee limit must be between 2 and 8." };
+  if (!(duration >= 15 && duration <= 180)) return { ok: false, error: "Duration must be between 15 and 180 minutes." };
+  if (!LOC.includes(location)) return { ok: false, error: "Please select a verified campus public spot from the list." };
+
+  const newAct = {
+    id: "a" + state.n++,
+    t: title.trim(),
+    c: category || "study",
+    desc: "Custom created moment",
+    d: day || "Today",
+    s: slot || "Afternoon",
+    dur: duration,
+    loc: location,
+    max: maxAttendees,
+    host: hostId,
+    ps: [hostId],
+    tags: [category || "study"],
+    sty: "Study-focused",
+    st: "open"
+  };
+  state.acts.unshift(newAct);
+  return { ok: true, act: newAct };
+}
+
+export const sanitizeIcs = str => String(str || "").replace(/[\\;,]/g, "\\$&").replace(/\r\n|\r|\n/g, "\\n");
+
 // ----------------- TEST SUITE -----------------
 
 describe('CampusBuddy Match Scoring Rules', () => {
@@ -428,6 +456,48 @@ describe('Blocking and Safety Constraints', () => {
 
     unblockUser(s, "maya", "dev");
     assert.ok(!isBlocked(s, "maya", "dev"));
+  });
+});
+
+describe('Moment Creation & Public Landmark Constraints', () => {
+  test('Creation rejects moments with unverified or private locations', () => {
+    const s = createInitialState();
+    const res = createMoment(s, "maya", {
+      title: "Private Study Session",
+      category: "study",
+      day: "Today",
+      slot: "Afternoon",
+      duration: 60,
+      location: "Private Dormitory Room 204",
+      maxAttendees: 3
+    });
+    assert.equal(res.ok, false);
+    assert.match(res.error, /verified campus public spot/i);
+  });
+
+  test('Creation accepts moments with verified campus public landmarks and initializes defaults', () => {
+    const s = createInitialState();
+    const initialCount = s.acts.length;
+    const res = createMoment(s, "maya", {
+      title: "Biology Midterm Review",
+      category: "study",
+      day: "Tomorrow",
+      slot: "Morning",
+      duration: 45,
+      location: LOC[0],
+      maxAttendees: 4
+    });
+    assert.equal(res.ok, true);
+    assert.equal(s.acts.length, initialCount + 1);
+    assert.equal(res.act.loc, LOC[0]);
+    assert.equal(res.act.host, "maya");
+    assert.deepEqual(res.act.ps, ["maya"]);
+  });
+
+  test('RFC 5545 iCalendar sanitizer escapes delimiters and multiline CRLF sequences', () => {
+    const raw = "Special chars: , ; \\\r\nLine 2 with \nLine 3";
+    const sanitized = sanitizeIcs(raw);
+    assert.equal(sanitized, "Special chars: \\, \\; \\\\\\nLine 2 with \\nLine 3");
   });
 });
 

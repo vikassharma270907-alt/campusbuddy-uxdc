@@ -2,7 +2,7 @@
 > **"Your campus. Your people. Your moments."**  
 > *A low-pressure, moment-based micro-connection experience for university students.*
 
-[![Automated Core Tests](https://img.shields.io/badge/Tests-53%2F53%20Passing-success?style=flat-square)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc/actions)
+[![Automated Core Tests](https://img.shields.io/badge/Tests-60%2F60%20Passing-success?style=flat-square)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc/actions)
 [![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.2%20AA-blue?style=flat-square)](DESIGN.md)
 [![Theme Support](https://img.shields.io/badge/Theme-Light%20%26%20Dark%20Mode-emerald?style=flat-square)](campusbuddy.html)
 [![PWA Ready](https://img.shields.io/badge/PWA-Offline%20Ready-teal?style=flat-square)](manifest.webmanifest)
@@ -82,43 +82,50 @@ To run all unit, domain-rule, prototype integrity, and server tests:
 npm test
 ```
 
-### Verified Test Results (53/53 Passing across 7 Suites):
+### Verified Test Results (60/60 Passing across 8 Suites):
 ```text
 ▶ CampusBuddy Match Scoring Rules
   ✔ Exact activity match delivers maximum points across all 5 dimensions
   ✔ Partial match calculates exact design default weights
   ✔ Peer Jaccard similarity respects category, time, interest, course and style weights
-✔ CampusBuddy Match Scoring Rules (2.99ms)
+✔ CampusBuddy Match Scoring Rules (2.17ms)
 
 ▶ Capacity and Join Constraints
   ✔ Cannot join when moment is full
   ✔ Cannot join twice (duplicate join prevention)
   ✔ Cannot join a cancelled or finished moment
-✔ Capacity and Join Constraints (1.41ms)
+✔ Capacity and Join Constraints (0.94ms)
 
 ▶ Invitation State Machine Transitions
   ✔ Pending invitation transitions to accepted and updates participants
   ✔ Final invitation states cannot transition again
   ✔ Cannot accept invitation if moment reached capacity before response
   ✔ Duplicate pending invitations are prevented
-✔ Invitation State Machine Transitions (2.19ms)
+✔ Invitation State Machine Transitions (1.64ms)
 
 ▶ Blocking and Safety Constraints
   ✔ Blocking cancels all pending mutual invitations
   ✔ Blocked users cannot join each other’s moments
   ✔ Blocked users cannot invite each other
   ✔ Unblocking removes block state correctly
-✔ Blocking and Safety Constraints (2.70ms)
+✔ Blocking and Safety Constraints (1.58ms)
+
+▶ Moment Creation & Public Landmark Constraints
+  ✔ Creation rejects moments with unverified or private locations
+  ✔ Creation accepts moments with verified campus public landmarks and initializes defaults
+  ✔ RFC 5545 iCalendar sanitizer escapes delimiters and multiline CRLF sequences
+✔ Moment Creation & Public Landmark Constraints (1.02ms)
 
 ▶ CampusBuddy End-to-End User Journey Smoke Suite
   ✔ E2E Gate 1: HTTP server serves production index.html and health endpoint
   ✔ E2E Gate 2: Full 90-Second Sprint & Application Lifecycle Flow
-✔ CampusBuddy End-to-End User Journey Smoke Suite (36.01ms)
+✔ CampusBuddy End-to-End User Journey Smoke Suite (60.50ms)
 
 ▶ CampusBuddy Single-File Prototype Integrity
   ✔ campusbuddy.html file exists and has healthy size
   ✔ index.html and campusbuddy.html are identical in content
   ✔ All required meta tags, viewport, fonts, and title are present
+  ✔ All application tab views render without runtime ReferenceErrors or exceptions
   ✔ Extract and compile embedded JavaScript without syntax errors
   ✔ Theme toggle and CSS variable tokens are defined for Light and Dark modes
   ✔ The 90-Second Micro-Connection journey is implemented with real timer & flow
@@ -128,10 +135,16 @@ npm test
   ✔ Progressive Web App (PWA) manifest and service worker exist with valid configuration
   ✔ Campus Spots Directory contains all 6 verified zones with rich metadata
   ✔ Cross-tab synchronization and keyboard navigation shortcuts are registered
-✔ CampusBuddy Single-File Prototype Integrity (15.93ms)
+  ✔ Zero console.log/console.debug in production prototype code
+  ✔ Render Blueprint specification defines both web service and static site
+  ✔ Content Security Policy meta tag is configured with defense-in-depth directives
+  ✔ Persistent safety and alerts quick-access navigation triggers are present in header
+✔ CampusBuddy Single-File Prototype Integrity (25.57ms)
 
 ▶ CampusBuddy Production HTTP Server
   ✔ GET / serves index.html with 200 OK and security headers
+  ✔ GET / with Accept-Encoding: gzip compresses response transparently
+  ✔ OPTIONS / returns 204 No Content with Allow headers
   ✔ GET /health returns 200 OK with valid JSON status payload
   ✔ GET /favicon.ico returns 200 OK with valid SVG icon payload
   ✔ GET /healthz returns 200 OK matching kubernetes/cloud standard
@@ -139,23 +152,23 @@ npm test
   ✔ POST / returns 405 Method Not Allowed
   ✔ GET /.git/config returns 403 Forbidden
   ✔ GET /render.yaml returns 403 Forbidden
+  ✔ GET /vercel.json returns 403 Forbidden
+  ✔ GET /.coderabbit.yaml returns 403 Forbidden
   ✔ GET /package-lock.json returns 403 Forbidden
-  ✔ GET /nonexistent-image.png returns 404 Not Found instead of SPA fallback
-  ✔ Malformed URI sequence returns 400 Bad Request
-  ✔ Null-byte sequence returns 400 Bad Request
-  ✔ GET / with Accept-Encoding: gzip compresses response transparently
-  ✔ OPTIONS / returns 204 No Content with Allow headers
   ✔ GET /server.js returns 403 Forbidden (source code protection)
   ✔ GET /scripts/sync-html.js returns 403 Forbidden (internal scripts blocked)
   ✔ GET /tests/server.test.js returns 403 Forbidden (test harness blocked)
+  ✔ GET /nonexistent-image.png returns 404 Not Found instead of SPA fallback
+  ✔ Malformed URI sequence returns 400 Bad Request
+  ✔ Null-byte sequence returns 400 Bad Request
   ✔ GET /campusbuddy.html directly serves the standalone prototype
   ✔ GET /manifest.webmanifest returns 200 OK with correct MIME type
   ✔ GET /sw.js returns 200 OK with javascript MIME type
   ✔ GET /DESIGN.md returns markdown with correct MIME type
   ✔ GET /non-existent-route returns index.html fallback for SPA routing
-✔ CampusBuddy Production HTTP Server (64.05ms)
+✔ CampusBuddy Production HTTP Server (115.65ms)
 
-ℹ tests 53 | suites 7 | pass 53 | fail 0 | cancelled 0 | duration_ms 224.9ms
+ℹ tests 60 | suites 8 | pass 60 | fail 0 | cancelled 0 | duration_ms 279.5ms
 ```
 
 ---

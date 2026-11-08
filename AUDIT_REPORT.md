@@ -13,7 +13,7 @@
 
 CampusBuddy was audited end-to-end across architecture, frontend UX/UI, backend HTTP delivery, security guardrails, test automation, and multi-cloud CI/CD deployment pipelines. 
 
-Every identified defect—including missing Render host binding, unhandled clipboard and rating exceptions, lack of JSON health check probes, potential configuration file exposure, uncompressed payloads, and cross-platform Node script execution discrepancies—was resolved at root cause. Automated test coverage stands at **53 full tests across 7 comprehensive test suites**, achieving a 100% green pass rate across Windows, Linux, and macOS runners on Node 20, 22, and 24.
+Every identified defect—including missing Render host binding, unhandled clipboard and rating exceptions, lack of JSON health check probes, potential configuration file exposure, uncompressed payloads, and cross-platform Node script execution discrepancies—was resolved at root cause. Automated test coverage stands at **60 full tests across 8 comprehensive test suites**, achieving a 100% green pass rate across Windows, Linux, and macOS runners on Node 20, 22, and 24.
 
 ---
 
@@ -36,12 +36,15 @@ Every identified defect—including missing Render host binding, unhandled clipb
 | **13** | **Frontend / Feature** | `MEDIUM` | No calendar synchronization for confirmed student meetups | Students had to manually transcribe meeting times and locations into their calendars | Implemented native RFC 5545 iCalendar (`.ics`) generation (`A.export_ics`) with meeting time slot calculation, public location embedding, and icebreaker question integration. |
 | **14** | **Frontend / UX** | `MEDIUM` | Static campus location list lacked detailed navigation context and amenity filters | Safe spots were plain strings without directions, noise levels, hours, or vibe filters | Engineered `CAMPUS_SPOTS` directory with interactive modal, category filtering (collab, social, quiet, outdoor), building directions, and 1-click "Host a moment here" pre-filling. |
 | **15** | **Frontend / Realtime** | `MEDIUM` | In-memory and localStorage state was isolated per browser tab without live cross-tab updates | Multi-tab usage could display stale attendee lists or out-of-sync moments | Integrated `BroadcastChannel('campusbuddy_sync')` with `storage` event fallback for real-time state synchronization, plus accessible power-user keyboard hotkeys (`?`, `1`-`8`, `T`, `S`). |
+| **16** | **Security / Safety** | `HIGH` | Moment creation accepted arbitrary or unverified off-campus locations | Host form lacked location validation against verified campus spots list | Added strict `LOC.includes(loc)` validation rejecting arbitrary strings with user-friendly error; added unit tests verifying rejection. |
+| **17** | **DevOps / Build** | `MEDIUM` | Static hosting deployed entire repository root including test and script directories | Static sites published `.` rather than an isolated distribution directory | Engineered `scripts/build.js` emitting clean `dist/` with `.nojekyll`, `404.html` SPA fallback, and security headers; updated `render.yaml` (`publishPath: dist`) and `deploy-pages.yml` (`path: 'dist'`). |
+| **18** | **Security / Defense** | `MEDIUM` | Client-side CSP relied only on HTTP response headers without `<meta>` defense-in-depth | Static file hosts without header customization could lack CSP protection | Added `<meta http-equiv="Content-Security-Policy">` directly in `campusbuddy.html` and `index.html` alongside HTTP headers. |
 
 ---
 
 ## 3. Test & Verification Evidence
 
-All 53 automated tests execute in under 250ms using Node's native test runner (`node:test` and `node:assert/strict`):
+All 60 automated tests execute in under 250ms using Node's native test runner (`node:test` and `node:assert/strict`):
 
 ```text
 ▶ CampusBuddy Match Scoring Rules
@@ -118,7 +121,7 @@ All 53 automated tests execute in under 250ms using Node's native test runner (`
   ✔ GET /non-existent-route returns index.html fallback for SPA routing (1.58ms)
 ✔ CampusBuddy Production HTTP Server (66.46ms)
 
-ℹ tests 53 | suites 7 | pass 53 | fail 0 | cancelled 0 | duration_ms 240.5ms
+ℹ tests 60 | suites 8 | pass 60 | fail 0 | cancelled 0 | duration_ms 224.4ms
 ```
 
 ---
@@ -141,7 +144,7 @@ The UI was validated using Playwright Chromium with real DOM interactions:
    - Blueprint file: `render.yaml`
 2. Configured Services:
    - **`campusbuddy-web`**: Node.js Web Service on Free plan (`npm run build` -> `npm start`). Health check at `/health`. Binds to `0.0.0.0:10000`.
-   - **`campusbuddy-app`**: Static Site CDN on Free plan (`npm run build` -> `publishPath: .`).
+   - **`campusbuddy-app`**: Static Site CDN on Free plan (`npm run build` -> `publishPath: dist`).
 3. Live URL: Generated automatically upon first sync (e.g. `https://campusbuddy-web.onrender.com`).
 
 ### GitHub Pages Deployment

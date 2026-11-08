@@ -129,6 +129,18 @@ describe('CampusBuddy Production HTTP Server', () => {
     assert.match(res.body, /Forbidden/);
   });
 
+  test('GET /vercel.json returns 403 Forbidden', async () => {
+    const res = await get('/vercel.json');
+    assert.equal(res.status, 403);
+    assert.match(res.body, /Forbidden/);
+  });
+
+  test('GET /.coderabbit.yaml returns 403 Forbidden', async () => {
+    const res = await get('/.coderabbit.yaml');
+    assert.equal(res.status, 403);
+    assert.match(res.body, /Forbidden/);
+  });
+
   test('GET /package-lock.json returns 403 Forbidden', async () => {
     const res = await get('/package-lock.json');
     assert.equal(res.status, 403);
@@ -187,10 +199,11 @@ describe('CampusBuddy Production HTTP Server', () => {
     assert.equal(data.name, 'CampusBuddy');
   });
 
-  test('GET /sw.js returns 200 OK with javascript MIME type', async () => {
+  test('GET /sw.js returns 200 OK with javascript MIME type and no-cache control', async () => {
     const res = await get('/sw.js');
     assert.equal(res.status, 200);
     assert.match(res.headers['content-type'], /application\/javascript/);
+    assert.match(res.headers['cache-control'], /no-cache/);
     assert.match(res.body, /addEventListener/);
   });
 

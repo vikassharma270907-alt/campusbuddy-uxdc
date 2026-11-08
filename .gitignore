@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+dist/
 
 # Local IDE & Antigravity Agent Junctions
 .agents/
@@ -14,6 +15,7 @@ coverage/
 .DS_Store
 Thumbs.db
 *.log
+*.mp3
 .npm/
 
 # Temporary research or build clones
