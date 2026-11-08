@@ -48,6 +48,13 @@ try:
         if capsule_count > 0:
             capsule.first.screenshot(path="assets/screenshots/capsule_fixed.png")
             print("Captured assets/screenshots/capsule_fixed.png!")
+            
+            b = page.locator('.capsule-badge').bounding_box()
+            c = page.locator('.capsule-content').bounding_box()
+            a = page.locator('.capsule-actions').bounding_box()
+            print(f"Badge: {b}")
+            print(f"Content: {c}")
+            print(f"Actions: {a}")
         
         page.screenshot(path="assets/screenshots/today_page_fixed.png")
         print("Captured assets/screenshots/today_page_fixed.png!")
