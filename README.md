@@ -2,7 +2,7 @@
 > **"Your campus. Your people. Your moments."**  
 > *A low-pressure, moment-based micro-connection experience for university students.*
 
-[![Automated Core Tests](https://img.shields.io/badge/Tests-46%2F46%20Passing-success?style=flat-square)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc/actions)
+[![Automated Core Tests](https://img.shields.io/badge/Tests-51%2F51%20Passing-success?style=flat-square)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc/actions)
 [![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.2%20AA-blue?style=flat-square)](DESIGN.md)
 [![Theme Support](https://img.shields.io/badge/Theme-Light%20%26%20Dark%20Mode-emerald?style=flat-square)](campusbuddy.html)
 [![PWA Ready](https://img.shields.io/badge/PWA-Offline%20Ready-teal?style=flat-square)](manifest.webmanifest)
@@ -143,14 +143,19 @@ npm test
   ✔ GET /nonexistent-image.png returns 404 Not Found instead of SPA fallback
   ✔ Malformed URI sequence returns 400 Bad Request
   ✔ Null-byte sequence returns 400 Bad Request
+  ✔ GET / with Accept-Encoding: gzip compresses response transparently
+  ✔ OPTIONS / returns 204 No Content with Allow headers
+  ✔ GET /server.js returns 403 Forbidden (source code protection)
+  ✔ GET /scripts/sync-html.js returns 403 Forbidden (internal scripts blocked)
+  ✔ GET /tests/server.test.js returns 403 Forbidden (test harness blocked)
   ✔ GET /campusbuddy.html directly serves the standalone prototype
   ✔ GET /manifest.webmanifest returns 200 OK with correct MIME type
   ✔ GET /sw.js returns 200 OK with javascript MIME type
   ✔ GET /DESIGN.md returns markdown with correct MIME type
   ✔ GET /non-existent-route returns index.html fallback for SPA routing
-✔ CampusBuddy Production HTTP Server (47.40ms)
+✔ CampusBuddy Production HTTP Server (64.05ms)
 
-ℹ tests 46 | suites 7 | pass 46 | fail 0 | cancelled 0 | duration_ms 184.5ms
+ℹ tests 51 | suites 7 | pass 51 | fail 0 | cancelled 0 | duration_ms 208.1ms
 ```
 
 ---

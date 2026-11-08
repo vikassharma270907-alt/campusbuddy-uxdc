@@ -1,7 +1,11 @@
 import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
+import zlib from 'node:zlib';
+import { promisify } from 'node:util';
 import { createServer } from '../server.js';
+
+const gunzip = promisify(zlib.gunzip);
 
 describe('CampusBuddy Production HTTP Server', () => {
   let testPort;
@@ -28,15 +32,23 @@ describe('CampusBuddy Production HTTP Server', () => {
 
   const request = (urlPath, options = {}) => new Promise((resolve, reject) => {
     const req = http.request(`http://127.0.0.1:${testPort}${urlPath}`, options, (res) => {
-      let data = '';
-      res.on('data', chunk => { data += chunk; });
-      res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body: data }));
+      const chunks = [];
+      res.on('data', chunk => { chunks.push(chunk); });
+      res.on('end', () => {
+        const buffer = Buffer.concat(chunks);
+        resolve({
+          status: res.statusCode,
+          headers: res.headers,
+          rawBuffer: buffer,
+          body: buffer.toString('utf8')
+        });
+      });
     });
     req.on('error', reject);
     req.end();
   });
 
-  const get = (urlPath) => request(urlPath, { method: 'GET' });
+  const get = (urlPath, headers = {}) => request(urlPath, { method: 'GET', headers });
 
   test('GET / serves index.html with 200 OK and security headers', async () => {
     const res = await get('/');
@@ -45,9 +57,26 @@ describe('CampusBuddy Production HTTP Server', () => {
     assert.equal(res.headers['x-content-type-options'], 'nosniff');
     assert.equal(res.headers['x-frame-options'], 'SAMEORIGIN');
     assert.equal(res.headers['referrer-policy'], 'strict-origin-when-cross-origin');
+    assert.equal(res.headers['cross-origin-opener-policy'], 'same-origin');
+    assert.equal(res.headers['x-xss-protection'], '1; mode=block');
+    assert.match(res.headers['content-security-policy'], /default-src/);
     assert.match(res.headers['permissions-policy'], /geolocation=/);
     assert.match(res.body, /<title>CampusBuddy/);
     assert.match(res.body, /90-Second Micro-Connection Sprint/);
+  });
+
+  test('GET / with Accept-Encoding: gzip compresses response transparently', async () => {
+    const res = await get('/', { 'Accept-Encoding': 'gzip' });
+    assert.equal(res.status, 200);
+    assert.equal(res.headers['content-encoding'], 'gzip');
+    const decompressed = await gunzip(res.rawBuffer);
+    assert.match(decompressed.toString('utf8'), /<title>CampusBuddy/);
+  });
+
+  test('OPTIONS / returns 204 No Content with Allow headers', async () => {
+    const res = await request('/', { method: 'OPTIONS' });
+    assert.equal(res.status, 204);
+    assert.match(res.headers.allow, /GET, HEAD, OPTIONS/);
   });
 
   test('GET /health returns 200 OK with valid JSON status payload', async () => {
@@ -85,7 +114,7 @@ describe('CampusBuddy Production HTTP Server', () => {
   test('POST / returns 405 Method Not Allowed', async () => {
     const res = await request('/', { method: 'POST' });
     assert.equal(res.status, 405);
-    assert.equal(res.headers.allow, 'GET, HEAD');
+    assert.match(res.headers.allow, /GET, HEAD, OPTIONS/);
   });
 
   test('GET /.git/config returns 403 Forbidden', async () => {
@@ -102,6 +131,24 @@ describe('CampusBuddy Production HTTP Server', () => {
 
   test('GET /package-lock.json returns 403 Forbidden', async () => {
     const res = await get('/package-lock.json');
+    assert.equal(res.status, 403);
+    assert.match(res.body, /Forbidden/);
+  });
+
+  test('GET /server.js returns 403 Forbidden (source code protection)', async () => {
+    const res = await get('/server.js');
+    assert.equal(res.status, 403);
+    assert.match(res.body, /Forbidden/);
+  });
+
+  test('GET /scripts/sync-html.js returns 403 Forbidden (internal scripts blocked)', async () => {
+    const res = await get('/scripts/sync-html.js');
+    assert.equal(res.status, 403);
+    assert.match(res.body, /Forbidden/);
+  });
+
+  test('GET /tests/server.test.js returns 403 Forbidden (test harness blocked)', async () => {
+    const res = await get('/tests/server.test.js');
     assert.equal(res.status, 403);
     assert.match(res.body, /Forbidden/);
   });

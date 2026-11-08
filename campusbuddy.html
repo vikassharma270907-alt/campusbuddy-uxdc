@@ -1181,9 +1181,11 @@
     const note = (to, txt) => S.notes.unshift({ to, txt, r: 0 });
     const blocked = (a, b) => S.blocks.some(x => (x[0] === a && x[1] === b) || (x[0] === b && x[1] === a));
     const jac = (a, b) => {
-      if (!a.length && !b.length) return 0;
-      const i = a.filter(x => b.includes(x)).length;
-      return i / Math.max(1, new Set([...a, ...b]).size);
+      const arrA = Array.isArray(a) ? a : [];
+      const arrB = Array.isArray(b) ? b : [];
+      if (!arrA.length && !arrB.length) return 0;
+      const i = arrA.filter(x => arrB.includes(x)).length;
+      return i / Math.max(1, new Set([...arrA, ...arrB]).size);
     };
 
     // =========================================================================
@@ -1191,25 +1193,30 @@
     // Weights: Activity: 30, Availability: 25, Interests: 20, Course: 15, Style: 10
     // =========================================================================
     function score(uid, a) {
-      const u = S.users[uid];
-      const h = S.users[a.host];
+      const u = S.users && S.users[uid];
+      if (!u || !a) return { s: 0, why: [] };
+      const h = S.users && S.users[a.host];
       const why = [];
       let total = 0;
 
       // 1. Activity Compatibility (30 pts)
-      const c = u.cats.includes(a.c);
+      const uCats = Array.isArray(u.cats) ? u.cats : [];
+      const c = uCats.includes(a.c);
       total += 30 * (c ? 1 : 0.3);
-      if (c) why.push(`${CATS[a.c]} is one of your go-to activities (+30).`);
+      if (c && CATS[a.c]) why.push(`${CATS[a.c]} is one of your go-to activities (+30).`);
 
       // 2. Availability Overlap (25 pts)
-      const av = u.av.includes(a.s);
+      const uAv = Array.isArray(u.av) ? u.av : [];
+      const av = uAv.includes(a.s);
       if (av) {
         total += 25;
-        why.push(`You’re free ${a.d === "Today" ? "today" : "tomorrow"} ${a.s.toLowerCase()} (+25).`);
+        why.push(`You’re free ${a.d === "Today" ? "today" : "tomorrow"} ${String(a.s || '').toLowerCase()} (+25).`);
       }
 
       // 3. Shared Interests / Topic Overlap (20 pts)
-      const io = a.tags.filter(x => u.int.includes(x));
+      const uInt = Array.isArray(u.int) ? u.int : [];
+      const aTags = Array.isArray(a.tags) ? a.tags : [];
+      const io = aTags.filter(x => uInt.includes(x));
       if (io.length) {
         total += 20;
         why.push(`Shared interests: ${io.join(", ")} (+20).`);
@@ -1222,9 +1229,10 @@
       }
 
       // 5. Interaction Style (10 pts)
-      if (u.sty.includes(a.sty)) {
+      const uSty = Array.isArray(u.sty) ? u.sty : [];
+      if (a.sty && uSty.includes(a.sty)) {
         total += 10;
-        why.push(`Matches your style: ${a.sty.toLowerCase()} (+10).`);
+        why.push(`Matches your style: ${String(a.sty || '').toLowerCase()} (+10).`);
       }
 
       return { s: Math.round(total), why };
@@ -1232,23 +1240,33 @@
 
     // Person-to-person similarity (Jaccard + common course)
     function scoreP(uid, oid) {
-      const u = S.users[uid];
-      const o = S.users[oid];
+      const u = S.users && S.users[uid];
+      const o = S.users && S.users[oid];
+      if (!u || !o) return { s: 0, why: [] };
       const why = [];
-      const sc = 30 * jac(u.cats, o.cats) +
-                 25 * jac(u.av, o.av) +
-                 20 * jac(u.int, o.int) +
-                 (u.course === o.course ? 15 : 0) +
-                 10 * jac(u.sty, o.sty);
+      const uCats = Array.isArray(u.cats) ? u.cats : [];
+      const oCats = Array.isArray(o.cats) ? o.cats : [];
+      const uAv = Array.isArray(u.av) ? u.av : [];
+      const oAv = Array.isArray(o.av) ? o.av : [];
+      const uInt = Array.isArray(u.int) ? u.int : [];
+      const oInt = Array.isArray(o.int) ? o.int : [];
+      const uSty = Array.isArray(u.sty) ? u.sty : [];
+      const oSty = Array.isArray(o.sty) ? o.sty : [];
 
-      const ci = u.cats.filter(x => o.cats.includes(x));
-      const ai = u.av.filter(x => o.av.includes(x));
-      const ii = u.int.filter(x => o.int.includes(x));
+      const sc = 30 * jac(uCats, oCats) +
+                 25 * jac(uAv, oAv) +
+                 20 * jac(uInt, oInt) +
+                 (u.course && o.course && u.course === o.course ? 15 : 0) +
+                 10 * jac(uSty, oSty);
 
-      if (ci.length) why.push(`You both like ${ci.map(x => CATS[x].toLowerCase()).join(" and ")}.`);
+      const ci = uCats.filter(x => oCats.includes(x));
+      const ai = uAv.filter(x => oAv.includes(x));
+      const ii = uInt.filter(x => oInt.includes(x));
+
+      if (ci.length) why.push(`You both like ${ci.map(x => (CATS[x] || x).toLowerCase()).join(" and ")}.`);
       if (ai.length) why.push(`You’re both free in the ${ai.join(" and ").toLowerCase()}.`);
       if (ii.length) why.push(`You share interests in ${ii.join(", ")}.`);
-      if (u.course === o.course) why.push(`You’re both in ${u.course}.`);
+      if (u.course && o.course && u.course === o.course) why.push(`You’re both in ${u.course}.`);
 
       return { s: Math.round(sc), why };
     }
@@ -2190,9 +2208,20 @@
         }
         R();
       },
-      chip(v) {
-        const [k, x] = v.split("|");
-        const list = S.users[S.me][k];
+      chip(keyOrCombined, maybeValue) {
+        let k, x;
+        if (maybeValue !== undefined) {
+          k = keyOrCombined;
+          x = maybeValue;
+        } else if (typeof keyOrCombined === "string" && keyOrCombined.includes("|")) {
+          [k, x] = keyOrCombined.split("|");
+        } else {
+          return;
+        }
+        const user = S.users && S.users[S.me];
+        if (!user || !k || x === undefined) return;
+        if (!Array.isArray(user[k])) user[k] = [];
+        const list = user[k];
         const idx = list.indexOf(x);
         if (idx < 0) list.push(x);
         else list.splice(idx, 1);
@@ -2526,8 +2555,8 @@
         toast(u.vis ? "Profile is now visible." : "Profile is now hidden.");
         R();
       },
-      block() {
-        const target = $("#bl") ? $("#bl").value : "";
+      block(explicitTarget) {
+        const target = explicitTarget || ($("#bl") ? $("#bl").value : "");
         if (!target || !S.users[target] || target === S.me) return;
         if (!blocked(S.me, target)) {
           S.blocks.push([S.me, target]);
@@ -2541,19 +2570,24 @@
             i.s = "cancelled";
           }
         });
-        toast(`Blocked ${S.users[target].n}.`);
+        const targetName = (S.users && S.users[target] && S.users[target].n) || target;
+        toast(`Blocked ${targetName}.`);
         R();
       },
-      unblock(target) {
+      unblock(explicitTarget) {
+        const target = explicitTarget || ($("#unbl") ? $("#unbl").value : "");
+        if (!target) return;
         S.blocks = S.blocks.filter(b => !(b[0] === S.me && b[1] === target));
-        toast(`Unblocked ${S.users[target].n}.`);
+        const targetName = (S.users && S.users[target] && S.users[target].n) || target;
+        toast(`Unblocked ${targetName}.`);
         R();
       },
-      report() {
-        const who = $("#rp-w") ? $("#rp-w").value : "";
-        const why = $("#rp-y") ? $("#rp-y").value : "";
-        const text = $("#rp-t") ? $("#rp-t").value.trim() : "";
+      report(explicitWho, explicitWhy, explicitText) {
+        const who = explicitWho || ($("#rp-w") ? $("#rp-w").value : "");
+        const why = explicitWhy || ($("#rp-y") ? $("#rp-y").value : "Other");
+        const text = explicitText || ($("#rp-t") ? $("#rp-t").value.trim() : "");
         if (!who) return toast("Select a student to report.");
+        if (!Array.isArray(S.reports)) S.reports = [];
         S.reports.push({
           by: S.me,
           who: who,

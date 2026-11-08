@@ -33,7 +33,7 @@ const MIME_TYPES = {
 
 const STATIC_EXTENSIONS = new Set(Object.keys(MIME_TYPES));
 const COMPRESSIBLE_EXTENSIONS = new Set(['.html', '.css', '.js', '.mjs', '.json', '.svg', '.txt', '.md', '.webmanifest', '.ics']);
-const BLOCKED_FILES = new Set(['render.yaml', 'package.json', 'package-lock.json', '.env', '.env.example', 'server.js', '.coderabbit.yaml']);
+const BLOCKED_FILES = new Set(['render.yaml', 'vercel.json', 'package.json', 'package-lock.json', '.env', '.env.example', 'server.js', '.coderabbit.yaml']);
 const BLOCKED_DIRS = new Set(['tests', 'scripts', '.git', '.github', '.vscode', '.agents']);
 
 function createServer() {

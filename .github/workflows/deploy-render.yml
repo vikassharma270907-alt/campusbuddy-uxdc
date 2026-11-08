@@ -1,0 +1,44 @@
+name: Render Cloud Deployment Gate
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  validate-and-deploy:
+    name: Validate Blueprint & Trigger Render Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Validate Render Blueprint Specification
+        run: |
+          test -f render.yaml || (echo "render.yaml not found" && exit 1)
+          node -e "
+            import fs from 'node:fs';
+            const content = fs.readFileSync('render.yaml', 'utf8');
+            if (!content.includes('campusbuddy-web') || !content.includes('campusbuddy-app')) {
+              console.error('Invalid render.yaml content');
+              process.exit(1);
+            }
+            console.log('render.yaml Blueprint specification validated cleanly.');
+          "
+
+      - name: Trigger Render Deploy Hook (if secret configured)
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -n "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "Triggering Render deployment via deploy hook..."
+            curl -f -X POST "$RENDER_DEPLOY_HOOK_URL"
+            echo "Render deploy hook triggered successfully."
+          else
+            echo "RENDER_DEPLOY_HOOK_URL secret is not set. Render will auto-deploy via GitHub integration or 1-click Blueprint."
+          fi

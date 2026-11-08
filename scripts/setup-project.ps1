@@ -47,6 +47,7 @@ $MasterNaming = Join-Path -Path $PluginsBase -ChildPath 'naming'
 $MasterMotion = Join-Path -Path $PluginsBase -ChildPath 'motion-skills'
 $MasterUiUxProMax = Join-Path -Path $PluginsBase -ChildPath 'ui-ux-pro-max'
 $MasterVercel = Join-Path -Path $PluginsBase -ChildPath 'vercel-agent-skills'
+$MasterUnslop = Join-Path -Path $PluginsBase -ChildPath 'unslop'
 
 $MasterSkills = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\skills'
 $ProjectsJsonPath = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\projects.json'
@@ -498,7 +499,7 @@ jobs:
             'styleseed', 'fable-mode', 'naming', 'motion-skills', 'coderabbit', 'firebase',
             'wispr-flow', 'ralph', 'graphify', 'laya', 'get-shit-done', 'armorantigravity',
             'ponytail', 'agent-reach', 'lemo-opuscar', 'agent-skills', 'context7', 'skillspector',
-            'strix', 'taste-skill', 'design-motion-principles', 'magic'
+            'strix', 'taste-skill', 'design-motion-principles', 'magic', 'unslop'
         )
         sourceVersion = '3.0.0'
     }
@@ -543,6 +544,7 @@ jobs:
     Write-Host "  - Tasteskill & Motion: Active (figma & x.ai bar, design-motion-principles, Emil Kowalski / Jakub Krehel physics)"
     Write-Host "  - Strix Autonomous Pentesting: Active (9 security skills, OWASP Top 10, API testing, PoC exploit validation, strix 1.7.0 CLI)"
     Write-Host "  - NVIDIA SkillSpector: Active (71 vulnerability patterns, pre-install static vetting, semantic source review, skillspector MCP server)"
+    Write-Host "  - Unslop Anti-Slop UI Craft: Active (/unslop, unslop, unslop-reviewer, unslop-designer, 8-pass redline craft engine)"
     Write-Host "  - Context7 Live Docs: Active (resolve-library-id, query-docs, ctx7 CLI, docs-researcher agent, auto-grounding for all libraries)"
     Write-Host "  - MCP Servers: Active (.mcp.json configured with Figma, Laya, Context7, Magic, 21st & SkillSpector)"
     Write-Host "  - Ralph Scaffolding: Active (scripts\ralph\ralph.ps1, ralph.sh)"

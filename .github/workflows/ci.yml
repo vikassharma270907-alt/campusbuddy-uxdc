@@ -1,4 +1,4 @@
-﻿name: CampusBuddy CI & Quality Gate
+name: CampusBuddy CI & Quality Gate
 
 on:
   push:
@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   verify-campusbuddy:
@@ -17,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         node-version: ['20.x', '22.x', '24.x']
 
     steps:
@@ -28,8 +32,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
 
       - name: Verify Project Deliverables Exist
         run: |

@@ -3,13 +3,13 @@
 # Docs: https://render.com/docs/blueprint-spec
 
 services:
-  # Option 1: Lightweight Node.js Production Web Service (with HTTP security headers)
+  # Option 1: Lightweight Node.js Production Web Service (with HTTP security headers & Gzip)
   - type: web
     name: campusbuddy-web
     runtime: node
     plan: free
     region: oregon
-    buildCommand: npm install && npm run build
+    buildCommand: npm run build
     startCommand: npm start
     healthCheckPath: /health
     envVars:
@@ -19,8 +19,6 @@ services:
         value: 10000
       - key: HOST
         value: 0.0.0.0
-      - key: NODE_VERSION
-        value: "22"
 
   # Option 2: Standalone Static Site CDN Deployment
   - type: static
