@@ -33,12 +33,14 @@ Every identified defect—including missing Render host binding, unhandled clipb
 | **10** | **QA / Testing** | `HIGH` | No automated end-to-end user journey test suite | Tests only covered isolated scoring formulas without asserting the full 90-second user flow | Developed `tests/e2e-smoke.test.js` validating the entire 90-second sprint from landing to match recommendation, attendee join, icebreaker shuffle, plans verification, and localStorage serialization. |
 | **11** | **Frontend / Offline** | `MEDIUM` | Offline fragility on intermittent campus Wi-Fi (e.g. library stacks, basement study zones) | No Service Worker or Progressive Web App manifest existed | Implemented `manifest.webmanifest` and `sw.js` with stale-while-revalidate caching and standalone PWA display mode. |
 | **12** | **Frontend / Feature** | `MEDIUM` | No calendar synchronization for confirmed student meetups | Students had to manually transcribe meeting times and locations into their calendars | Implemented native RFC 5545 iCalendar (`.ics`) generation (`A.export_ics`) with meeting time slot calculation, public location embedding, and icebreaker question integration. |
+| **13** | **Frontend / UX** | `MEDIUM` | Static campus location list lacked detailed navigation context and amenity filters | Safe spots were plain strings without directions, noise levels, hours, or vibe filters | Engineered `CAMPUS_SPOTS` directory with interactive modal, category filtering (collab, social, quiet, outdoor), building directions, and 1-click "Host a moment here" pre-filling. |
+| **14** | **Frontend / Realtime** | `MEDIUM` | In-memory and localStorage state was isolated per browser tab without live cross-tab updates | Multi-tab usage could display stale attendee lists or out-of-sync moments | Integrated `BroadcastChannel('campusbuddy_sync')` with `storage` event fallback for real-time state synchronization, plus accessible power-user keyboard hotkeys (`?`, `1`-`8`, `T`, `S`). |
 
 ---
 
 ## 3. Test & Verification Evidence
 
-All 43 automated tests execute in under 200ms using Node's native test runner (`node:test` and `node:assert/strict`):
+All 46 automated tests execute in under 200ms using Node's native test runner (`node:test` and `node:assert/strict`):
 
 ```text
 ▶ CampusBuddy Match Scoring Rules
@@ -81,31 +83,33 @@ All 43 automated tests execute in under 200ms using Node's native test runner (`
   ✔ The 90-Second Micro-Connection journey is implemented with real timer & flow (0.19ms)
   ✔ Safe campus public spots are verified and disclaimers are present (0.16ms)
   ✔ WCAG AA accessibility landmarks, ARIA attributes and roles are verified (0.19ms)
-  ✔ All required actions (A object) are defined (2.07ms)
-  ✔ Progressive Web App (PWA) manifest and service worker exist with valid configuration (0.92ms)
-✔ CampusBuddy Single-File Prototype Integrity (9.64ms)
+  ✔ All required actions (A object) are defined (1.40ms)
+  ✔ Progressive Web App (PWA) manifest and service worker exist with valid configuration (0.56ms)
+  ✔ Campus Spots Directory contains all 6 verified zones with rich metadata (0.21ms)
+  ✔ Cross-tab synchronization and keyboard navigation shortcuts are registered (0.14ms)
+✔ CampusBuddy Single-File Prototype Integrity (15.93ms)
 
 ▶ CampusBuddy Production HTTP Server
-  ✔ GET / serves index.html with 200 OK and security headers (27.08ms)
-  ✔ GET /health returns 200 OK with valid JSON status payload (1.58ms)
-  ✔ GET /favicon.ico returns 200 OK with valid SVG icon payload (0.99ms)
-  ✔ GET /healthz returns 200 OK matching kubernetes/cloud standard (1.04ms)
-  ✔ HEAD /health returns 200 OK with empty body (1.20ms)
-  ✔ POST / returns 405 Method Not Allowed (2.48ms)
-  ✔ GET /.git/config returns 403 Forbidden (2.02ms)
-  ✔ GET /render.yaml returns 403 Forbidden (0.92ms)
-  ✔ GET /package-lock.json returns 403 Forbidden (0.94ms)
-  ✔ GET /nonexistent-image.png returns 404 Not Found instead of SPA fallback (0.97ms)
-  ✔ Malformed URI sequence returns 400 Bad Request (0.75ms)
-  ✔ Null-byte sequence returns 400 Bad Request (0.56ms)
-  ✔ GET /campusbuddy.html directly serves the standalone prototype (1.96ms)
-  ✔ GET /manifest.webmanifest returns 200 OK with correct MIME type (1.37ms)
-  ✔ GET /sw.js returns 200 OK with javascript MIME type (1.01ms)
-  ✔ GET /DESIGN.md returns markdown with correct MIME type (1.01ms)
-  ✔ GET /non-existent-route returns index.html fallback for SPA routing (1.31ms)
-✔ CampusBuddy Production HTTP Server (52.18ms)
+  ✔ GET / serves index.html with 200 OK and security headers (23.09ms)
+  ✔ GET /health returns 200 OK with valid JSON status payload (1.64ms)
+  ✔ GET /favicon.ico returns 200 OK with valid SVG icon payload (1.01ms)
+  ✔ GET /healthz returns 200 OK matching kubernetes/cloud standard (0.93ms)
+  ✔ HEAD /health returns 200 OK with empty body (1.41ms)
+  ✔ POST / returns 405 Method Not Allowed (2.69ms)
+  ✔ GET /.git/config returns 403 Forbidden (1.73ms)
+  ✔ GET /render.yaml returns 403 Forbidden (1.21ms)
+  ✔ GET /package-lock.json returns 403 Forbidden (1.08ms)
+  ✔ GET /nonexistent-image.png returns 404 Not Found instead of SPA fallback (1.11ms)
+  ✔ Malformed URI sequence returns 400 Bad Request (0.95ms)
+  ✔ Null-byte sequence returns 400 Bad Request (0.72ms)
+  ✔ GET /campusbuddy.html directly serves the standalone prototype (1.51ms)
+  ✔ GET /manifest.webmanifest returns 200 OK with correct MIME type (1.21ms)
+  ✔ GET /sw.js returns 200 OK with javascript MIME type (0.89ms)
+  ✔ GET /DESIGN.md returns markdown with correct MIME type (0.84ms)
+  ✔ GET /non-existent-route returns index.html fallback for SPA routing (1.20ms)
+✔ CampusBuddy Production HTTP Server (47.40ms)
 
-ℹ tests 43 | suites 7 | pass 43 | fail 0 | cancelled 0 | duration_ms 186.6ms
+ℹ tests 46 | suites 7 | pass 46 | fail 0 | cancelled 0 | duration_ms 184.5ms
 ```
 
 ---
