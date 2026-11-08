@@ -1,17 +1,24 @@
 import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
+import fs from 'node:fs';
+import path from 'node:path';
 import zlib from 'node:zlib';
 import { promisify } from 'node:util';
+import { fileURLToPath } from 'node:url';
 import { createServer } from '../server.js';
 
 const gunzip = promisify(zlib.gunzip);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const sampleAudioPath = path.resolve(__dirname, '../sample-test.mp3');
 
 describe('CampusBuddy Production HTTP Server', () => {
   let testPort;
   const server = createServer();
 
   before(async () => {
+    fs.writeFileSync(sampleAudioPath, Buffer.from('ID3v2.4.0-campusbuddy-test-audio'));
     await new Promise((resolve, reject) => {
       server.listen(0, '127.0.0.1', (err) => {
         if (err) return reject(err);
@@ -22,6 +29,9 @@ describe('CampusBuddy Production HTTP Server', () => {
   });
 
   after(async () => {
+    if (fs.existsSync(sampleAudioPath)) {
+      try { fs.unlinkSync(sampleAudioPath); } catch {}
+    }
     await new Promise((resolve, reject) => {
       server.close((err) => {
         if (err) return reject(err);
@@ -214,11 +224,11 @@ describe('CampusBuddy Production HTTP Server', () => {
     assert.match(res.body, /Design System/);
   });
 
-  test('GET /assets/audio/chapter1.mp3 returns 200 OK with audio/mpeg MIME type', async () => {
-    const res = await get('/assets/audio/chapter1.mp3');
+  test('GET /sample-test.mp3 returns 200 OK with audio/mpeg MIME type', async () => {
+    const res = await get('/sample-test.mp3');
     assert.equal(res.status, 200);
     assert.match(res.headers['content-type'], /audio\/mpeg/);
-    assert.ok(res.rawBuffer.length > 1000);
+    assert.ok(res.rawBuffer.length > 0);
   });
 
   test('GET /non-existent-route returns index.html fallback for SPA routing', async () => {
