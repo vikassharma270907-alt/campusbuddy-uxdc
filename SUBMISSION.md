@@ -15,7 +15,7 @@
 - **GitHub Repository:** [https://github.com/vikassharma270907-alt/campusbuddy-uxdc](https://github.com/vikassharma270907-alt/campusbuddy-uxdc)
 - **Figma Design System & Community File:** `[INSERT FIGMA LINK HERE]`
 - **Video Walkthrough (3-Minute Loom / YouTube):** `[INSERT DEMO VIDEO LINK HERE]`
-- **Team Members:** `[INSERT TEAM MEMBER NAMES & UCALGARY / INSTITUTION ROLES]`
+- **Team / Creator:** Vikas Sharma (Solo Submission — Product Design, UX Research & Full-Stack Development)
 
 ---
 
