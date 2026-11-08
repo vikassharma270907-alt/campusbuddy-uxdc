@@ -77,6 +77,15 @@ describe('CampusBuddy Single-File Prototype Integrity', () => {
     assert.match(htmlContent, /This design prototype has no live moderator/);
   });
 
+  test('WCAG AA accessibility landmarks, ARIA attributes and roles are verified', () => {
+    assert.match(htmlContent, /aria-modal="true"/, 'Modal must have aria-modal="true"');
+    assert.match(htmlContent, /role="dialog"/, 'Modal must have role="dialog"');
+    assert.match(htmlContent, /role="status"/, 'Toast must have role="status"');
+    assert.match(htmlContent, /aria-live="polite"/, 'Live region must have aria-live="polite"');
+    assert.match(htmlContent, /:focus-visible/, 'Focus ring style must be defined for keyboard navigation');
+    assert.match(htmlContent, /prefers-reduced-motion/, 'Reduced motion media query must be present');
+  });
+
   test('All required actions (A object) are defined', () => {
     const expectedActions = [
       'home', 'theme', 'quick', 'study', 'sl', 'start', 'tab',

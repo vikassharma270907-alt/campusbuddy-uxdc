@@ -11,6 +11,9 @@ jobs:
   verify-campusbuddy:
     name: Test & Validate (${{ matrix.os }} · Node ${{ matrix.node-version }})
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
     strategy:
       fail-fast: false
       matrix:
@@ -27,7 +30,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Verify Project Deliverables Exist
-        shell: bash
         run: |
           test -f campusbuddy.html || (echo "Missing campusbuddy.html" && exit 1)
           test -f index.html || (echo "Missing index.html" && exit 1)
@@ -40,26 +42,3 @@ jobs:
 
       - name: Run Complete Automated Test Suite (Domain Rules, Integrity & Server)
         run: npm test
-
-      - name: Validate Single-File Prototype & Accessibility Standards
-        run: |
-          node -e "
-            import fs from 'node:fs';
-            const html = fs.readFileSync('index.html', 'utf8');
-            const checks = [
-              ['90-Second Micro-Connection Sprint', 'Missing 90s sprint workflow banner'],
-              ['Taylor Family Digital Library', 'Missing verified public campus landmarks'],
-              ['data-theme=\"dark\"', 'Missing high-contrast dark theme styling'],
-              ['Bricolage Grotesque', 'Missing display font declaration'],
-              ['Figtree', 'Missing body typography declaration'],
-              ['aria-modal=\"true\"', 'Missing accessible modal dialog attribute'],
-              ['role=\"status\"', 'Missing toast notification status role']
-            ];
-            for (const [needle, msg] of checks) {
-              if (!html.includes(needle)) {
-                console.error('Validation failure: ' + msg);
-                process.exit(1);
-              }
-            }
-            console.log('✓ All 7 critical HTML and WCAG AA accessibility assertions passed.');
-          "
