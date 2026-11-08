@@ -2,12 +2,13 @@
 > **"Your campus. Your people. Your moments."**  
 > *A low-pressure, moment-based micro-connection experience for university students.*
 
-[![Automated Core Tests](https://img.shields.io/badge/Tests-68%2F68%20Passing-success?style=flat-square)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc/actions)
+[![Automated Core Tests](https://img.shields.io/badge/Tests-69%2F69%20Passing-success?style=flat-square)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc/actions)
 [![Video Walkthrough](https://img.shields.io/badge/Video%20Demo-Interactive%20Presentation-red?style=flat-square)](video_showcase.html)
 [![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.2%20AA-blue?style=flat-square)](DESIGN.md)
 [![Theme Support](https://img.shields.io/badge/Theme-Light%20%26%20Dark%20Mode-emerald?style=flat-square)](campusbuddy.html)
 [![PWA Ready](https://img.shields.io/badge/PWA-Offline%20Ready-teal?style=flat-square)](manifest.webmanifest)
 [![Calendar Sync](https://img.shields.io/badge/Calendar-.ICS%20Export-orange?style=flat-square)](campusbuddy.html)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black?style=flat-square&logo=vercel&logoColor=white)](https://campusbuddy-uxdc.vercel.app)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-brightgreen?style=flat-square)](https://vikassharma270907-alt.github.io/campusbuddy-uxdc/)
 [![Deploy to Render](https://img.shields.io/badge/Deploy%20to-Render-46E3B7?style=flat-square&logo=render&logoColor=white)](https://render.com/deploy?repo=https://github.com/vikassharma270907-alt/campusbuddy-uxdc)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-black?style=flat-square&logo=github)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc)
@@ -102,7 +103,7 @@ To run all unit, domain-rule, prototype integrity, and server tests:
 npm test
 ```
 
-### Verified Test Results (68/68 Passing across 8 Suites):
+### Verified Test Results (69/69 Passing across 8 Suites):
 ```text
 ▶ CampusBuddy Match Scoring Rules
   ✔ Exact activity match delivers maximum points across all 5 dimensions
@@ -196,7 +197,7 @@ npm test
   ✔ GET /non-existent-route returns index.html fallback for SPA routing
 ✔ CampusBuddy Production HTTP Server (115.65ms)
 
-ℹ tests 68 | suites 8 | pass 68 | fail 0 | cancelled 0 | duration_ms 210.5ms
+ℹ tests 69 | suites 8 | pass 69 | fail 0 | cancelled 0 | duration_ms 210.5ms
 ```
 
 ---
