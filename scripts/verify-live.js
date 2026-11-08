@@ -22,8 +22,8 @@ async function checkUrl(url, retries = 2) {
         console.log(`[LIVE VERIFIED] ${res.statusCode} ${res.statusMessage} -> ${url}`);
         console.log(`  Content-Type: ${res.headers['content-type']}`);
         console.log(`  Content-Length: ${res.headers['content-length']} bytes`);
-        res.resume();
-        res.on('end', () => resolve(res.statusCode));
+        req.destroy();
+        resolve(res.statusCode);
       });
       req.on('error', err => {
         if (attempt < retries) {
