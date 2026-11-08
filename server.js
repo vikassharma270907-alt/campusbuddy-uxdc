@@ -37,10 +37,60 @@ const MIME_TYPES = {
 
 const STATIC_EXTENSIONS = new Set(Object.keys(MIME_TYPES));
 const COMPRESSIBLE_EXTENSIONS = new Set(['.html', '.css', '.js', '.mjs', '.json', '.svg', '.txt', '.md', '.webmanifest', '.ics']);
-const BLOCKED_FILES = new Set(['render.yaml', 'vercel.json', 'package.json', 'package-lock.json', '.env', '.env.example', 'server.js', '.coderabbit.yaml']);
-const BLOCKED_DIRS = new Set(['tests', 'scripts', '.git', '.github', '.vscode', '.agents', 'node_modules', 'etc', 'proc', 'sys', 'dev']);
+const BLOCKED_FILES = new Set([
+  'render.yaml',
+  'vercel.json',
+  'package.json',
+  'package-lock.json',
+  '.env',
+  '.env.example',
+  '.env.local',
+  '.env.production',
+  'server.js',
+  '.coderabbit.yaml',
+  '.gitattributes',
+  '.gitignore'
+]);
+const BLOCKED_DIRS = new Set([
+  'tests',
+  'scripts',
+  '.git',
+  '.github',
+  '.vscode',
+  '.agents',
+  'node_modules',
+  'coverage',
+  'test-results',
+  'etc',
+  'proc',
+  'sys',
+  'dev'
+]);
 
+const MAX_SSE_CLIENTS = 256;
 const sseClients = new Set();
+
+function closeAllSSE() {
+  for (const client of sseClients) {
+    try {
+      client.write('event: shutdown\ndata: {"status":"server_stopping"}\n\n');
+      client.end();
+    } catch {}
+  }
+  sseClients.clear();
+}
+
+// Periodic SSE keepalive heartbeat (every 25s) to prune dead or disconnected sockets
+const sseHeartbeatTimer = setInterval(() => {
+  for (const client of sseClients) {
+    try {
+      client.write(': ping\n\n');
+    } catch {
+      sseClients.delete(client);
+    }
+  }
+}, 25000);
+if (sseHeartbeatTimer.unref) sseHeartbeatTimer.unref();
 
 function broadcastSSE(event, data) {
   const payload = `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
@@ -53,23 +103,37 @@ function broadcastSSE(event, data) {
   }
 }
 
+let wellbeingState = {
+  campus: 'University of Calgary',
+  activeMomentsToday: 42,
+  sprintSuccessRate: 0.91,
+  topLandmarks: [
+    { name: 'TFDL Commons', activeSpots: 18, vibe: 'Morning Focus' },
+    { name: 'MacEwan Food Court', activeSpots: 14, vibe: 'Midday Collab' },
+    { name: 'Science Theatres Concourse', activeSpots: 10, vibe: 'Study Sprint' }
+  ],
+  disconnectionGapIdentified: '14:15 - 15:30 (Post-Lecture Void)',
+  lonelinessReductionIndex: '+42%',
+  updatedAt: new Date().toISOString()
+};
+
 function getWellbeingStats() {
-  return {
-    campus: 'University of Calgary',
-    activeMomentsToday: 42,
-    sprintSuccessRate: 0.91,
-    topLandmarks: [
-      { name: 'TFDL Commons', activeSpots: 18, vibe: 'Morning Focus' },
-      { name: 'MacEwan Food Court', activeSpots: 14, vibe: 'Midday Collab' },
-      { name: 'Science Theatres Concourse', activeSpots: 10, vibe: 'Study Sprint' }
-    ],
-    disconnectionGapIdentified: '14:15 - 15:30 (Post-Lecture Void)',
-    lonelinessReductionIndex: '+42%',
-    updatedAt: new Date().toISOString()
-  };
+  return { ...wellbeingState, updatedAt: new Date().toISOString() };
 }
 
 function handleRequest(req, res) {
+    const startTime = process.hrtime.bigint();
+    const clientIp = req.headers['x-forwarded-for']?.split(',')[0].trim() ||
+                     req.socket?.remoteAddress ||
+                     '-';
+
+    res.on('finish', () => {
+      const durationMs = Number(process.hrtime.bigint() - startTime) / 1e6;
+      if (process.env.NODE_ENV !== 'test' || process.env.ENABLE_HTTP_LOGS === '1') {
+        console.log(`[HTTP] ${new Date().toISOString()} ${req.method} ${req.url} ${res.statusCode} ${durationMs.toFixed(2)}ms ${clientIp}`);
+      }
+    });
+
     // Production security & isolation headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Vary', 'Accept-Encoding');
@@ -81,7 +145,7 @@ function handleRequest(req, res) {
     res.setHeader('X-XSS-Protection', '1; mode=block');
     res.setHeader(
       'Content-Security-Policy',
-      "default-src 'self' 'unsafe-inline' data: https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com;"
+      "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self';"
     );
 
     // Support CORS preflight
@@ -220,20 +284,42 @@ function handleRequest(req, res) {
       return;
     }
 
-    // Dynamic /api/spots endpoint for spatial status and live telemetry
+    // Dynamic /api/spots endpoint for spatial status and live telemetry with optional query filtering
     if (reqPath === '/api/spots' || reqPath === '/api/spots.json') {
+      let allSpots = [
+        { id: 'tfdl', name: 'TFDL 2nd Floor Commons', type: 'Quiet', busyness: 34, capacity: 'High', noise: 'Low', peerCount: 18 },
+        { id: 'macewan', name: 'MacEwan Student Centre', type: 'Social', busyness: 78, capacity: 'High', noise: 'Lively', peerCount: 42 },
+        { id: 'science', name: 'Science Theatres Concourse', type: 'Moderate', busyness: 52, capacity: 'Medium', noise: 'Moderate', peerCount: 24 },
+        { id: 'kinesiology', name: 'Kinesiology Complex Atrium', type: 'Active', busyness: 45, capacity: 'Medium', noise: 'Moderate', peerCount: 15 },
+        { id: 'engineering', name: 'Engineering Lounge (ENA)', type: 'Collaborative', busyness: 60, capacity: 'Medium', noise: 'Collaborative', peerCount: 30 },
+        { id: 'taylor', name: 'Taylor Quad Outdoor Benches', type: 'Outdoor', busyness: 20, capacity: 'Open', noise: 'Quiet Ambient', peerCount: 12 }
+      ];
+
+      // Parse query string for filtering (?type=Quiet, ?search=TFDL, ?noise=Low)
+      const qIndex = rawUrl.indexOf('?');
+      if (qIndex !== -1) {
+        const params = new URLSearchParams(rawUrl.slice(qIndex));
+        const typeFilter = params.get('type');
+        const noiseFilter = params.get('noise');
+        const searchFilter = params.get('search');
+
+        if (typeFilter) {
+          allSpots = allSpots.filter(s => s.type.toLowerCase() === typeFilter.toLowerCase());
+        }
+        if (noiseFilter) {
+          allSpots = allSpots.filter(s => s.noise.toLowerCase() === noiseFilter.toLowerCase());
+        }
+        if (searchFilter) {
+          const q = searchFilter.toLowerCase();
+          allSpots = allSpots.filter(s => s.name.toLowerCase().includes(q) || s.id.toLowerCase().includes(q));
+        }
+      }
+
       const payload = JSON.stringify({
         status: 'ok',
         timestamp: new Date().toISOString(),
         campus: 'University of Calgary',
-        spots: [
-          { id: 'tfdl', name: 'TFDL 2nd Floor Commons', type: 'Quiet', busyness: 34, capacity: 'High', noise: 'Low', peerCount: 18 },
-          { id: 'macewan', name: 'MacEwan Student Centre', type: 'Social', busyness: 78, capacity: 'High', noise: 'Lively', peerCount: 42 },
-          { id: 'science', name: 'Science Theatres Concourse', type: 'Moderate', busyness: 52, capacity: 'Medium', noise: 'Moderate', peerCount: 24 },
-          { id: 'kinesiology', name: 'Kinesiology Complex Atrium', type: 'Active', busyness: 45, capacity: 'Medium', noise: 'Moderate', peerCount: 15 },
-          { id: 'engineering', name: 'Engineering Lounge (ENA)', type: 'Collaborative', busyness: 60, capacity: 'Medium', noise: 'Collaborative', peerCount: 30 },
-          { id: 'taylor', name: 'Taylor Quad Outdoor Benches', type: 'Outdoor', busyness: 20, capacity: 'Open', noise: 'Quiet Ambient', peerCount: 12 }
-        ]
+        spots: allSpots
       }, null, 2);
       res.writeHead(200, {
         'Content-Type': 'application/json; charset=utf-8',
@@ -248,8 +334,49 @@ function handleRequest(req, res) {
       return;
     }
 
-    // Institutional wellbeing & loneliness reduction telemetry endpoint
+    // Institutional wellbeing & loneliness reduction telemetry endpoint (supports GET, HEAD, and POST updates)
     if (reqPath === '/api/wellbeing') {
+      if (req.method === 'POST') {
+        let body = '';
+        let payloadTooLarge = false;
+        req.on('data', chunk => {
+          body += chunk;
+          if (body.length > 65536) {
+            payloadTooLarge = true;
+            res.writeHead(413, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ error: 'Payload Too Large: maximum 64KB' }));
+            req.destroy();
+          }
+        });
+        req.on('end', () => {
+          if (payloadTooLarge) return;
+          try {
+            const parsed = body ? JSON.parse(body) : {};
+            if (parsed.activeMomentsToday !== undefined) {
+              const val = parseInt(parsed.activeMomentsToday, 10);
+              if (!isNaN(val) && val >= 0) wellbeingState.activeMomentsToday = val;
+            }
+            if (typeof parsed.lonelinessReductionIndex === 'string') {
+              wellbeingState.lonelinessReductionIndex = parsed.lonelinessReductionIndex;
+            }
+            if (typeof parsed.disconnectionGapIdentified === 'string') {
+              wellbeingState.disconnectionGapIdentified = parsed.disconnectionGapIdentified;
+            }
+            wellbeingState.updatedAt = new Date().toISOString();
+            const payload = JSON.stringify(getWellbeingStats(), null, 2);
+            res.writeHead(200, {
+              'Content-Type': 'application/json; charset=utf-8',
+              'Access-Control-Allow-Origin': '*'
+            });
+            res.end(payload);
+          } catch {
+            res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ error: 'Invalid JSON payload' }));
+          }
+        });
+        return;
+      }
+
       const wellbeingPayload = JSON.stringify(getWellbeingStats(), null, 2);
       res.writeHead(200, {
         'Content-Type': 'application/json; charset=utf-8',
@@ -264,8 +391,14 @@ function handleRequest(req, res) {
       return;
     }
 
-    // Server-Sent Events (SSE) live connection stream
+    // Server-Sent Events (SSE) live connection stream with capacity caps and error resilience
     if (reqPath === '/events' || reqPath === '/api/events') {
+      if (sseClients.size >= MAX_SSE_CLIENTS) {
+        res.writeHead(503, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ error: 'SSE connection capacity reached' }));
+        return;
+      }
+
       res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache, no-transform',
@@ -276,24 +409,48 @@ function handleRequest(req, res) {
       res.write(`event: connected\ndata: ${JSON.stringify({ status: 'connected', clients: sseClients.size + 1, timestamp: new Date().toISOString() })}\n\n`);
       sseClients.add(res);
 
-      req.on('close', () => {
+      const cleanup = () => {
         sseClients.delete(res);
         try { res.end(); } catch {}
-      });
+      };
+
+      req.on('close', cleanup);
+      req.on('error', cleanup);
+      res.on('error', cleanup);
       return;
     }
 
-    // Realtime broadcast endpoint (POST)
+    // Realtime broadcast endpoint (POST) with size limits and CRLF injection defenses
     if (reqPath === '/api/broadcast' && req.method === 'POST') {
       let body = '';
+      let payloadTooLarge = false;
       req.on('data', chunk => {
         body += chunk;
-        if (body.length > 65536) req.destroy();
+        if (body.length > 65536) {
+          payloadTooLarge = true;
+          res.writeHead(413, { 'Content-Type': 'application/json; charset=utf-8' });
+          res.end(JSON.stringify({ error: 'Payload Too Large: maximum 64KB' }));
+          req.destroy();
+        }
       });
       req.on('end', () => {
+        if (payloadTooLarge) return;
         try {
           const parsed = body ? JSON.parse(body) : {};
-          broadcastSSE(parsed.event || 'message', parsed.data || {});
+          if (parsed === null || typeof parsed !== 'object') {
+            res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ error: 'Invalid JSON payload: expected object' }));
+            return;
+          }
+          const rawEvent = String(parsed.event || 'message');
+          // Defend against SSE protocol frame poisoning / CRLF injection
+          if (!/^[a-zA-Z0-9_\-:]+$/.test(rawEvent)) {
+            res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ error: 'Invalid event identifier: must be alphanumeric characters only' }));
+            return;
+          }
+
+          broadcastSSE(rawEvent, parsed.data || {});
           res.writeHead(200, {
             'Content-Type': 'application/json; charset=utf-8',
             'Access-Control-Allow-Origin': '*'
@@ -333,8 +490,10 @@ function handleRequest(req, res) {
     }
 
     // Security guard: Block direct access to sensitive repository configuration files
-    const baseName = path.basename(filePath).toLowerCase();
-    if (BLOCKED_FILES.has(baseName)) {
+    // Defend against Windows NTFS trailing dot / space / ADS (Alternate Data Stream) bypasses
+    const rawBase = path.basename(filePath);
+    const sanitizedBase = rawBase.replace(/[\.\s]+$/, '').split(':')[0].toLowerCase();
+    if (BLOCKED_FILES.has(sanitizedBase) || BLOCKED_FILES.has(rawBase.toLowerCase())) {
       res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
       res.end('403 Forbidden');
       return;
@@ -401,66 +560,132 @@ function handleRequest(req, res) {
         return;
       }
 
-      const contentType = MIME_TYPES[reqExt] || 'application/octet-stream';
-      const isNoCache = reqExt === '.html' || baseName === 'sw.js';
-      const cacheControl = isNoCache
-        ? 'no-cache, no-store, must-revalidate'
-        : 'public, max-age=86400, stale-while-revalidate=604800';
-
-      // RFC 7233 byte-range request support (smooth video and audio streaming/seeking)
-      const rangeHeader = req.headers.range;
-      if (rangeHeader && rangeHeader.startsWith('bytes=')) {
-        const parts = rangeHeader.replace(/bytes=/, '').split('-');
-        const start = parseInt(parts[0], 10);
-        const end = parts[1] ? parseInt(parts[1], 10) : stats.size - 1;
-
-        if (isNaN(start) || isNaN(end) || start > end || start >= stats.size) {
-          res.writeHead(416, {
-            'Content-Range': `bytes */${stats.size}`,
-            'Content-Type': 'text/plain; charset=utf-8'
-          });
-          res.end('416 Range Not Satisfiable');
+      // Defense in depth: Verify real canonical path to prevent symlink traversal outside of document root
+      fs.realpath(filePath, (rpErr, realFilePath) => {
+        if (rpErr) {
+          res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+          res.end('404 Not Found');
           return;
         }
 
-        const chunksize = (end - start) + 1;
-        const rangeHeaders = {
-          'Content-Range': `bytes ${start}-${end}/${stats.size}`,
-          'Accept-Ranges': 'bytes',
-          'Content-Length': chunksize,
-          'Content-Type': contentType,
-          'Cache-Control': cacheControl
-        };
-
-        res.writeHead(206, rangeHeaders);
-        if (req.method === 'HEAD') {
-          res.end();
-        } else {
-          const stream = fs.createReadStream(filePath, { start, end });
-          stream.on('error', () => {
-            if (!res.headersSent) {
-              res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
-              res.end('500 Internal Server Error');
-            }
-          });
-          stream.pipe(res);
+        let realPublicDir;
+        try {
+          realPublicDir = fs.realpathSync(PUBLIC_DIR);
+        } catch {
+          realPublicDir = PUBLIC_DIR;
         }
-        return;
-      }
 
-      fs.readFile(filePath, (readErr, content) => {
-        if (readErr) {
-          res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
-          res.end('500 Internal Server Error');
+        if (!realFilePath.startsWith(realPublicDir + path.sep) && realFilePath !== realPublicDir) {
+          res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
+          res.end('403 Forbidden');
           return;
         }
 
-        const headers = {
-          'Content-Type': contentType,
-          'Cache-Control': cacheControl,
-          'Accept-Ranges': 'bytes'
-        };
-        sendResponse(200, headers, content, reqExt);
+        // Double check target base name against blocked configurations
+        const canonicalBase = path.basename(realFilePath).replace(/[\.\s]+$/, '').split(':')[0].toLowerCase();
+        if (BLOCKED_FILES.has(canonicalBase)) {
+          res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
+          res.end('403 Forbidden');
+          return;
+        }
+
+        const contentType = MIME_TYPES[reqExt] || 'application/octet-stream';
+        const isNoCache = reqExt === '.html' || canonicalBase === 'sw.js';
+        const cacheControl = isNoCache
+          ? 'no-cache, no-store, must-revalidate'
+          : 'public, max-age=86400, stale-while-revalidate=604800';
+
+        // RFC 7233 byte-range request support (smooth video and audio streaming/seeking)
+        const rangeHeader = req.headers.range;
+        if (rangeHeader && rangeHeader.startsWith('bytes=')) {
+          const parts = rangeHeader.replace(/bytes=/, '').split('-');
+          const start = parseInt(parts[0], 10);
+          const end = parts[1] ? parseInt(parts[1], 10) : stats.size - 1;
+
+          if (isNaN(start) || isNaN(end) || start > end || start >= stats.size) {
+            res.writeHead(416, {
+              'Content-Range': `bytes */${stats.size}`,
+              'Content-Type': 'text/plain; charset=utf-8'
+            });
+            res.end('416 Range Not Satisfiable');
+            return;
+          }
+
+          const chunksize = (end - start) + 1;
+          const rangeHeaders = {
+            'Content-Range': `bytes ${start}-${end}/${stats.size}`,
+            'Accept-Ranges': 'bytes',
+            'Content-Length': chunksize,
+            'Content-Type': contentType,
+            'Cache-Control': cacheControl
+          };
+
+          res.writeHead(206, rangeHeaders);
+          if (req.method === 'HEAD') {
+            res.end();
+          } else {
+            const stream = fs.createReadStream(filePath, { start, end });
+            const cleanupStream = () => {
+              if (!stream.destroyed) {
+                stream.destroy();
+              }
+            };
+            req.on('close', cleanupStream);
+            res.on('close', cleanupStream);
+            stream.on('error', () => {
+              cleanupStream();
+              if (!res.headersSent) {
+                res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+                res.end('500 Internal Server Error');
+              }
+            });
+            stream.pipe(res);
+          }
+          return;
+        }
+
+        // Direct streaming for large media assets (prevents V8 heap exhaustion on low-memory environments)
+        const isMedia = reqExt === '.mp4' || reqExt === '.webm' || reqExt === '.mp3';
+        if (isMedia) {
+          const mediaHeaders = {
+            'Content-Type': contentType,
+            'Cache-Control': cacheControl,
+            'Accept-Ranges': 'bytes',
+            'Content-Length': stats.size,
+            'Access-Control-Allow-Origin': '*'
+          };
+          res.writeHead(200, mediaHeaders);
+          if (req.method === 'HEAD') {
+            res.end();
+            return;
+          }
+          const mediaStream = fs.createReadStream(filePath);
+          const cleanupMediaStream = () => {
+            if (!mediaStream.destroyed) mediaStream.destroy();
+          };
+          req.on('close', cleanupMediaStream);
+          res.on('close', cleanupMediaStream);
+          mediaStream.on('error', () => {
+            cleanupMediaStream();
+          });
+          mediaStream.pipe(res);
+          return;
+        }
+
+        fs.readFile(filePath, (readErr, content) => {
+          if (readErr) {
+            res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+            res.end('500 Internal Server Error');
+            return;
+          }
+
+          const headers = {
+            'Content-Type': contentType,
+            'Cache-Control': cacheControl,
+            'Accept-Ranges': 'bytes'
+          };
+          sendResponse(200, headers, content, reqExt);
+        });
       });
     });
 }
@@ -476,20 +701,31 @@ function createServer() {
 const server = createServer();
 
 // Graceful shutdown handling for container and cloud environments
-const handleShutdown = (signal) => {
+const handleShutdown = (signal, exitCode = 0) => {
   console.log(`\n[CampusBuddy] Received ${signal}. Gracefully closing HTTP server...`);
+  closeAllSSE();
   if (typeof server.closeIdleConnections === 'function') {
     server.closeIdleConnections();
   }
+  if (typeof server.closeAllConnections === 'function') {
+    server.closeAllConnections();
+  }
   server.close(() => {
     console.log('[CampusBuddy] HTTP server closed cleanly. Exiting.');
-    process.exit(0);
+    process.exit(exitCode);
   });
-  setTimeout(() => process.exit(0), 5000).unref();
+  setTimeout(() => process.exit(exitCode), 5000).unref();
 };
 
 process.on('SIGTERM', () => handleShutdown('SIGTERM'));
 process.on('SIGINT', () => handleShutdown('SIGINT'));
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[CampusBuddy] Unhandled Promise Rejection at:', promise, 'reason:', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('[CampusBuddy] Uncaught Exception thrown:', err);
+  handleShutdown('UNCAUGHT_EXCEPTION', 1);
+});
 
 // Only listen if executed directly
 if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {

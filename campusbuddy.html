@@ -201,14 +201,21 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 8px;
       padding: 10px 0;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+    }
+    @media (max-width: 640px) {
+      .top-bar {
+        flex-wrap: wrap;
+        gap: 6px;
+      }
     }
     .brand-col {
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-shrink: 0;
     }
     .logo-btn {
       background: none;
@@ -231,7 +238,10 @@
       align-items: center;
       gap: 5px;
       flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
     }
+    .top-actions::-webkit-scrollbar { display: none; }
     .top-actions .btn.sm {
       padding: 5px 8px;
       min-height: 32px;
@@ -243,21 +253,95 @@
       display: none;
     }
 
+    /* Persona Switcher & Animated List Components */
+    .persona-dropdown-container {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
     .persona-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       background: var(--card);
-      border: 1px solid var(--line);
+      border: 1.5px solid var(--line);
       border-radius: var(--radius-full);
-      padding: 4px 10px 4px 6px;
+      padding: 3px 10px 3px 4px;
       font-size: 13px;
       color: var(--ink);
-      transition: border-color 0.15s ease;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
     }
     .persona-badge:focus-within, .persona-badge:hover {
-      border-color: var(--mut);
+      border-color: var(--pine);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25), 0 0 12px rgba(16, 185, 129, 0.2);
     }
+    .persona-badge-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--card);
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius-full);
+      padding: 3px 9px 3px 4px;
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: var(--shadow-sm);
+      outline: none;
+      user-select: none;
+    }
+    .persona-badge-btn:hover {
+      background: var(--card-muted);
+      border-color: var(--pine);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25), 0 0 12px rgba(16, 185, 129, 0.25);
+    }
+    .persona-badge-btn:active {
+      transform: scale(0.97);
+    }
+    .persona-badge-btn.active {
+      border-color: var(--pine);
+      background: var(--card-muted);
+      box-shadow: 0 0 0 3px var(--pine-subtle), 0 4px 16px rgba(0, 0, 0, 0.35);
+    }
+    .persona-name-col {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      line-height: 1.15;
+      text-align: left;
+    }
+    .persona-name {
+      font-weight: 700;
+      font-size: 12.5px;
+      color: var(--ink);
+    }
+    .persona-role-chip {
+      font-size: 9.5px;
+      font-weight: 600;
+      color: var(--mut);
+      letter-spacing: 0.02em;
+    }
+    .persona-chevron {
+      font-size: 11px;
+      color: var(--mut);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.15s ease;
+      margin-left: 1px;
+    }
+    .persona-badge-btn:hover .persona-chevron {
+      color: var(--ink);
+    }
+    .persona-chevron.open {
+      transform: rotate(180deg);
+      color: var(--pine);
+    }
+
     .avatar-dot {
       width: 24px;
       height: 24px;
@@ -270,6 +354,342 @@
       place-items: center;
       text-transform: uppercase;
       box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+    .avatar-maya { background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important; color: #fff !important; }
+    .avatar-dev { background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%) !important; color: #fff !important; }
+    .avatar-ines { background: linear-gradient(135deg, #7c3aed 0%, #c084fc 100%) !important; color: #fff !important; }
+    .avatar-tom { background: linear-gradient(135deg, #d97706 0%, #fbbf24 100%) !important; color: #fff !important; }
+    .avatar-zoe { background: linear-gradient(135deg, #e11d48 0%, #fb7185 100%) !important; color: #fff !important; }
+
+    .avatar-pulse-beacon {
+      position: absolute;
+      bottom: -1px;
+      right: -1px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      border: 1.5px solid var(--card);
+      box-shadow: 0 0 6px #22c55e;
+      animation: beaconPulse 2s infinite ease-in-out;
+    }
+
+    /* Persona Flyout Menu List */
+    .persona-flyout-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      width: 440px;
+      max-width: min(440px, calc(100vw - 24px));
+      max-height: min(580px, calc(85vh - 70px));
+      overflow-y: auto;
+      background: rgba(18, 22, 34, 0.96);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 20px;
+      padding: 14px;
+      box-shadow: 0 24px 60px -8px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08), 0 0 32px -4px rgba(16, 185, 129, 0.15);
+      z-index: 1000;
+      animation: personaFlyoutOpen 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      scrollbar-width: thin;
+    }
+    :root:not([data-theme="dark"]) .persona-flyout-menu {
+      background: rgba(255, 255, 255, 0.98);
+      border-color: rgba(0, 0, 0, 0.12);
+      box-shadow: 0 24px 60px -8px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.06), 0 0 28px -4px rgba(16, 185, 129, 0.12);
+    }
+    .persona-flyout-menu::-webkit-scrollbar {
+      width: 5px;
+    }
+    .persona-flyout-menu::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .persona-flyout-menu::-webkit-scrollbar-thumb {
+      background: var(--line);
+      border-radius: 10px;
+    }
+
+    @keyframes personaFlyoutOpen {
+      0% {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.96);
+      }
+      60% {
+        opacity: 1;
+        transform: translateY(2px) scale(1.008);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .persona-menu-header {
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .persona-menu-crown {
+      font-size: 20px;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
+    }
+    .persona-menu-title {
+      font: 800 15px var(--font-display);
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    .persona-menu-subtitle {
+      font-size: 11.5px;
+      color: var(--mut);
+      line-height: 1.35;
+      margin-top: 2px;
+    }
+    .persona-close-btn {
+      background: var(--card-muted);
+      border: 1px solid var(--line);
+      color: var(--mut);
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .persona-close-btn:hover {
+      background: var(--line);
+      color: var(--ink);
+      transform: rotate(90deg);
+    }
+
+    .persona-menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .persona-menu-card {
+      display: grid;
+      grid-template-columns: 46px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      background: var(--card);
+      border: 1.5px solid var(--line);
+      border-radius: 14px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      animation: personaItemSlideIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-delay: calc(var(--item-index, 0) * 45ms);
+    }
+    .persona-menu-card:hover {
+      transform: translateX(4px);
+      border-color: var(--persona-accent, var(--pine));
+      background: var(--card-muted);
+      box-shadow: 0 6px 20px -3px var(--persona-accent-bg, rgba(16, 185, 129, 0.2));
+    }
+    .persona-menu-card.active {
+      border-color: var(--persona-accent, var(--pine));
+      background: linear-gradient(135deg, var(--persona-accent-bg, rgba(16, 185, 129, 0.12)) 0%, transparent 100%);
+      box-shadow: 0 0 0 1px var(--persona-accent, var(--pine)), 0 6px 24px -4px var(--persona-accent-bg, rgba(16, 185, 129, 0.25));
+    }
+    .persona-menu-card.active::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--persona-accent, var(--pine));
+      border-radius: 4px 0 0 4px;
+    }
+
+    @keyframes personaItemSlideIn {
+      0% {
+        opacity: 0;
+        transform: translateX(-12px) scale(0.98);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+      }
+    }
+
+    .persona-card-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 18px;
+      color: #ffffff;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+      flex-shrink: 0;
+    }
+    .persona-online-beacon {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 2px solid var(--card);
+      animation: beaconPulse 2s infinite ease-in-out;
+    }
+    @keyframes beaconPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.75; }
+    }
+
+    .persona-card-info {
+      min-width: 0;
+    }
+    .persona-card-header-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .persona-card-name {
+      font: 800 15px var(--font-display);
+      color: var(--ink);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .persona-verified-icon {
+      font-size: 12px;
+    }
+    .persona-track-chip {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: var(--radius-full);
+      letter-spacing: 0.02em;
+    }
+    .persona-card-major {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-secondary);
+      margin-top: 1px;
+    }
+    .persona-card-tagline {
+      font-size: 11px;
+      color: var(--mut);
+      line-height: 1.35;
+      margin-top: 3px;
+    }
+    .persona-card-pills-row {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    .persona-meta-pill {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      background: var(--card-muted);
+      border: 1px solid var(--line);
+      color: var(--ink-secondary);
+      white-space: nowrap;
+    }
+    .persona-meta-pill.vibe {
+      border-color: rgba(255, 255, 255, 0.12);
+      color: var(--ink);
+      font-weight: 700;
+    }
+    :root:not([data-theme="dark"]) .persona-meta-pill.vibe {
+      border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .persona-card-action {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    .persona-current-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #10b981;
+      background: rgba(16, 185, 129, 0.16);
+      border: 1px solid #10b981;
+      border-radius: var(--radius-full);
+      padding: 3px 8px;
+      letter-spacing: 0.03em;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    }
+    .persona-switch-btn {
+      font-size: 12px;
+      padding: 4px 10px;
+      min-height: 28px;
+      border-radius: 8px;
+      font-weight: 700;
+    }
+    .persona-profile-btn {
+      font-size: 10.5px;
+      padding: 2px 6px;
+      min-height: 22px;
+      color: var(--mut);
+    }
+    .persona-profile-btn:hover {
+      color: var(--ink);
+    }
+
+    .persona-menu-footer {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .persona-footer-hint {
+      font-size: 11px;
+      color: var(--mut);
+      line-height: 1.35;
+    }
+    .persona-footer-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 600px) {
+      .persona-flyout-menu {
+        position: fixed;
+        top: 60px;
+        left: 12px;
+        right: 12px;
+        width: auto;
+        max-width: none;
+        max-height: calc(85vh - 70px);
+      }
+      .persona-menu-card {
+        grid-template-columns: 40px 1fr auto;
+        padding: 10px;
+        gap: 8px;
+      }
+      .persona-card-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 15px;
+      }
     }
 
     /* Navigation Tabs */
@@ -642,6 +1062,15 @@
       background-position: right 14px center;
       padding-right: 36px;
     }
+    select option {
+      background-color: var(--card, #131620);
+      color: var(--ink, #f0f6fc);
+      padding: 10px 14px;
+    }
+    :root:not([data-theme="dark"]) select option {
+      background-color: #ffffff;
+      color: #0f172a;
+    }
     input:focus, select:focus, textarea:focus {
       border-color: var(--ink);
       box-shadow: 0 0 0 3px var(--pine-subtle);
@@ -670,6 +1099,157 @@
       margin: 0;
       padding: 8px 12px;
       padding-right: 34px;
+    }
+
+    /* Animated List Cards & UI Components */
+    .moment-list-card, .peer-list-card {
+      animation: listCardSlideUp 0.36s cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-delay: calc(var(--card-index, 0) * 45ms);
+      transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+    .moment-list-card:hover, .peer-list-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.4), 0 0 16px -2px rgba(16, 185, 129, 0.15);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    :root:not([data-theme="dark"]) .moment-list-card:hover,
+    :root:not([data-theme="dark"]) .peer-list-card:hover {
+      box-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.12), 0 0 16px -2px rgba(16, 185, 129, 0.1);
+      border-color: #cbd5e1;
+    }
+
+    @keyframes listCardSlideUp {
+      0% {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Synergy Meter Component */
+    .synergy-meter-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .synergy-meter-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+    }
+    .synergy-star {
+      color: var(--sun);
+      font-size: 14px;
+      animation: starTwinkle 3s infinite ease-in-out;
+    }
+    @keyframes starTwinkle {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.2); opacity: 1; filter: drop-shadow(0 0 4px var(--sun)); }
+    }
+    .synergy-progress-track {
+      width: 100%;
+      height: 5px;
+      background: var(--card-muted);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .synergy-progress-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      background: linear-gradient(90deg, #10b981 0%, #06b6d4 100%);
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Spot Capacity Urgency Badges */
+    .chip.status-urgent {
+      background: rgba(245, 158, 11, 0.16);
+      border-color: var(--sun);
+      color: var(--sun);
+      font-weight: 700;
+    }
+    .pulse-beacon-green {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 6px #22c55e;
+      margin-right: 3px;
+      animation: beaconPulse 1.8s infinite ease-in-out;
+    }
+    .pulse-beacon-amber {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #f59e0b;
+      box-shadow: 0 0 6px #f59e0b;
+      margin-right: 3px;
+      animation: beaconPulse 1.4s infinite ease-in-out;
+    }
+
+    /* Attendees Facepile Component */
+    .attendees-facepile-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .facepile-cluster {
+      display: inline-flex;
+      align-items: center;
+    }
+    .facepile-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      font-weight: 800;
+      color: #ffffff;
+      border: 2px solid var(--card);
+      margin-left: -6px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+      transition: transform 0.15s ease, z-index 0.15s ease;
+      cursor: default;
+    }
+    .facepile-dot:first-child {
+      margin-left: 0;
+    }
+    .facepile-dot:hover {
+      transform: scale(1.25) translateY(-2px);
+      z-index: 5;
+    }
+    .facepile-maya { background: linear-gradient(135deg, #059669, #10b981) !important; }
+    .facepile-dev { background: linear-gradient(135deg, #0284c7, #38bdf8) !important; }
+    .facepile-ines { background: linear-gradient(135deg, #7c3aed, #c084fc) !important; }
+    .facepile-tom { background: linear-gradient(135deg, #d97706, #fbbf24) !important; }
+    .facepile-zoe { background: linear-gradient(135deg, #e11d48, #fb7185) !important; }
+
+    /* Peer Synergy Meter */
+    .peer-synergy-track {
+      width: 120px;
+      height: 5px;
+      background: var(--card-muted);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+    .peer-synergy-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      background: linear-gradient(90deg, #10b981 0%, #06b6d4 100%);
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     /* 90-Second Sprint Flow Elements */
@@ -1700,6 +2280,7 @@
       sound: true,
       tourCollapsed: false,
       tourStep: 0,
+      personaMenuOpen: false,
       vibeFilter: "",
       cmdSearch: "",
       discoverView: "list",
@@ -1750,6 +2331,7 @@
     if (!S.theme) S.theme = "light";
     if (S.sound === undefined) S.sound = true;
     if (S.tourCollapsed === undefined) S.tourCollapsed = false;
+    if (S.personaMenuOpen === undefined) S.personaMenuOpen = false;
     if (S.discoverView === undefined) S.discoverView = "list";
     if (!S.selectedSpot) S.selectedSpot = "tfdl";
     if (!S.onboarded) S.onboarded = true;
@@ -2211,6 +2793,141 @@
       `;
     }
 
+    function renderPersonaMenu() {
+      const users = S.users;
+      const current = users[S.me] || users.maya;
+
+      const personaMeta = {
+        maya: {
+          accent: "#10b981",
+          accentBg: "rgba(16, 185, 129, 0.15)",
+          gradient: "linear-gradient(135deg, #059669 0%, #10b981 100%)",
+          tagline: "First-year biology major seeking quiet study partners & nature photo walks",
+          major: "Biology (Pre-Med Track)",
+          vibe: "🌿 Quiet Company · Focused"
+        },
+        dev: {
+          accent: "#0ea5e9",
+          accentBg: "rgba(14, 165, 233, 0.15)",
+          gradient: "linear-gradient(135deg, #0284c7 0%, #38bdf8 100%)",
+          tagline: "Commuter student optimizing transit gaps for calculus problem sets & chess",
+          major: "Computer Science",
+          vibe: "⚡ Study-Focused · Problem Solving"
+        },
+        ines: {
+          accent: "#a855f7",
+          accentBg: "rgba(168, 85, 247, 0.15)",
+          gradient: "linear-gradient(135deg, #7c3aed 0%, #c084fc 100%)",
+          tagline: "Third-year design senior organizing campus golden-hour photo walks & film chats",
+          major: "Design & Visual Arts",
+          vibe: "🎨 Explore & Socialize · Creative"
+        },
+        tom: {
+          accent: "#f59e0b",
+          accentBg: "rgba(245, 158, 11, 0.15)",
+          gradient: "linear-gradient(135deg, #d97706 0%, #fbbf24 100%)",
+          tagline: "Second-year math student open to morning coffee sprints & small-group coworking",
+          major: "Mathematics",
+          vibe: "☕ Small Groups · Morning Routines"
+        },
+        zoe: {
+          accent: "#f43f5e",
+          accentBg: "rgba(244, 63, 94, 0.15)",
+          gradient: "linear-gradient(135deg, #e11d48 0%, #fb7185 100%)",
+          tagline: "Exchange student exploring Calgary campus landmarks, board games & outdoor sports",
+          major: "Biology Exchange",
+          vibe: "✈️ Explore & Socialize · Casual"
+        }
+      };
+
+      return `
+        <div class="persona-flyout-menu" role="listbox" aria-label="Student Persona Selector" tabindex="-1">
+          <div class="persona-menu-header">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+              <div style="display:flex;align-items:center;gap:7px;">
+                <span class="persona-menu-crown">🎭</span>
+                <div>
+                  <div class="persona-menu-title">Switch Campus Persona</div>
+                  <div class="persona-menu-subtitle">Preview tailored matches & campus moments from different student perspectives</div>
+                </div>
+              </div>
+              <button class="persona-close-btn" data-a="close_persona_menu" aria-label="Close Persona Menu">✕</button>
+            </div>
+          </div>
+
+          <div class="persona-menu-list">
+            ${Object.keys(users).map((id, index) => {
+              const u = users[id];
+              const isCurrent = id === S.me;
+              const meta = personaMeta[id] || {
+                accent: "#10b981",
+                accentBg: "rgba(16, 185, 129, 0.15)",
+                gradient: "linear-gradient(135deg, #059669, #10b981)",
+                tagline: u.role,
+                major: u.course || "Student",
+                vibe: u.sty[0] || "Friendly"
+              };
+
+              return `
+                <div class="persona-menu-card ${isCurrent ? 'active' : ''}" style="--item-index:${index}; --persona-accent:${meta.accent}; --persona-accent-bg:${meta.accentBg};" data-a="switch_persona" data-v="${id}" role="option" aria-selected="${isCurrent ? 'true' : 'false'}" tabindex="0">
+                  <div class="persona-card-avatar" style="background:${meta.gradient};">
+                    <span>${esc(u.n[0])}</span>
+                    <span class="persona-online-beacon" style="background:${meta.accent};"></span>
+                  </div>
+                  <div class="persona-card-info">
+                    <div class="persona-card-header-row">
+                      <div class="persona-card-name">
+                        ${esc(u.n)}
+                        <span class="persona-verified-icon" title="SSO Verified University Student">🛡️</span>
+                      </div>
+                      <span class="persona-track-chip" style="color:${meta.accent};background:${meta.accentBg};">${esc(u.role.split("·")[0].trim())}</span>
+                    </div>
+                    <div class="persona-card-major">${esc(meta.major)} · ${esc(u.role.split("·")[1] ? u.role.split("·")[1].trim() : '')}</div>
+                    <div class="persona-card-tagline">${esc(meta.tagline)}</div>
+                    
+                    <div class="persona-card-pills-row">
+                      <span class="persona-meta-pill vibe">${esc(meta.vibe)}</span>
+                      <span class="persona-meta-pill time">⏱ ${u.av.join(", ")}</span>
+                      ${u.int.slice(0, 2).map(i => `<span class="persona-meta-pill interest">#${esc(i)}</span>`).join("")}
+                    </div>
+                  </div>
+
+                  <div class="persona-card-action">
+                    ${isCurrent ? `
+                      <span class="persona-current-pill">
+                        <span class="checkmark-icon">✓</span> Active
+                      </span>
+                    ` : `
+                      <button class="btn sm persona-switch-btn" data-a="switch_persona" data-v="${id}" tabindex="-1">
+                        Select ➔
+                      </button>
+                    `}
+                    <button class="btn ghost sm persona-profile-btn" data-a="show_profile" data-v="${id}" title="Inspect full persona profile & synergy sheet" tabindex="-1">
+                      Profile ↗
+                    </button>
+                  </div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+
+          <div class="persona-menu-footer">
+            <div class="persona-footer-hint">
+              <span>💡 <b>Pro-tip:</b> Each persona experiences distinct algorithmic weights, match scores, and schedule compatibility.</span>
+            </div>
+            <div class="persona-footer-actions">
+              <button class="btn ghost sm" data-a="modal" data-v="shortcuts" style="font-size:12px;padding:4px 8px;">
+                ⚡ Quick Shortcuts (⌘K)
+              </button>
+              <button class="btn ghost sm" data-a="tab" data-v="onboard" style="font-size:12px;padding:4px 8px;">
+                ⚙️ Edit Preferences
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     function renderLiveCapsule() {
       if (S.tab === "onboard") return "";
       if (S.tab === "study" && S.t0) {
@@ -2253,7 +2970,7 @@
       `;
     }
 
-    function card(a, isHighlight = false) {
+    function card(a, isHighlight = false, index = 0) {
       const sc = score(S.me, a);
       const u = S.me;
       const left = spots(a);
@@ -2273,7 +2990,7 @@
       const icon = CAT_ICONS[a.c] || "📍";
 
       return `
-        <article class="card tile" style="${isHighlight ? 'border-color:var(--pine);box-shadow:var(--shadow-md);' : ''}">
+        <article class="card tile moment-list-card" style="--card-index:${index}; ${isHighlight ? 'border-color:var(--pine);box-shadow:var(--shadow-md);' : ''}">
           <div class="when-box">
             <span class="day">${esc(a.d)}</span>
             <span class="slot">${esc(a.s)}</span>
@@ -2281,7 +2998,9 @@
           <div>
             <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
               <h3 style="margin:0">${esc(a.t)}</h3>
-              <span class="chip ${left > 0 ? 'status-open' : 'status-full'}">${left > 0 ? left + ' spots open' : 'Full'}</span>
+              <span class="chip ${left === 1 ? 'status-urgent' : left > 0 ? 'status-open' : 'status-full'}">
+                ${left === 1 ? '<span class="pulse-beacon-amber"></span> Only 1 spot left!' : left > 0 ? '<span class="pulse-beacon-green"></span> ' + left + ' spots open' : 'Full (' + a.max + '/' + a.max + ')'}
+              </span>
             </div>
             <p class="m" style="margin:4px 0 8px;">${esc(a.desc)}</p>
             <div style="margin:6px 0;">
@@ -2290,12 +3009,19 @@
               <span class="chip safe-point">📍 ${esc(a.loc)}</span>
               <span class="chip">Hosted by ${esc(host.n)}</span>
             </div>
-            <div class="fit-box">
-              <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
-                <div><b>${sc.s}% Match Score</b> <span class="small-meta">· Explainable design defaults</span></div>
-                <button class="btn sm ghost" data-a="toggle_breakdown" data-v="${a.id}" style="padding:2px 8px;font-size:12px;min-height:28px;">
+            <div class="fit-box" style="position:relative;">
+              <div class="synergy-meter-top">
+                <div class="synergy-meter-badge">
+                  <span class="synergy-star">★</span>
+                  <b>${sc.s}% Match Score</b>
+                  <span class="small-meta">· Explainable design defaults</span>
+                </div>
+                <button class="btn sm ghost" data-a="toggle_breakdown" data-v="${a.id}" style="padding:2px 8px;font-size:12px;min-height:26px;">
                   ${S.openBreakdown === a.id ? 'Hide breakdown ▲' : 'Why this match? ▾'}
                 </button>
+              </div>
+              <div class="synergy-progress-track">
+                <div class="synergy-progress-fill" style="width:${sc.s}%;"></div>
               </div>
               <ul class="fit-reasons-list">
                 ${sc.why.slice(0, 3).map(w => `<li>${esc(w)}</li>`).join("")}
@@ -2338,7 +3064,16 @@
               ` : ''}
             </div>
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:10px;">
-              <div class="small-meta">Attendees: ${a.ps.map(p => esc((S.users[p] || {}).n || p)).join(", ")}</div>
+              <div class="attendees-facepile-row">
+                <div class="facepile-cluster">
+                  ${a.ps.map(p => `
+                    <span class="facepile-dot facepile-${esc(p)}" title="${esc((S.users[p] || {}).n || p)} (${esc((S.users[p] || {}).course || 'Student')})">
+                      ${esc(((S.users[p] || {}).n || p)[0])}
+                    </span>
+                  `).join("")}
+                </div>
+                <span class="small-meta">${a.ps.map(p => esc((S.users[p] || {}).n || p)).join(", ")}</span>
+              </div>
               <div>${actBtn}</div>
             </div>
           </div>
@@ -2346,19 +3081,19 @@
       `;
     }
 
-    function pcard(id) {
+    function pcard(id, index = 0) {
       const o = S.users[id];
       if (!o) return "";
       const sc = scoreP(S.me, id);
       const mine = S.acts.filter(a => a.ps.includes(S.me) && a.st === "open" && spots(a) > 0);
 
       return `
-        <article class="card">
+        <article class="card peer-list-card" style="--card-index:${index};">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
             <div style="display:flex;align-items:center;gap:12px;cursor:pointer;" data-a="show_profile" data-v="${esc(id)}">
-              <div class="avatar-dot" style="width:38px;height:38px;font-size:15px;position:relative;">
+              <div class="avatar-dot avatar-${esc(id)}" style="width:38px;height:38px;font-size:15px;position:relative;">
                 ${esc(o.n[0])}
-                <span style="position:absolute;bottom:0;right:0;width:10px;height:10px;border-radius:50%;background:var(--green);border:1.5px solid var(--card);"></span>
+                <span class="avatar-pulse-beacon" style="width:8px;height:8px;"></span>
               </div>
               <div>
                 <h3 style="margin:0;font-size:16px;">${esc(o.n)} <span style="font-size:12px;color:var(--mut);font-weight:500;">(View Profile ↗)</span></h3>
@@ -2371,7 +3106,12 @@
             ${o.int.map(i => `<span class="chip">${esc(i)}</span>`).join("")}
           </p>
           <div class="fit-box">
-            <b>${sc.s}% Peer Synergy</b>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+              <b>${sc.s}% Peer Synergy</b>
+              <div class="peer-synergy-track">
+                <div class="peer-synergy-fill" style="width:${sc.s}%;"></div>
+              </div>
+            </div>
             <div style="font-size:13px;color:var(--ink-secondary);margin-top:2px;">
               ${esc(sc.why.join(" ") || "A different peer group. Weak ties foster campus belonging.")}
             </div>
@@ -3589,15 +4329,6 @@
                   ${S.ssoVerified ? '🛡️<span class="desktop-tab-label"> Verified</span>' : '🎓<span class="desktop-tab-label"> SSO</span>'}
                 </button>
 
-                <button class="btn sm ghost" data-a="tab" data-v="safety" aria-label="Safety & Guidelines" title="Campus Safety Guidelines">
-                  🛡️<span class="desktop-tab-label"> Safety</span>
-                </button>
-
-                <button class="btn sm ghost" data-a="tab" data-v="alerts" aria-label="Notifications" title="Notifications & Alerts" style="position:relative;">
-                  🔔<span class="desktop-tab-label"> Alerts</span>
-                  ${unreadAlerts ? `<span class="badge" style="margin-left:2px;font-size:10px;padding:1px 5px;">${unreadAlerts}</span>` : ""}
-                </button>
-
                 <button class="btn sm ghost" data-a="export_calendar_feed" aria-label="Subscribe to Calendar Feed" title="Download or subscribe to live iCalendar (.ics) feed">
                   📅<span class="desktop-tab-label"> iCal</span>
                 </button>
@@ -3618,7 +4349,7 @@
 
             <nav class="desktop-tabs" aria-label="Main Navigation">
               ${navTabs.map(tab => `
-                <button class="tab-btn ${S.tab === tab.id ? "on" : ""}" data-a="tab" data-v="${tab.id}" aria-current="${S.tab === tab.id ? 'page' : 'false'}">
+                <button class="tab-btn ${S.tab === tab.id ? "on" : ""}" data-a="tab" data-v="${tab.id}" aria-current="${S.tab === tab.id ? 'page' : 'false'}" ${tab.id === 'safety' ? 'data-a="tab" data-v="safety"' : tab.id === 'alerts' ? 'data-a="tab" data-v="alerts"' : ''}>
                   <span>${tab.label}</span>
                   ${tab.badge ? `<span class="badge">${tab.badge}</span>` : ""}
                 </button>

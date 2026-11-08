@@ -2,7 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,7 +12,7 @@ const distDir = path.join(rootDir, 'dist');
 console.log('[CampusBuddy Build] Starting production build...');
 
 // Step 1: Ensure campusbuddy.html and index.html are synchronized
-execSync(`node "${path.join(__dirname, 'sync-html.js')}"`, { stdio: 'inherit' });
+execFileSync(process.execPath, [path.join(__dirname, 'sync-html.js')], { stdio: 'inherit' });
 
 // Step 2: Prepare dist/ directory
 if (fs.existsSync(distDir)) {
@@ -37,6 +37,10 @@ const PUBLIC_FILES = [
   'thumbnail.png',
   'gallery_overview.png',
   'DESIGN.md',
+  'RESEARCH.md',
+  'DEMO_SCRIPT.md',
+  'SUBMISSION.md',
+  'AUDIT_REPORT.md',
   '_headers',
   '_redirects'
 ];
@@ -139,8 +143,8 @@ fs.writeFileSync(path.join(apiDir, 'wellbeing.json'), wellbeingPayload);
 fs.writeFileSync(path.join(apiDir, 'wellbeing.html'), wellbeingPayload);
 fs.writeFileSync(path.join(apiDir, 'health.json'), healthPayload);
 fs.writeFileSync(path.join(apiDir, 'health.html'), healthPayload);
-fs.writeFileSync(path.join(apiDir, 'health.json'), healthPayload);
 fs.writeFileSync(path.join(apiDir, 'healthz.json'), healthPayload);
+fs.writeFileSync(path.join(apiDir, 'healthz.html'), healthPayload);
 
 console.log(`[CampusBuddy Build] Copied ${PUBLIC_FILES.length} public assets and generated .nojekyll, health endpoints + 404.html SPA fallback in dist/.`);
 console.log('[CampusBuddy Build] Production build completed successfully.');

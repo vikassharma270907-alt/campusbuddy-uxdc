@@ -32,8 +32,14 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
-  // Bypass service worker cache for large media and byte-range requests
-  if (event.request.headers.has('range') || event.request.url.includes('.mp4') || event.request.url.includes('.mp3')) {
+  // Bypass service worker cache for large media, byte-range requests, and real-time SSE streams
+  if (
+    event.request.headers.has('range') ||
+    event.request.url.includes('.mp4') ||
+    event.request.url.includes('.mp3') ||
+    event.request.url.includes('/events') ||
+    event.request.url.includes('/api/events')
+  ) {
     return;
   }
 
@@ -93,9 +99,15 @@ self.addEventListener('notificationclick', (event) => {
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
-        if (client.url.includes('index.html') || client.url.includes('campusbuddy.html')) {
-          return client.focus();
-        }
+        try {
+          const clientUrl = new URL(client.url);
+          if (
+            clientUrl.origin === self.location.origin &&
+            (clientUrl.pathname.includes('index.html') || clientUrl.pathname.includes('campusbuddy.html') || clientUrl.pathname === '/')
+          ) {
+            return client.focus();
+          }
+        } catch {}
       }
       if (self.clients.openWindow) {
         return self.clients.openWindow('./index.html');
