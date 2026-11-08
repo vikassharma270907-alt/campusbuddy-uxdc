@@ -190,7 +190,7 @@
       background: rgba(9, 10, 15, 0.82);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      z-index: 40;
+      z-index: 90;
       border-bottom: 1px solid var(--line);
       transition: background-color 0.2s ease, border-color 0.2s ease;
     }
@@ -204,6 +204,7 @@
       gap: 8px;
       padding: 10px 0;
       flex-wrap: nowrap;
+      overflow: visible;
     }
     @media (max-width: 640px) {
       .top-bar {
@@ -238,8 +239,7 @@
       align-items: center;
       gap: 5px;
       flex-wrap: nowrap;
-      overflow-x: auto;
-      scrollbar-width: none;
+      overflow: visible;
     }
     .top-actions::-webkit-scrollbar { display: none; }
     .top-actions .btn.sm {
@@ -2803,7 +2803,7 @@
           accentBg: "rgba(16, 185, 129, 0.15)",
           gradient: "linear-gradient(135deg, #059669 0%, #10b981 100%)",
           tagline: "First-year biology major seeking quiet study partners & nature photo walks",
-          major: "Biology (Pre-Med Track)",
+          major: "B.Sc. Biology (Pre-Med Track)",
           vibe: "🌿 Quiet Company · Focused"
         },
         dev: {
@@ -2811,7 +2811,7 @@
           accentBg: "rgba(14, 165, 233, 0.15)",
           gradient: "linear-gradient(135deg, #0284c7 0%, #38bdf8 100%)",
           tagline: "Commuter student optimizing transit gaps for calculus problem sets & chess",
-          major: "Computer Science",
+          major: "B.Sc. Computer Science (Commuter)",
           vibe: "⚡ Study-Focused · Problem Solving"
         },
         ines: {
@@ -2819,7 +2819,7 @@
           accentBg: "rgba(168, 85, 247, 0.15)",
           gradient: "linear-gradient(135deg, #7c3aed 0%, #c084fc 100%)",
           tagline: "Third-year design senior organizing campus golden-hour photo walks & film chats",
-          major: "Design & Visual Arts",
+          major: "B.Des Design & Visual Arts",
           vibe: "🎨 Explore & Socialize · Creative"
         },
         tom: {
@@ -2827,7 +2827,7 @@
           accentBg: "rgba(245, 158, 11, 0.15)",
           gradient: "linear-gradient(135deg, #d97706 0%, #fbbf24 100%)",
           tagline: "Second-year math student open to morning coffee sprints & small-group coworking",
-          major: "Mathematics",
+          major: "B.Sc. Applied Mathematics",
           vibe: "☕ Small Groups · Morning Routines"
         },
         zoe: {
@@ -2835,7 +2835,7 @@
           accentBg: "rgba(244, 63, 94, 0.15)",
           gradient: "linear-gradient(135deg, #e11d48 0%, #fb7185 100%)",
           tagline: "Exchange student exploring Calgary campus landmarks, board games & outdoor sports",
-          major: "Biology Exchange",
+          major: "International Exchange (Biology & Ecology)",
           vibe: "✈️ Explore & Socialize · Casual"
         }
       };
@@ -2882,7 +2882,7 @@
                       </div>
                       <span class="persona-track-chip" style="color:${meta.accent};background:${meta.accentBg};">${esc(u.role.split("·")[0].trim())}</span>
                     </div>
-                    <div class="persona-card-major">${esc(meta.major)} · ${esc(u.role.split("·")[1] ? u.role.split("·")[1].trim() : '')}</div>
+                    <div class="persona-card-major">${esc(meta.major)}</div>
                     <div class="persona-card-tagline">${esc(meta.tagline)}</div>
                     
                     <div class="persona-card-pills-row">
