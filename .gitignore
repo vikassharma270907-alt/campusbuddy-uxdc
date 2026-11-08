@@ -14,6 +14,8 @@ coverage/
 # OS Metadata & Logs
 .DS_Store
 Thumbs.db
+__pycache__/
+*.pyc
 *.log
 *.mp3
 *.mp4
@@ -22,6 +24,10 @@ assets/audio/*
 !assets/audio/campusbuddy_3min_voice.mp3
 !assets/audio/campusbuddy_master_narration.mp3
 .npm/
+
+# Python Artifacts
+__pycache__/
+*.pyc
 
 # Temporary research or build clones
 temp_*/
@@ -35,3 +41,4 @@ assets/raw_video_temp/
 .taste-skill/
 .taste-pro/
 assets/raw_video_temp/
+__pycache__/

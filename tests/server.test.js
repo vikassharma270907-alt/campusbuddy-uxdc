@@ -12,13 +12,19 @@ const gunzip = promisify(zlib.gunzip);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const sampleAudioPath = path.resolve(__dirname, '../sample-test.mp3');
+const sampleVideoPath = path.resolve(__dirname, '../campusbuddy_showcase.mp4');
 
 describe('CampusBuddy Production HTTP Server', () => {
   let testPort;
+  let createdVideoFixture = false;
   const server = createServer();
 
   before(async () => {
     fs.writeFileSync(sampleAudioPath, Buffer.from('ID3v2.4.0-campusbuddy-test-audio'));
+    if (!fs.existsSync(sampleVideoPath)) {
+      fs.writeFileSync(sampleVideoPath, Buffer.from('ftypmp42isommp42-campusbuddy-test-video-stream-payload'));
+      createdVideoFixture = true;
+    }
     await new Promise((resolve, reject) => {
       server.listen(0, '127.0.0.1', (err) => {
         if (err) return reject(err);
@@ -31,6 +37,9 @@ describe('CampusBuddy Production HTTP Server', () => {
   after(async () => {
     if (fs.existsSync(sampleAudioPath)) {
       try { fs.unlinkSync(sampleAudioPath); } catch {}
+    }
+    if (createdVideoFixture && fs.existsSync(sampleVideoPath)) {
+      try { fs.unlinkSync(sampleVideoPath); } catch {}
     }
     await new Promise((resolve, reject) => {
       server.close((err) => {
