@@ -40,6 +40,9 @@ jobs:
         run: |
           test -f campusbuddy.html || (echo "Missing campusbuddy.html" && exit 1)
           test -f index.html || (echo "Missing index.html" && exit 1)
+          test -f video_showcase.html || (echo "Missing video_showcase.html" && exit 1)
+          test -f video.html || (echo "Missing video.html" && exit 1)
+          test -f campusbuddy_showcase.mp4 || (echo "Missing campusbuddy_showcase.mp4" && exit 1)
           test -f server.js || (echo "Missing server.js" && exit 1)
           test -f manifest.webmanifest || (echo "Missing manifest.webmanifest" && exit 1)
           test -f sw.js || (echo "Missing sw.js" && exit 1)
@@ -59,5 +62,8 @@ jobs:
           test -d dist || (echo "Missing dist directory" && exit 1)
           test -f dist/index.html || (echo "Missing dist/index.html" && exit 1)
           test -f dist/campusbuddy.html || (echo "Missing dist/campusbuddy.html" && exit 1)
+          test -f dist/video_showcase.html || (echo "Missing dist/video_showcase.html" && exit 1)
+          test -f dist/video.html || (echo "Missing dist/video.html" && exit 1)
+          test -f dist/campusbuddy_showcase.mp4 || (echo "Missing dist/campusbuddy_showcase.mp4" && exit 1)
           test -f dist/manifest.webmanifest || (echo "Missing dist/manifest.webmanifest" && exit 1)
           test -f dist/sw.js || (echo "Missing dist/sw.js" && exit 1)

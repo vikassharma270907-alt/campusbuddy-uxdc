@@ -2,7 +2,7 @@
 > **"Your campus. Your people. Your moments."**  
 > *A low-pressure, moment-based micro-connection experience for university students.*
 
-[![Automated Core Tests](https://img.shields.io/badge/Tests-65%2F65%20Passing-success?style=flat-square)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc/actions)
+[![Automated Core Tests](https://img.shields.io/badge/Tests-68%2F68%20Passing-success?style=flat-square)](https://github.com/vikassharma270907-alt/campusbuddy-uxdc/actions)
 [![Video Walkthrough](https://img.shields.io/badge/Video%20Demo-Interactive%20Presentation-red?style=flat-square)](video_showcase.html)
 [![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.2%20AA-blue?style=flat-square)](DESIGN.md)
 [![Theme Support](https://img.shields.io/badge/Theme-Light%20%26%20Dark%20Mode-emerald?style=flat-square)](campusbuddy.html)
@@ -88,7 +88,7 @@ To run all unit, domain-rule, prototype integrity, and server tests:
 npm test
 ```
 
-### Verified Test Results (60/60 Passing across 8 Suites):
+### Verified Test Results (68/68 Passing across 8 Suites):
 ```text
 ▶ CampusBuddy Match Scoring Rules
   ✔ Exact activity match delivers maximum points across all 5 dimensions
@@ -145,12 +145,13 @@ npm test
   ✔ Render Blueprint specification defines both web service and static site
   ✔ Content Security Policy meta tag is configured with defense-in-depth directives
   ✔ Persistent safety and alerts quick-access navigation triggers are present in header
+  ✔ Interactive video showcase player exists and links to campusbuddy prototype
 ✔ CampusBuddy Single-File Prototype Integrity (25.57ms)
 
 ▶ CampusBuddy Production HTTP Server
-  ✔ GET / serves index.html with 200 OK and security headers
+  ✔ GET / serves index.html with 200 OK, CORS, and security headers
   ✔ GET / with Accept-Encoding: gzip compresses response transparently
-  ✔ OPTIONS / returns 204 No Content with Allow headers
+  ✔ OPTIONS / returns 204 No Content with CORS preflight and Allow headers
   ✔ GET /health returns 200 OK with valid JSON status payload
   ✔ GET /favicon.ico returns 200 OK with valid SVG icon payload
   ✔ GET /healthz returns 200 OK matching kubernetes/cloud standard
@@ -164,17 +165,24 @@ npm test
   ✔ GET /server.js returns 403 Forbidden (source code protection)
   ✔ GET /scripts/sync-html.js returns 403 Forbidden (internal scripts blocked)
   ✔ GET /tests/server.test.js returns 403 Forbidden (test harness blocked)
+  ✔ Path traversal attempt with .. returns 403 Forbidden
+  ✔ GET /node_modules returns 403 Forbidden
   ✔ GET /nonexistent-image.png returns 404 Not Found instead of SPA fallback
+  ✔ GET /missing-asset.xyz with arbitrary non-HTML extension returns 404 Not Found
   ✔ Malformed URI sequence returns 400 Bad Request
   ✔ Null-byte sequence returns 400 Bad Request
   ✔ GET /campusbuddy.html directly serves the standalone prototype
   ✔ GET /manifest.webmanifest returns 200 OK with correct MIME type
-  ✔ GET /sw.js returns 200 OK with javascript MIME type
+  ✔ GET /sw.js returns 200 OK with javascript MIME type and no-cache control
   ✔ GET /DESIGN.md returns markdown with correct MIME type
+  ✔ GET /sample-test.mp3 returns 200 OK with audio/mpeg MIME type
+  ✔ GET /campusbuddy_showcase.mp4 returns 200 OK with video/mp4 MIME type and Accept-Ranges
+  ✔ GET /campusbuddy_showcase.mp4 with Range header returns 206 Partial Content
+  ✔ GET /campusbuddy_showcase.mp4 with invalid Range header returns 416 Range Not Satisfiable
   ✔ GET /non-existent-route returns index.html fallback for SPA routing
 ✔ CampusBuddy Production HTTP Server (115.65ms)
 
-ℹ tests 60 | suites 8 | pass 60 | fail 0 | cancelled 0 | duration_ms 279.5ms
+ℹ tests 68 | suites 8 | pass 68 | fail 0 | cancelled 0 | duration_ms 210.5ms
 ```
 
 ---

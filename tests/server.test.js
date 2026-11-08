@@ -12,13 +12,19 @@ const gunzip = promisify(zlib.gunzip);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const sampleAudioPath = path.resolve(__dirname, '../sample-test.mp3');
+const sampleVideoPath = path.resolve(__dirname, '../campusbuddy_showcase.mp4');
 
 describe('CampusBuddy Production HTTP Server', () => {
   let testPort;
+  let createdVideoFixture = false;
   const server = createServer();
 
   before(async () => {
     fs.writeFileSync(sampleAudioPath, Buffer.from('ID3v2.4.0-campusbuddy-test-audio'));
+    if (!fs.existsSync(sampleVideoPath)) {
+      fs.writeFileSync(sampleVideoPath, Buffer.from('ftypmp42isommp42-campusbuddy-test-video-stream-payload'));
+      createdVideoFixture = true;
+    }
     await new Promise((resolve, reject) => {
       server.listen(0, '127.0.0.1', (err) => {
         if (err) return reject(err);
@@ -31,6 +37,9 @@ describe('CampusBuddy Production HTTP Server', () => {
   after(async () => {
     if (fs.existsSync(sampleAudioPath)) {
       try { fs.unlinkSync(sampleAudioPath); } catch {}
+    }
+    if (createdVideoFixture && fs.existsSync(sampleVideoPath)) {
+      try { fs.unlinkSync(sampleVideoPath); } catch {}
     }
     await new Promise((resolve, reject) => {
       server.close((err) => {
@@ -266,6 +275,30 @@ describe('CampusBuddy Production HTTP Server', () => {
         try { fs.unlinkSync(sampleAudioPath); } catch {}
       }
     }
+  });
+
+  test('GET /campusbuddy_showcase.mp4 returns 200 OK with video/mp4 MIME type and Accept-Ranges', async () => {
+    const res = await get('/campusbuddy_showcase.mp4');
+    assert.equal(res.status, 200);
+    assert.match(res.headers['content-type'], /video\/mp4/);
+    assert.equal(res.headers['accept-ranges'], 'bytes');
+    assert.ok(res.rawBuffer.length > 0);
+  });
+
+  test('GET /campusbuddy_showcase.mp4 with Range header returns 206 Partial Content', async () => {
+    const res = await get('/campusbuddy_showcase.mp4', { Range: 'bytes=0-99' });
+    assert.equal(res.status, 206);
+    assert.match(res.headers['content-type'], /video\/mp4/);
+    assert.equal(res.headers['accept-ranges'], 'bytes');
+    assert.match(res.headers['content-range'], /^bytes 0-99\/\d+$/);
+    assert.equal(res.headers['content-length'], '100');
+    assert.equal(res.rawBuffer.length, 100);
+  });
+
+  test('GET /campusbuddy_showcase.mp4 with invalid Range header returns 416 Range Not Satisfiable', async () => {
+    const res = await get('/campusbuddy_showcase.mp4', { Range: 'bytes=999999999-999999999' });
+    assert.equal(res.status, 416);
+    assert.match(res.headers['content-range'], /^bytes \*\/\d+$/);
   });
 
   test('GET /non-existent-route returns index.html fallback for SPA routing', async () => {
