@@ -225,6 +225,14 @@ describe('CampusBuddy Single-File Prototype Integrity', () => {
     assert.match(videoContent, /id="prototypeIframe"/);
     assert.match(videoContent, /src="campusbuddy\.html"/);
   });
+
+  test('Interactive Command Palette (Cmd+K / ?), Campus Vibe Timeline, and Spot Compass are defined', () => {
+    assert.match(htmlContent, /cmd-palette-box/);
+    assert.match(htmlContent, /vibe-timeline-wrapper/);
+    assert.match(htmlContent, /landmark-guide-card/);
+    assert.match(htmlContent, /cmd_search/);
+    assert.match(htmlContent, /vibe_filter/);
+  });
 });
 
 

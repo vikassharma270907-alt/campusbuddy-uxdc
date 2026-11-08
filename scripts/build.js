@@ -57,5 +57,15 @@ if (fs.existsSync(assetsSrc)) {
 fs.writeFileSync(path.join(distDir, '.nojekyll'), '');
 fs.copyFileSync(path.join(distDir, 'index.html'), path.join(distDir, '404.html'));
 
-console.log(`[CampusBuddy Build] Copied ${PUBLIC_FILES.length} public assets and generated .nojekyll + 404.html SPA fallback in dist/.`);
+// Step 5: Static health endpoints for CDN / serverless deployments
+const healthPayload = JSON.stringify({
+  status: 'healthy',
+  timestamp: new Date().toISOString(),
+  environment: 'production',
+  service: 'campusbuddy-cdn'
+}, null, 2);
+fs.writeFileSync(path.join(distDir, 'health'), healthPayload);
+fs.writeFileSync(path.join(distDir, 'healthz'), healthPayload);
+
+console.log(`[CampusBuddy Build] Copied ${PUBLIC_FILES.length} public assets and generated .nojekyll, health endpoints + 404.html SPA fallback in dist/.`);
 console.log('[CampusBuddy Build] Production build completed successfully.');
