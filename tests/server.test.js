@@ -133,6 +133,14 @@ describe('CampusBuddy Production HTTP Server', () => {
     assert.ok(data.timestamp);
   });
 
+  test('GET /health.json returns 200 OK with valid JSON status payload', async () => {
+    const res = await get('/health.json');
+    assert.equal(res.status, 200);
+    assert.match(res.headers['content-type'], /application\/json/);
+    const data = JSON.parse(res.body);
+    assert.equal(data.status, 'ok');
+  });
+
   test('GET /favicon.ico returns 200 OK with valid SVG icon payload', async () => {
     const res = await get('/favicon.ico');
     assert.equal(res.status, 200);

@@ -10,6 +10,8 @@ const urls = [
   'https://vikassharma270907-alt.github.io/campusbuddy-uxdc/calendar.ics',
   'https://vikassharma270907-alt.github.io/campusbuddy-uxdc/health.json',
   'https://vikassharma270907-alt.github.io/campusbuddy-uxdc/api/spots.json',
+  'https://vikassharma270907-alt.github.io/campusbuddy-uxdc/api/wellbeing.json',
+  'https://vikassharma270907-alt.github.io/campusbuddy-uxdc/api/health.json',
   'https://vikassharma270907-alt.github.io/campusbuddy-uxdc/campusbuddy_showcase.mp4'
 ];
 

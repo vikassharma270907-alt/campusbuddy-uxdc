@@ -27,6 +27,9 @@ const PUBLIC_FILES = [
   'video_showcase.html',
   'video.html',
   'calendar.ics',
+  'health.json',
+  'health.html',
+  '.nojekyll',
   'campusbuddy_showcase.mp4',
   'manifest.webmanifest',
   'sw.js',
@@ -65,8 +68,6 @@ const healthPayload = JSON.stringify({
   environment: 'production',
   service: 'campusbuddy-cdn'
 }, null, 2);
-fs.writeFileSync(path.join(distDir, 'health'), healthPayload);
-fs.writeFileSync(path.join(distDir, 'healthz'), healthPayload);
 fs.writeFileSync(path.join(distDir, 'health.json'), healthPayload);
 fs.writeFileSync(path.join(distDir, 'healthz.json'), healthPayload);
 fs.writeFileSync(path.join(distDir, 'health.html'), healthPayload);
@@ -136,6 +137,10 @@ const wellbeingPayload = JSON.stringify({
 fs.writeFileSync(path.join(apiDir, 'wellbeing'), wellbeingPayload);
 fs.writeFileSync(path.join(apiDir, 'wellbeing.json'), wellbeingPayload);
 fs.writeFileSync(path.join(apiDir, 'wellbeing.html'), wellbeingPayload);
+fs.writeFileSync(path.join(apiDir, 'health.json'), healthPayload);
+fs.writeFileSync(path.join(apiDir, 'health.html'), healthPayload);
+fs.writeFileSync(path.join(apiDir, 'health.json'), healthPayload);
+fs.writeFileSync(path.join(apiDir, 'healthz.json'), healthPayload);
 
 console.log(`[CampusBuddy Build] Copied ${PUBLIC_FILES.length} public assets and generated .nojekyll, health endpoints + 404.html SPA fallback in dist/.`);
 console.log('[CampusBuddy Build] Production build completed successfully.');

@@ -2912,7 +2912,8 @@
     // =========================================================================
     // CONFIRMATION MODAL (THE 90-SECOND JOURNEY DESTINATION)
     // =========================================================================
-        function celebrate() {
+    function celebrate() {
+      try { playChime('celebrate'); } catch (_) {}
       if (typeof document === "undefined" || !document.createElement || !document.body) return;
       if (typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       const c = document.createElement("div");

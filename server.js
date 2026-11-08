@@ -158,7 +158,7 @@ function handleRequest(req, res) {
     }
 
     // First-class health check endpoints for Render and orchestration probes
-    if (reqPath === '/health' || reqPath === '/healthz') {
+    if (reqPath === '/health' || reqPath === '/healthz' || reqPath === '/health.json' || reqPath === '/healthz.json') {
       const payload = JSON.stringify({
         status: 'ok',
         service: 'campusbuddy',

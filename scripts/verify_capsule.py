@@ -31,16 +31,26 @@ try:
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page(viewport={"width": 1280, "height": 800})
-        page.goto(f"http://127.0.0.1:{port}/campusbuddy.html")
-        page.wait_for_selector(".live-activity-capsule")
+        page.on("console", lambda msg: print(f"BROWSER LOG: {msg.text}"))
+        page.on("pageerror", lambda err: print(f"BROWSER ERROR: {err}"))
         
-        # Take screenshot of the capsule
+        page.goto(f"http://127.0.0.1:{port}/campusbuddy.html", wait_until="domcontentloaded")
+        time.sleep(0.5)
+        
+        # Click enter demo if on landing page
+        if page.locator('[data-a="start"]').count() > 0:
+            page.click('[data-a="start"]')
+            time.sleep(0.5)
+            
         capsule = page.locator(".live-activity-capsule")
-        capsule.screenshot(path="assets/screenshots/capsule_fixed.png")
-        print("Captured assets/screenshots/capsule_fixed.png successfully!")
-
+        capsule_count = capsule.count()
+        print(f"Capsule count after enter demo: {capsule_count}")
+        if capsule_count > 0:
+            capsule.first.screenshot(path="assets/screenshots/capsule_fixed.png")
+            print("Captured assets/screenshots/capsule_fixed.png!")
+        
         page.screenshot(path="assets/screenshots/today_page_fixed.png")
-        print("Captured assets/screenshots/today_page_fixed.png successfully!")
+        print("Captured assets/screenshots/today_page_fixed.png!")
         browser.close()
 finally:
     proc.terminate()

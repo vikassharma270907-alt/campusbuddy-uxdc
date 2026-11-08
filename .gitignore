@@ -10,6 +10,7 @@ dist/
 .playwright-mcp/
 test-results/
 coverage/
+assets/screenshots/*_fixed.png
 
 # OS Metadata & Logs
 .DS_Store
