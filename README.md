@@ -103,44 +103,44 @@ To run all unit, domain-rule, prototype integrity, and server tests:
 npm test
 ```
 
-### Verified Test Results (80/80 Passing across 8 Suites):
+### Verified Test Results (83/83 Passing across 8 Suites):
 ```text
 ▶ CampusBuddy Match Scoring Rules
   ✔ Exact activity match delivers maximum points across all 5 dimensions
   ✔ Partial match calculates exact design default weights
   ✔ Peer Jaccard similarity respects category, time, interest, course and style weights
-✔ CampusBuddy Match Scoring Rules (2.17ms)
+✔ CampusBuddy Match Scoring Rules (1.73ms)
 
 ▶ Capacity and Join Constraints
   ✔ Cannot join when moment is full
   ✔ Cannot join twice (duplicate join prevention)
   ✔ Cannot join a cancelled or finished moment
-✔ Capacity and Join Constraints (0.94ms)
+✔ Capacity and Join Constraints (0.77ms)
 
 ▶ Invitation State Machine Transitions
   ✔ Pending invitation transitions to accepted and updates participants
   ✔ Final invitation states cannot transition again
   ✔ Cannot accept invitation if moment reached capacity before response
   ✔ Duplicate pending invitations are prevented
-✔ Invitation State Machine Transitions (1.64ms)
+✔ Invitation State Machine Transitions (1.12ms)
 
 ▶ Blocking and Safety Constraints
   ✔ Blocking cancels all pending mutual invitations
   ✔ Blocked users cannot join each other’s moments
   ✔ Blocked users cannot invite each other
   ✔ Unblocking removes block state correctly
-✔ Blocking and Safety Constraints (1.58ms)
+✔ Blocking and Safety Constraints (1.22ms)
 
 ▶ Moment Creation & Public Landmark Constraints
   ✔ Creation rejects moments with unverified or private locations
   ✔ Creation accepts moments with verified campus public landmarks and initializes defaults
   ✔ RFC 5545 iCalendar sanitizer escapes delimiters and multiline CRLF sequences
-✔ Moment Creation & Public Landmark Constraints (1.02ms)
+✔ Moment Creation & Public Landmark Constraints (1.38ms)
 
 ▶ CampusBuddy End-to-End User Journey Smoke Suite
   ✔ E2E Gate 1: HTTP server serves production index.html and health endpoint
   ✔ E2E Gate 2: Full 90-Second Sprint & Application Lifecycle Flow
-✔ CampusBuddy End-to-End User Journey Smoke Suite (60.50ms)
+✔ CampusBuddy End-to-End User Journey Smoke Suite (39.14ms)
 
 ▶ CampusBuddy Single-File Prototype Integrity
   ✔ campusbuddy.html file exists and has healthy size
@@ -161,7 +161,16 @@ npm test
   ✔ Content Security Policy meta tag is configured with defense-in-depth directives
   ✔ Persistent safety and alerts quick-access navigation triggers are present in header
   ✔ Interactive video showcase player exists and links to campusbuddy prototype
-✔ CampusBuddy Single-File Prototype Integrity (25.57ms)
+  ✔ Interactive Command Palette (Cmd+K / ?), Campus Vibe Timeline, and Spot Compass are defined
+  ✔ UXDC Judge Guided Tour 5-step interactive banner is defined with evaluation triggers
+  ✔ Interactive Campus Radar Map SVG renders beacons, campus landmarks, transit lines and spatial drawer
+  ✔ Dynamic Island / Live Activity Capsule provides persistent ambient status and countdown tracking
+  ✔ Student Persona Deep-Dive Sheet renders academic synergy gauge, study badges, and 1-tap invite action
+  ✔ Web Audio Haptic Feedback Engine provides synthesized tactile audio chimes and toggle state
+  ✔ Interactive Video Showcase (video_showcase.html) includes chapters, narration, video player and dual prototype view
+  ✔ Native Push Notifications and Service Worker event handlers are integrated
+  ✔ Live iCalendar (.ics) subscription feed links are embedded in header and plans view
+✔ CampusBuddy Single-File Prototype Integrity (22.05ms)
 
 ▶ CampusBuddy Production HTTP Server
   ✔ GET / serves index.html with 200 OK, CORS, and security headers
@@ -194,10 +203,16 @@ npm test
   ✔ GET /campusbuddy_showcase.mp4 returns 200 OK with video/mp4 MIME type and Accept-Ranges
   ✔ GET /campusbuddy_showcase.mp4 with Range header returns 206 Partial Content
   ✔ GET /campusbuddy_showcase.mp4 with invalid Range header returns 416 Range Not Satisfiable
+  ✔ GET /calendar.ics returns 200 OK with text/calendar MIME type and valid VCALENDAR payload
+  ✔ HEAD /calendar.ics returns 200 OK with empty body
+  ✔ GET /api/spots returns 200 OK with verified campus zones and metrics
+  ✔ GET /api/wellbeing returns 200 OK with institutional campus telemetry
+  ✔ POST /api/broadcast accepts and distributes event to connected listeners
+  ✔ GET /events initiates native SSE stream with event-stream headers
   ✔ GET /non-existent-route returns index.html fallback for SPA routing
-✔ CampusBuddy Production HTTP Server (115.65ms)
+✔ CampusBuddy Production HTTP Server (124.73ms)
 
-ℹ tests 80 | suites 8 | pass 80 | fail 0 | cancelled 0 | duration_ms 292.6ms
+ℹ tests 83 | suites 8 | pass 83 | fail 0 | cancelled 0 | duration_ms 262.75ms
 ```
 
 ---
