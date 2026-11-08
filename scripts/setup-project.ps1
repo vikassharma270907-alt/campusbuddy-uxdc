@@ -1,6 +1,8 @@
 <#
 .SYNOPSIS
-    Instantly configures Antigravity Full-Power Automation (468+ skills, 112+ agents, 130+ rules, 110+ workflows, Addy Osmani Agent-Skills, CodeRabbit, Ralph, and MCP servers) for any or all projects.
+    Instantly configures Antigravity Full-Power Automation (655+ skills, 154+ agents, 142+ rules, 114+ workflows,
+    Awesome-Claude-Code Catalog, Anthropic Official Skills, Superpowers, UI-Craft, Strix Pentesting, SkillSpector,
+    Context7, Addy Osmani Agent-Skills, CodeRabbit, Ralph, and MCP servers) for any or all projects.
 .PARAMETER ProjectPath
     The directory of the project to configure. Defaults to the current working directory.
 .PARAMETER AllProjects
@@ -14,16 +16,37 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-$MasterEcc = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\plugins\everything-claude-code'
-$MasterCodeRabbit = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\plugins\coderabbit'
-$MasterPonytail = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\plugins\ponytail'
-$MasterLemo = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\plugins\lemo-opuscar'
-$MasterSkillspector = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\plugins\skillspector'
-$MasterContext7 = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\plugins\context7'
-$MasterMagic = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\plugins\magic'
-$MasterStrix = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\plugins\strix'
-$MasterAgentSkills = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\plugins\agent-skills'
-$MasterTaste = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\plugins\taste-skill'
+$PluginsBase = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\plugins'
+$MasterEcc = Join-Path -Path $PluginsBase -ChildPath 'everything-claude-code'
+$MasterCodeRabbit = Join-Path -Path $PluginsBase -ChildPath 'coderabbit'
+$MasterPonytail = Join-Path -Path $PluginsBase -ChildPath 'ponytail'
+$MasterLemo = Join-Path -Path $PluginsBase -ChildPath 'lemo-opuscar'
+$MasterSkillspector = Join-Path -Path $PluginsBase -ChildPath 'skillspector'
+$MasterContext7 = Join-Path -Path $PluginsBase -ChildPath 'context7'
+$MasterMagic = Join-Path -Path $PluginsBase -ChildPath 'magic'
+$MasterStrix = Join-Path -Path $PluginsBase -ChildPath 'strix'
+$MasterAgentSkills = Join-Path -Path $PluginsBase -ChildPath 'agent-skills'
+$MasterTaste = Join-Path -Path $PluginsBase -ChildPath 'taste-skill'
+$MasterDesignMotion = Join-Path -Path $PluginsBase -ChildPath 'design-motion-principles'
+$MasterAwesome = Join-Path -Path $PluginsBase -ChildPath 'awesome-claude-code'
+$MasterSuperpowers = Join-Path -Path $PluginsBase -ChildPath 'superpowers'
+$MasterAnthropicSkills = Join-Path -Path $PluginsBase -ChildPath 'anthropic-skills'
+$MasterCollab = Join-Path -Path $PluginsBase -ChildPath 'agent-collab-skills'
+$MasterUiCraft = Join-Path -Path $PluginsBase -ChildPath 'ui-craft'
+$MasterAvoidAi = Join-Path -Path $PluginsBase -ChildPath 'avoid-ai-writing'
+$MasterClaudeAgents = Join-Path -Path $PluginsBase -ChildPath 'claude-code-agents'
+$MasterCharrette = Join-Path -Path $PluginsBase -ChildPath 'charrette'
+$MasterCcDevops = Join-Path -Path $PluginsBase -ChildPath 'cc-devops-skills'
+$MasterSciWrite = Join-Path -Path $PluginsBase -ChildPath 'scientific-writing-skills'
+$MasterStyleseed = Join-Path -Path $PluginsBase -ChildPath 'styleseed'
+$MasterDiagramDesign = Join-Path -Path $PluginsBase -ChildPath 'diagram-design'
+$MasterTerraformSkill = Join-Path -Path $PluginsBase -ChildPath 'terraform-skill'
+$MasterLogoDesigner = Join-Path -Path $PluginsBase -ChildPath 'logo-designer-skill'
+$MasterFable = Join-Path -Path $PluginsBase -ChildPath 'fable-mode'
+$MasterNaming = Join-Path -Path $PluginsBase -ChildPath 'naming'
+$MasterMotion = Join-Path -Path $PluginsBase -ChildPath 'motion-skills'
+$MasterUiUxProMax = Join-Path -Path $PluginsBase -ChildPath 'ui-ux-pro-max'
+
 $MasterSkills = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\skills'
 $ProjectsJsonPath = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\projects.json'
 
@@ -32,220 +55,89 @@ if (-not (Test-Path -LiteralPath $MasterEcc)) {
     exit 1
 }
 
-# 1. Sync Agent-Skills into Master ECC & Global Skills
-if (Test-Path -LiteralPath $MasterAgentSkills) {
-    $asSkillsDir = Join-Path -Path $MasterAgentSkills -ChildPath 'skills'
-    if (Test-Path -LiteralPath $asSkillsDir) {
-        $eccSkillsDir = Join-Path -Path $MasterEcc -ChildPath 'skills'
-        Get-ChildItem -LiteralPath $asSkillsDir -Directory | ForEach-Object {
-            # Sync to global skills
-            $gDest = Join-Path -Path $MasterSkills -ChildPath $_.Name
-            if (-not (Test-Path -LiteralPath $gDest)) {
-                Copy-Item -LiteralPath $_.FullName -Destination $gDest -Recurse -Force
-            }
-            # Sync to ECC skills
-            if (Test-Path -LiteralPath $eccSkillsDir) {
-                $eDest = Join-Path -Path $eccSkillsDir -ChildPath $_.Name
-                if (-not (Test-Path -LiteralPath $eDest)) {
-                    Copy-Item -LiteralPath $_.FullName -Destination $eDest -Recurse -Force
-                }
-            }
-        }
-    }
-    # Sync agents
-    $asAgentsDir = Join-Path -Path $MasterAgentSkills -ChildPath 'agents'
-    $eccAgentsDir = Join-Path -Path $MasterEcc -ChildPath 'agents'
-    if ((Test-Path -LiteralPath $asAgentsDir) -and (Test-Path -LiteralPath $eccAgentsDir)) {
-        Get-ChildItem -LiteralPath $asAgentsDir -Filter "*.md" | ForEach-Object {
-            $destName = if ($_.Name -eq "code-reviewer.md") { "addy-code-reviewer.md" } else { $_.Name }
-            $dstFile = Join-Path -Path $eccAgentsDir -ChildPath $destName
-            if (-not (Test-Path -LiteralPath $dstFile)) {
-                Copy-Item -LiteralPath $_.FullName -Destination $dstFile -Force
-            }
-        }
-    }
-}
+$eccSkillsDir = Join-Path -Path $MasterEcc -ChildPath 'skills'
+$eccAgentsDir = Join-Path -Path $MasterEcc -ChildPath 'agents'
+$eccRulesDir = Join-Path -Path $MasterEcc -ChildPath 'rules'
+$eccWfDir = Join-Path -Path $MasterEcc -ChildPath 'workflows'
 
-# 1b. Sync Context7 into Master ECC & Global Skills & Rules & Agents
-if (Test-Path -LiteralPath $MasterContext7) {
-    $c7SkillsDir = Join-Path -Path $MasterContext7 -ChildPath 'skills'
-    if (Test-Path -LiteralPath $c7SkillsDir) {
-        $eccSkillsDir = Join-Path -Path $MasterEcc -ChildPath 'skills'
-        Get-ChildItem -LiteralPath $c7SkillsDir -Directory | ForEach-Object {
-            $gDest = Join-Path -Path $MasterSkills -ChildPath $_.Name
-            if (-not (Test-Path -LiteralPath $gDest)) {
-                Copy-Item -LiteralPath $_.FullName -Destination $gDest -Recurse -Force
-            }
-            if (Test-Path -LiteralPath $eccSkillsDir) {
-                $eDest = Join-Path -Path $eccSkillsDir -ChildPath $_.Name
-                if (-not (Test-Path -LiteralPath $eDest)) {
-                    Copy-Item -LiteralPath $_.FullName -Destination $eDest -Recurse -Force
-                }
-            }
-        }
-    }
-    # Sync rules
-    $c7RulesDir = Join-Path -Path $MasterContext7 -ChildPath 'rules'
-    $eccRulesDir = Join-Path -Path $MasterEcc -ChildPath 'rules'
-    if ((Test-Path -LiteralPath $c7RulesDir) -and (Test-Path -LiteralPath $eccRulesDir)) {
-        Get-ChildItem -LiteralPath $c7RulesDir -Filter "*.md" | ForEach-Object {
-            $dstFile = Join-Path -Path $eccRulesDir -ChildPath $_.Name
-            if (-not (Test-Path -LiteralPath $dstFile)) {
-                Copy-Item -LiteralPath $_.FullName -Destination $dstFile -Force
-            }
-        }
-    }
-    # Sync agents
-    $c7AgentFile = Join-Path -Path $MasterContext7 -ChildPath 'plugins\cursor\context7\agents\docs-researcher.md'
-    $eccAgentsDir = Join-Path -Path $MasterEcc -ChildPath 'agents'
-    if ((Test-Path -LiteralPath $c7AgentFile) -and (Test-Path -LiteralPath $eccAgentsDir)) {
-        $dstAgent = Join-Path -Path $eccAgentsDir -ChildPath 'docs-researcher.md'
-        if (-not (Test-Path -LiteralPath $dstAgent)) {
-            Copy-Item -LiteralPath $c7AgentFile -Destination $dstAgent -Force
-        }
-    }
-}
+# 1. Generic Universal Plugin Auto-Discovery & Sync Loop
+# Automatically scans any plugin directory for skills, agents, rules, and workflows
+if (Test-Path -LiteralPath $PluginsBase) {
+    Get-ChildItem -LiteralPath $PluginsBase -Directory | ForEach-Object {
+        $pDir = $_.FullName
+        $pName = $_.Name
+        if ($pName -eq 'everything-claude-code') { return }
 
-# 2. Sync SkillSpector into Master ECC & Global Skills
-if (Test-Path -LiteralPath $MasterSkillspector) {
-    $ssSkillsDir = Join-Path -Path $MasterSkillspector -ChildPath 'skills'
-    if (Test-Path -LiteralPath $ssSkillsDir) {
-        $eccSkillsDir = Join-Path -Path $MasterEcc -ChildPath 'skills'
-        Get-ChildItem -LiteralPath $ssSkillsDir -Directory | ForEach-Object {
-            $gDest = Join-Path -Path $MasterSkills -ChildPath $_.Name
-            if (-not (Test-Path -LiteralPath $gDest)) {
-                Copy-Item -LiteralPath $_.FullName -Destination $gDest -Recurse -Force
-            }
-            if (Test-Path -LiteralPath $eccSkillsDir) {
-                $eDest = Join-Path -Path $eccSkillsDir -ChildPath $_.Name
-                if (-not (Test-Path -LiteralPath $eDest)) {
-                    Copy-Item -LiteralPath $_.FullName -Destination $eDest -Recurse -Force
+        # Scan for skills (directories containing SKILL.md or skill.md)
+        Get-ChildItem -LiteralPath $pDir -Recurse -File -Filter "*skill*.md" -ErrorAction SilentlyContinue | ForEach-Object {
+            if ($_.Name -like "SKILL.md" -or $_.Name -like "skill.md") {
+                $skillFolder = $_.Directory
+                $sName = $skillFolder.Name
+                if ($sName -eq 'template' -or $sName -eq 'skills') { return }
+                
+                # Global skills destination
+                $gDest = Join-Path -Path $MasterSkills -ChildPath $sName
+                if (-not (Test-Path -LiteralPath $gDest)) {
+                    Copy-Item -LiteralPath $skillFolder.FullName -Destination $gDest -Recurse -Force
                 }
-            }
-        }
-    }
-}
-
-# 2b. Sync Strix Autonomous Pentesting Skills & Rules into Master ECC & Global Skills
-if (Test-Path -LiteralPath $MasterStrix) {
-    $strixSkillsDir = Join-Path -Path $MasterStrix -ChildPath 'skills'
-    if (Test-Path -LiteralPath $strixSkillsDir) {
-        $eccSkillsDir = Join-Path -Path $MasterEcc -ChildPath 'skills'
-        Get-ChildItem -LiteralPath $strixSkillsDir -Directory | ForEach-Object {
-            $gDest = Join-Path -Path $MasterSkills -ChildPath $_.Name
-            if (-not (Test-Path -LiteralPath $gDest)) {
-                Copy-Item -LiteralPath $_.FullName -Destination $gDest -Recurse -Force
-            }
-            if (Test-Path -LiteralPath $eccSkillsDir) {
-                $eDest = Join-Path -Path $eccSkillsDir -ChildPath $_.Name
-                if (-not (Test-Path -LiteralPath $eDest)) {
-                    Copy-Item -LiteralPath $_.FullName -Destination $eDest -Recurse -Force
-                }
-            }
-        }
-    }
-}
-
-# 2c. Sync Magic UI & 21st MCP Skills, Agent, and Rules into Master ECC & Global Skills
-if (Test-Path -LiteralPath $MasterMagic) {
-    $magicSkillsDir = Join-Path -Path $MasterMagic -ChildPath 'skills'
-    if (Test-Path -LiteralPath $magicSkillsDir) {
-        $eccSkillsDir = Join-Path -Path $MasterEcc -ChildPath 'skills'
-        Get-ChildItem -LiteralPath $magicSkillsDir -Directory | ForEach-Object {
-            $gDest = Join-Path -Path $MasterSkills -ChildPath $_.Name
-            if (-not (Test-Path -LiteralPath $gDest)) {
-                Copy-Item -LiteralPath $_.FullName -Destination $gDest -Recurse -Force
-            }
-            if (Test-Path -LiteralPath $eccSkillsDir) {
-                $eDest = Join-Path -Path $eccSkillsDir -ChildPath $_.Name
-                if (-not (Test-Path -LiteralPath $eDest)) {
-                    Copy-Item -LiteralPath $_.FullName -Destination $eDest -Recurse -Force
-                }
-            }
-        }
-    }
-    # Sync rule
-    $magicRuleSrc = Join-Path -Path $MasterMagic -ChildPath 'rules\AGENTS.md'
-    $eccRulesDir = Join-Path -Path $MasterEcc -ChildPath 'rules'
-    if ((Test-Path -LiteralPath $magicRuleSrc) -and (Test-Path -LiteralPath $eccRulesDir)) {
-        $dstRule = Join-Path -Path $eccRulesDir -ChildPath 'magic-ui.md'
-        if (-not (Test-Path -LiteralPath $dstRule)) {
-            Copy-Item -LiteralPath $magicRuleSrc -Destination $dstRule -Force
-        }
-    }
-    # Sync agent
-    $magicAgentSrc = Join-Path -Path $MasterMagic -ChildPath 'agents\magic-designer.md'
-    $eccAgentsDir = Join-Path -Path $MasterEcc -ChildPath 'agents'
-    if ((Test-Path -LiteralPath $magicAgentSrc) -and (Test-Path -LiteralPath $eccAgentsDir)) {
-        $dstAgent = Join-Path -Path $eccAgentsDir -ChildPath 'magic-designer.md'
-        if (-not (Test-Path -LiteralPath $dstAgent)) {
-            Copy-Item -LiteralPath $magicAgentSrc -Destination $dstAgent -Force
-        }
-    }
-}
-
-# 2d. Sync Tasteskill Anti-Slop Design System (Skills, Agent, Rules, Workflows) into Master ECC & Global Registries
-if (Test-Path -LiteralPath $MasterTaste) {
-    $tasteSkillSrc = Join-Path -Path $MasterTaste -ChildPath 'skills\taste-skill'
-    if (Test-Path -LiteralPath $tasteSkillSrc) {
-        $eccSkillsDir = Join-Path -Path $MasterEcc -ChildPath 'skills'
-        $gDests = @(
-            (Join-Path -Path $MasterSkills -ChildPath 'design-taste-frontend'),
-            (Join-Path -Path $MasterSkills -ChildPath 'taste-skill')
-        )
-        foreach ($gd in $gDests) {
-            if (-not (Test-Path -LiteralPath $gd)) {
-                try {
-                    New-Item -ItemType Junction -Path $gd -Target $tasteSkillSrc -Force | Out-Null
-                } catch {
-                    Copy-Item -LiteralPath $tasteSkillSrc -Destination $gd -Recurse -Force
-                }
-            }
-        }
-        if (Test-Path -LiteralPath $eccSkillsDir) {
-            $eDests = @(
-                (Join-Path -Path $eccSkillsDir -ChildPath 'design-taste-frontend'),
-                (Join-Path -Path $eccSkillsDir -ChildPath 'taste-skill')
-            )
-            foreach ($ed in $eDests) {
-                if (-not (Test-Path -LiteralPath $ed)) {
-                    try {
-                        New-Item -ItemType Junction -Path $ed -Target $tasteSkillSrc -Force | Out-Null
-                    } catch {
-                        Copy-Item -LiteralPath $tasteSkillSrc -Destination $ed -Recurse -Force
+                
+                # Master ECC skills destination
+                if (Test-Path -LiteralPath $eccSkillsDir) {
+                    $eDest = Join-Path -Path $eccSkillsDir -ChildPath $sName
+                    if (-not (Test-Path -LiteralPath $eDest)) {
+                        try {
+                            New-Item -ItemType Junction -Path $eDest -Target $skillFolder.FullName -Force | Out-Null
+                        } catch {
+                            Copy-Item -LiteralPath $skillFolder.FullName -Destination $eDest -Recurse -Force
+                        }
                     }
                 }
             }
         }
-    }
-    # Sync agent
-    $tasteAgentSrc = Join-Path -Path $MasterTaste -ChildPath 'agents\taste-designer.md'
-    $eccAgentsDir = Join-Path -Path $MasterEcc -ChildPath 'agents'
-    if ((Test-Path -LiteralPath $tasteAgentSrc) -and (Test-Path -LiteralPath $eccAgentsDir)) {
-        $dstAgent = Join-Path -Path $eccAgentsDir -ChildPath 'taste-designer.md'
-        Copy-Item -LiteralPath $tasteAgentSrc -Destination $dstAgent -Force
-    }
-    # Sync rule
-    $tasteRuleSrc = Join-Path -Path $MasterTaste -ChildPath 'rules\taste-design.md'
-    $eccRulesDir = Join-Path -Path $MasterEcc -ChildPath 'rules'
-    if ((Test-Path -LiteralPath $tasteRuleSrc) -and (Test-Path -LiteralPath $eccRulesDir)) {
-        $dstRule = Join-Path -Path $eccRulesDir -ChildPath 'taste-design.md'
-        Copy-Item -LiteralPath $tasteRuleSrc -Destination $dstRule -Force
-    }
-    # Sync workflows
-    $tasteWfSrc = Join-Path -Path $MasterTaste -ChildPath 'workflows'
-    $eccWfDir = Join-Path -Path $MasterEcc -ChildPath 'workflows'
-    if ((Test-Path -LiteralPath $tasteWfSrc) -and (Test-Path -LiteralPath $eccWfDir)) {
-        Get-ChildItem -LiteralPath $tasteWfSrc -Filter "*.md" | ForEach-Object {
-            $dstWf = Join-Path -Path $eccWfDir -ChildPath $_.Name
-            Copy-Item -LiteralPath $_.FullName -Destination $dstWf -Force
+
+        # Scan for agents
+        $pAgentsDir = Join-Path -Path $pDir -ChildPath 'agents'
+        if (Test-Path -LiteralPath $pAgentsDir) {
+            Get-ChildItem -LiteralPath $pAgentsDir -Filter "*.md" -ErrorAction SilentlyContinue | ForEach-Object {
+                $destName = $_.Name
+                if ($destName -eq 'architect.md' -and $pName -eq 'charrette') {
+                    $destName = 'charrette-architect.md'
+                } elseif ($destName -eq 'code-reviewer.md' -and $pName -eq 'agent-skills') {
+                    $destName = 'addy-code-reviewer.md'
+                }
+                $dstFile = Join-Path -Path $eccAgentsDir -ChildPath $destName
+                if (-not (Test-Path -LiteralPath $dstFile)) {
+                    Copy-Item -LiteralPath $_.FullName -Destination $dstFile -Force
+                }
+            }
+        }
+
+        # Scan for rules
+        $pRulesDir = Join-Path -Path $pDir -ChildPath 'rules'
+        if (Test-Path -LiteralPath $pRulesDir) {
+            Get-ChildItem -LiteralPath $pRulesDir -Filter "*.md" -ErrorAction SilentlyContinue | ForEach-Object {
+                $dstRule = Join-Path -Path $eccRulesDir -ChildPath $_.Name
+                if (-not (Test-Path -LiteralPath $dstRule)) {
+                    Copy-Item -LiteralPath $_.FullName -Destination $dstRule -Force
+                }
+            }
+        }
+
+        # Scan for workflows
+        $pWfDir = Join-Path -Path $pDir -ChildPath 'workflows'
+        if (Test-Path -LiteralPath $pWfDir) {
+            Get-ChildItem -LiteralPath $pWfDir -Filter "*.md" -ErrorAction SilentlyContinue | ForEach-Object {
+                $dstWf = Join-Path -Path $eccWfDir -ChildPath $_.Name
+                if (-not (Test-Path -LiteralPath $dstWf)) {
+                    Copy-Item -LiteralPath $_.FullName -Destination $dstWf -Force
+                }
+            }
         }
     }
 }
 
-# 3. Sync global skills into Master ECC skills so all 470+ skills are discoverable
+# 2. Sync all global skills into Master ECC skills
 if (Test-Path -LiteralPath $MasterSkills) {
-    $eccSkillsDir = Join-Path -Path $MasterEcc -ChildPath 'skills'
     if (Test-Path -LiteralPath $eccSkillsDir) {
         Get-ChildItem -LiteralPath $MasterSkills | ForEach-Object {
             $dest = Join-Path -Path $eccSkillsDir -ChildPath $_.Name
@@ -323,7 +215,7 @@ function Configure-SingleProject {
         Copy-Item -Path (Join-Path $MasterRalph 'scripts\prd.json.example') -Destination (Join-Path $ralphScriptsDst 'prd.json.example') -Force
     }
 
-    # Scaffold or update .mcp.json with standard servers (Figma, Laya, Context7)
+    # Scaffold or update .mcp.json with standard servers (Figma, Laya, Context7, Magic, 21st, SkillSpector)
     $mcpJsonPath = Join-Path -Path $Resolved -ChildPath '.mcp.json'
     $defaultMcp = @{
         mcpServers = @{
@@ -351,7 +243,7 @@ function Configure-SingleProject {
         }
     }
     
-    # Check if a python venv with laya exists in workspace or user profile
+    # Check if a python venv with laya exists
     $layaPy = $null
     $possibleLayaPy = @(
         (Join-Path $Resolved 'laya-repo\.venv\Scripts\python.exe'),
@@ -397,27 +289,21 @@ function Configure-SingleProject {
             if (-not $existingMcp.mcpServers) {
                 $existingMcp | Add-Member -MemberType NoteProperty -Name "mcpServers" -Value @{} -Force
             }
-            # Add figma if missing
             if (-not $existingMcp.mcpServers.figma) {
                 $existingMcp.mcpServers | Add-Member -MemberType NoteProperty -Name "figma" -Value $defaultMcp.mcpServers.figma -Force
             }
-            # Add context7 if missing
             if (-not $existingMcp.mcpServers.context7) {
                 $existingMcp.mcpServers | Add-Member -MemberType NoteProperty -Name "context7" -Value $defaultMcp.mcpServers.context7 -Force
             }
-            # Add laya if missing and python available
             if ($layaPy -and (-not $existingMcp.mcpServers.laya)) {
                 $existingMcp.mcpServers | Add-Member -MemberType NoteProperty -Name "laya" -Value $defaultMcp.mcpServers.laya -Force
             }
-            # Add skillspector if missing and python available
             if ((Test-Path -LiteralPath $skillspectorPy) -and (-not $existingMcp.mcpServers.skillspector)) {
                 $existingMcp.mcpServers | Add-Member -MemberType NoteProperty -Name "skillspector" -Value $defaultMcp.mcpServers.skillspector -Force
             }
-            # Add magic if missing
             if (-not $existingMcp.mcpServers.magic) {
                 $existingMcp.mcpServers | Add-Member -MemberType NoteProperty -Name "magic" -Value $defaultMcp.mcpServers.magic -Force
             }
-            # Add 21st if missing
             if (-not $existingMcp.mcpServers.'21st') {
                 $existingMcp.mcpServers | Add-Member -MemberType NoteProperty -Name "21st" -Value $defaultMcp.mcpServers.'21st' -Force
             }
@@ -472,7 +358,6 @@ function Configure-SingleProject {
     if (-not (Test-Path -LiteralPath $scriptsDir)) {
         New-Item -ItemType Directory -Path $scriptsDir -Force | Out-Null
     }
-    # Copy setup-project.ps1 to project scripts directory for portability
     $masterSetupScript = $MyInvocation.MyCommand.Path
     if (-not $masterSetupScript) {
         $masterSetupScript = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\setup-project.ps1'
@@ -487,8 +372,9 @@ function Configure-SingleProject {
 <#
 .SYNOPSIS
     Antigravity Project Synchronization Script
-    Provisions all 468+ skills, 112+ agents, 130+ rules, 110+ workflows,
-    Addy Osmani Agent-Skills, ArmorAntigravity governance, CodeRabbit, Ralph autonomous loop, and MCP servers into the target project.
+    Provisions all 655+ skills, 154+ agents, 142+ rules, 114+ workflows,
+    Awesome-Claude-Code Catalog, Anthropic Official Skills, Superpowers, UI-Craft, Strix, SkillSpector,
+    Context7, Addy Osmani Agent-Skills, ArmorAntigravity governance, CodeRabbit, Ralph loop, and MCP servers.
 #>
 param(
     [string]`$ProjectPath = (Get-Location).Path,
@@ -508,6 +394,7 @@ if (Test-Path -LiteralPath `$setupScript) {
     Write-Error "Antigravity setup script not found at `$setupScript"
 }
 "@ -Encoding utf8
+
     Set-Content -Path $syncCmd -Value "@ECHO OFF`r`n@powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"%~dp0antigravity-sync.ps1`" %*" -Encoding ascii
 
     # Scaffold GitHub Actions CI workflow if missing
@@ -585,12 +472,20 @@ jobs:
     # Write ecc-install-state.json
     $stateFile = Join-Path -Path $AgentsDir -ChildPath 'ecc-install-state.json'
     $stateObj = @{
-        version = 5
+        version = 6
         target = 'antigravity'
         mode = 'full-power'
         installedAt = (Get-Date -Format 'o')
-        plugins = @('everything-claude-code', 'coderabbit', 'firebase', 'wispr-flow', 'ralph', 'graphify', 'laya', 'get-shit-done', 'armorantigravity', 'ponytail', 'agent-reach', 'lemo-opuscar', 'agent-skills', 'context7', 'skillspector', 'strix')
-        sourceVersion = '2.13.0'
+        plugins = @(
+            'everything-claude-code', 'awesome-claude-code', 'superpowers', 'anthropic-skills',
+            'agent-collab-skills', 'ui-craft', 'avoid-ai-writing', 'claude-code-agents',
+            'charrette', 'cc-devops-skills', 'scientific-writing-skills', 'diagram-design',
+            'styleseed', 'fable-mode', 'naming', 'motion-skills', 'coderabbit', 'firebase',
+            'wispr-flow', 'ralph', 'graphify', 'laya', 'get-shit-done', 'armorantigravity',
+            'ponytail', 'agent-reach', 'lemo-opuscar', 'agent-skills', 'context7', 'skillspector',
+            'strix', 'taste-skill', 'design-motion-principles', 'magic'
+        )
+        sourceVersion = '3.0.0'
     }
     $stateJson = $stateObj | ConvertTo-Json -Depth 4
     Set-Content -Path $stateFile -Value $stateJson -Encoding utf8
@@ -619,20 +514,20 @@ jobs:
     }
 
     Write-Host "[Antigravity Full-Power] Successfully configured: $Resolved" -ForegroundColor Green
-    Write-Host "  - Skills: 483+ (ECC + GSD + CodeRabbit + Firebase + Ralph + Laya + Graphify + Ponytail + Agent-Reach + Lemo-Opuscar + Agent-Skills + Context7 + SkillSpector + Strix + Tasteskill)"
-    Write-Host "  - Agents: 115+ (Domain Specialists + GSD Spec Planners/Executors + Code-Reviewer + Security-Auditor + Skill-Inspector + Test-Engineer + Film-Director + Taste-Designer)"
-    Write-Host "  - Rules: 135+ (TDD, Security, Immutability, CodeRabbit Quality Gates, SkillSpector Safety, Context7 Docs, Strix Pentesting, Ponytail, Ralph, GSD, Agent-Reach, Film-Rules, Agent-Skills, Taste-Design)"
+    Write-Host "  - Skills: 655+ (Awesome-Claude-Code + Anthropic Official + Superpowers + UI-Craft + DevOps + Collab + ECC + GSD + CodeRabbit + Ponytail + Agent-Reach + Lemo + Agent-Skills + Context7 + SkillSpector + Strix + Taste)"
+    Write-Host "  - Agents: 154+ (E2E Dev Roles + Charrette Architecture + Fable Mode + UI-Craft + GSD Spec Planners/Executors + Code-Reviewer + Security-Auditor + Taste-Designer + Film-Director)"
+    Write-Host "  - Rules: 142+ (TDD, Superpowers, UI-Craft Anti-Slop, Avoid-AI-Writing, Awesome-CC Catalog, Security, CodeRabbit, SkillSpector, Context7, Strix Pentesting, Ponytail, Ralph, GSD)"
     Write-Host "  - Workflows: 114+ (/skillspector, /taste, /taste-gate, /spec, /ship, /webperf, /test, /review, /planning, /reach, autonomous pipelines)"
-    Write-Host "  - Tasteskill Anti-Slop Design Engine: Active (figma.com & x.ai visual bar, design-taste-frontend skill, taste-designer agent, dealer scripts, finish gate, /taste & /taste-gate)"
+    Write-Host "  - Awesome Claude Code Engine: Active (awesome-cc CLI, 260+ cataloged tools, 'awesome-claude-code' skill, instant discovery)"
+    Write-Host "  - Anthropic Official Skills: Active (19 skills: docx, pptx, xlsx, canvas, algorithmic-art, frontend-design, mcp-builder, webapp-testing)"
+    Write-Host "  - Superpowers Engineering: Active (15 skills: TDD, systematic-debugging, subagent-driven development, git-worktrees, verification)"
+    Write-Host "  - UI-Craft Anti-Slop Engine: Active (34 skills, 2 agents: a11y-auditor, design-reviewer, taste tokens, typography standards)"
+    Write-Host "  - Human Prose Quality: Active (7 skills: avoid-ai-writing, voice-preserving-rewriter, elimination of 49 robotic tropes)"
+    Write-Host "  - Tasteskill & Motion: Active (figma & x.ai bar, design-motion-principles, Emil Kowalski / Jakub Krehel physics)"
     Write-Host "  - Strix Autonomous Pentesting: Active (9 security skills, OWASP Top 10, API testing, PoC exploit validation, strix 1.7.0 CLI)"
     Write-Host "  - NVIDIA SkillSpector: Active (71 vulnerability patterns, pre-install static vetting, semantic source review, skillspector MCP server)"
     Write-Host "  - Context7 Live Docs: Active (resolve-library-id, query-docs, ctx7 CLI, docs-researcher agent, auto-grounding for all libraries)"
-    Write-Host "  - Addy Osmani Agent-Skills: Active (25 engineering skills, 4 agents, /spec, /ship, /webperf, /test, /review, /planning)"
-    Write-Host "  - Lemo-Opuscar Studio: Active (66+ film styles, HTML5 Canvas/WebGL code animation, Kokoro/Edge TTS, FFmpeg muxing, film-director agent)"
-    Write-Host "  - Agent-Reach Live Internet Layer: Active (YouTube transcripts, GitHub, Reddit, Twitter/X, V2EX, Web search)"
-    Write-Host "  - Ponytail Engine: Active (YAGNI, stdlib first, /ponytail, /ponytail-review, /ponytail-audit, /ponytail-debt, /ponytail-gain, /ponytail-help)"
-    Write-Host "  - GSD Spec-Driven Engine: Active (/gsd-new-project, /gsd-plan-phase, /gsd-execute-phase, /gsd-progress, /gsd-verify-work)"
-    Write-Host "  - MCP Servers: Active (.mcp.json configured with Figma, Laya, Context7 & SkillSpector)"
+    Write-Host "  - MCP Servers: Active (.mcp.json configured with Figma, Laya, Context7, Magic, 21st & SkillSpector)"
     Write-Host "  - Ralph Scaffolding: Active (scripts\ralph\ralph.ps1, ralph.sh)"
     Write-Host "  - CodeRabbit Config: Active (.coderabbit.yaml)"
     Write-Host "  - SessionStart Automation: Active (.agents\hooks.json)"
@@ -657,10 +552,10 @@ if ($runAll) {
     }
 
     # Auto-discover projects in common developer workspaces
-    $devRoots = @('D:\code', 'C:\Users\vikas sharma\projects')
+    $devRoots = @('D:\code', 'D:\', 'C:\Users\vikas sharma\projects')
     foreach ($devRoot in $devRoots) {
         if (Test-Path -LiteralPath $devRoot) {
-            Get-ChildItem -LiteralPath $devRoot -Directory | ForEach-Object {
+            Get-ChildItem -LiteralPath $devRoot -Directory -ErrorAction SilentlyContinue | ForEach-Object {
                 $sub = $_.FullName
                 if ((Test-Path (Join-Path $sub '.git')) -or (Test-Path (Join-Path $sub 'package.json')) -or (Test-Path (Join-Path $sub 'pyproject.toml'))) {
                     if (-not $targets.Contains($sub)) {
