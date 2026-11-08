@@ -178,7 +178,7 @@
 
     /* Layout Container */
     .wrap {
-      max-width: 920px;
+      max-width: 1040px;
       margin: 0 auto;
       padding: 0 16px;
     }
@@ -229,7 +229,7 @@
     .top-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 5px;
       flex-wrap: wrap;
     }
 
@@ -1698,7 +1698,7 @@
       pushGranted: (typeof Notification !== "undefined" && Notification.permission === "granted"),
       me: "maya",
       tab: "today",
-      onboarded: false,
+      onboarded: true,
       n: 100,
       modal: null,
       err: "",
@@ -1742,6 +1742,8 @@
     if (S.tourCollapsed === undefined) S.tourCollapsed = false;
     if (S.discoverView === undefined) S.discoverView = "list";
     if (!S.selectedSpot) S.selectedSpot = "tfdl";
+    if (!S.onboarded) S.onboarded = true;
+    if (S.tab === "onboard") S.tab = "today";
     document.documentElement.setAttribute("data-theme", S.theme);
 
     // Cross-tab real-time state synchronization
@@ -2200,6 +2202,7 @@
     }
 
     function renderLiveCapsule() {
+      if (S.tab === "onboard") return "";
       if (S.tab === "study" && S.t0) {
         const elapsed = Math.floor((Date.now() - S.t0) / 1000);
         return `
@@ -3808,7 +3811,8 @@
       },
       start() {
         S.mode = "demo";
-        S.tab = S.onboarded ? "today" : "onboard";
+        S.onboarded = true;
+        S.tab = "today";
         R();
       },
       tab(v) {
