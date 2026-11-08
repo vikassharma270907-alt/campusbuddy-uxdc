@@ -299,6 +299,30 @@ describe('CampusBuddy Single-File Prototype Integrity', () => {
     assert.match(htmlContent, /download="campusbuddy\.ics"/);
     assert.match(htmlContent, /Subscribe to Calendar/);
   });
+
+  test('TFDL Indoor Floorplan Micro-Navigator renders interactive level selector, zones, and SVG blueprint', () => {
+    assert.match(htmlContent, /floor-tabs-bar/);
+    assert.match(htmlContent, /floor-tab-btn/);
+    assert.match(htmlContent, /floor-map-container/);
+    assert.match(htmlContent, /indoor_floor/);
+    assert.match(htmlContent, /TFDL Indoor Floorplan Navigator/);
+  });
+
+  test('University Student SSO Authentication Simulation renders CAS dialog, Duo 2FA push, and verified badge', () => {
+    assert.match(htmlContent, /sso-title/);
+    assert.match(htmlContent, /Central Authentication \(CAS\)/);
+    assert.match(htmlContent, /sso_verify/);
+    assert.match(htmlContent, /sso_revoke/);
+    assert.match(htmlContent, /verified-student-badge/);
+  });
+
+  test('Institutional Wellbeing & Campus Pulse Insights Dashboard renders loneliness reduction telemetry and export', () => {
+    assert.match(htmlContent, /wellbeing-grid/);
+    assert.match(htmlContent, /wellbeing-metric-card/);
+    assert.match(htmlContent, /Loneliness Reduction/);
+    assert.match(htmlContent, /export_wellbeing/);
+    assert.match(htmlContent, /Peak Campus Disconnection Gap Identified/);
+  });
 });
 
 
