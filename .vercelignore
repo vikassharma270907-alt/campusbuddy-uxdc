@@ -1,0 +1,7 @@
+render.yaml
+scripts/
+tests/
+assets/raw_video_temp/
+.agents/
+.vscode/
+.playwright-mcp/

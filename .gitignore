@@ -43,3 +43,6 @@ assets/raw_video_temp/
 .taste-pro/
 assets/raw_video_temp/
 __pycache__/
+
+.vercel
+.env*
