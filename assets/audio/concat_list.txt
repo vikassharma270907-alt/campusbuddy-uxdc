@@ -1,0 +1,7 @@
+file 'chapter1.mp3'
+file 'chapter2.mp3'
+file 'chapter3.mp3'
+file 'chapter4.mp3'
+file 'chapter5.mp3'
+file 'chapter6.mp3'
+file 'chapter7.mp3'
