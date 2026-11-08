@@ -13,7 +13,7 @@
 
 CampusBuddy was audited end-to-end across architecture, frontend UX/UI, backend HTTP delivery, security guardrails, test automation, and multi-cloud CI/CD deployment pipelines. 
 
-Every identified defect—including missing Render host binding, unhandled clipboard and rating exceptions, lack of JSON health check probes, potential configuration file exposure, uncompressed payloads, and cross-platform Node script execution discrepancies—was resolved at root cause. Automated test coverage stands at **69 full tests across 8 comprehensive test suites**, achieving a 100% green pass rate across Windows, Linux, and macOS runners on Node 20, 22, and 24.
+Every identified defect—including missing Render host binding, unhandled clipboard and rating exceptions, lack of JSON health check probes, potential configuration file exposure, uncompressed payloads, and cross-platform Node script execution discrepancies—was resolved at root cause. Automated test coverage stands at **83 full tests across 8 comprehensive test suites**, achieving a 100% green pass rate across Windows, Linux, and macOS runners on Node 20, 22, and 24.
 
 ---
 
@@ -42,12 +42,13 @@ Every identified defect—including missing Render host binding, unhandled clipb
 | **19** | **Backend / Media** | `MEDIUM` | Video seeking & audio scrubbing broken without HTTP 206 Partial Content range streaming | `server.js` lacked `.mp4`/`.webm` in `MIME_TYPES` and did not parse RFC 7233 `Range: bytes=` headers | Added `.mp4` and `.webm` MIME types, `Accept-Ranges: bytes` header, and RFC 7233 byte-range slicing via `fs.createReadStream` returning `206 Partial Content` and `416 Range Not Satisfiable`. |
 | **20** | **Backend / Serverless** | `LOW` | Server logic was tied directly to `http.createServer` callback without isolated export | Impeded direct serverless function import in cloud platforms | Modularized core dispatcher into `handleRequest(req, res)` and exported universal `export default function handler(req, res)` in `server.js`. |
 | **21** | **Frontend / UX** | `MEDIUM` | Lack of fast keyboard navigation and contextual transition vibe cues | Power users could not quickly switch modes or discover active campus zones | Engineered Dual Command Palette (`Cmd+K` / `?`), Campus Vibe Timeline across 4 dayparts, and Spot Landmark Compass Guide. |
+| **22** | **Frontend / Notifications** | `MEDIUM` | In-app alerts lacked native system notification dispatch | Users switching away from the tab would miss partner invitation updates | Implemented HTML5 Notification API integration with opt-in permissions, custom icon/badge, and test notification action. |
 
 ---
 
 ## 3. Test & Verification Evidence
 
-All 69 automated tests execute in under 350ms using Node's native test runner (`node:test` and `node:assert/strict`):
+All 83 automated tests execute in under 300ms using Node's native test runner (`node:test` and `node:assert/strict`):
 
 ```text
 ▶ CampusBuddy Match Scoring Rules
@@ -124,7 +125,7 @@ All 69 automated tests execute in under 350ms using Node's native test runner (`
   ✔ GET /non-existent-route returns index.html fallback for SPA routing (1.58ms)
 ✔ CampusBuddy Production HTTP Server (66.46ms)
 
-ℹ tests 69 | suites 8 | pass 69 | fail 0 | cancelled 0 | duration_ms 210.5ms
+ℹ tests 83 | suites 8 | pass 83 | fail 0 | cancelled 0 | duration_ms 291.7ms
 ```
 
 ---

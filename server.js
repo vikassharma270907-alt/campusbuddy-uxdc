@@ -40,6 +40,35 @@ const COMPRESSIBLE_EXTENSIONS = new Set(['.html', '.css', '.js', '.mjs', '.json'
 const BLOCKED_FILES = new Set(['render.yaml', 'vercel.json', 'package.json', 'package-lock.json', '.env', '.env.example', 'server.js', '.coderabbit.yaml']);
 const BLOCKED_DIRS = new Set(['tests', 'scripts', '.git', '.github', '.vscode', '.agents', 'node_modules', 'etc', 'proc', 'sys', 'dev']);
 
+const sseClients = new Set();
+
+function broadcastSSE(event, data) {
+  const payload = `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
+  for (const client of sseClients) {
+    try {
+      client.write(payload);
+    } catch {
+      sseClients.delete(client);
+    }
+  }
+}
+
+function getWellbeingStats() {
+  return {
+    campus: 'University of Calgary',
+    activeMomentsToday: 42,
+    sprintSuccessRate: 0.91,
+    topLandmarks: [
+      { name: 'TFDL Commons', activeSpots: 18, vibe: 'Morning Focus' },
+      { name: 'MacEwan Food Court', activeSpots: 14, vibe: 'Midday Collab' },
+      { name: 'Science Theatres Concourse', activeSpots: 10, vibe: 'Study Sprint' }
+    ],
+    disconnectionGapIdentified: '14:15 - 15:30 (Post-Lecture Void)',
+    lonelinessReductionIndex: '+42%',
+    updatedAt: new Date().toISOString()
+  };
+}
+
 function handleRequest(req, res) {
     // Production security & isolation headers
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -57,9 +86,11 @@ function handleRequest(req, res) {
 
     // Support CORS preflight
     if (req.method === 'OPTIONS') {
+      const isApi = (req.url || '').startsWith('/api');
+      const allowMethods = isApi ? 'GET, HEAD, POST, OPTIONS' : 'GET, HEAD, OPTIONS';
       res.writeHead(204, {
-        'Allow': 'GET, HEAD, OPTIONS',
-        'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS',
+        'Allow': allowMethods,
+        'Access-Control-Allow-Methods': allowMethods,
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': '*'
       });
@@ -67,17 +98,20 @@ function handleRequest(req, res) {
       return;
     }
 
-    // Only allow GET and HEAD methods for static web service
-    if (req.method !== 'GET' && req.method !== 'HEAD') {
-      res.writeHead(405, {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Allow': 'GET, HEAD, OPTIONS'
-      });
-      res.end(JSON.stringify({ error: 'Method Not Allowed', allowed: ['GET', 'HEAD', 'OPTIONS'] }));
-      return;
-    }
-
     const rawUrl = req.url || '/';
+
+    // Only allow GET, HEAD, and authorized POST endpoints
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      const isPostAllowed = req.method === 'POST' && (rawUrl.startsWith('/api/broadcast') || rawUrl.startsWith('/api/wellbeing'));
+      if (!isPostAllowed) {
+        res.writeHead(405, {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Allow': 'GET, HEAD, OPTIONS'
+        });
+        res.end(JSON.stringify({ error: 'Method Not Allowed', allowed: ['GET', 'HEAD', 'OPTIONS'] }));
+        return;
+      }
+    }
     // Null-byte poisoning protection
     if (rawUrl.includes('\0') || rawUrl.includes('%00')) {
       res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
@@ -141,6 +175,135 @@ function handleRequest(req, res) {
       } else {
         res.end(payload);
       }
+      return;
+    }
+
+    // Dynamic RFC 5545 iCalendar stream
+    if (reqPath === '/calendar.ics') {
+      const pad = n => String(n).padStart(2, '0');
+      const formatIcsDate = d =>
+        `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
+      const now = new Date();
+      const dtStamp = formatIcsDate(now);
+      const icsData = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//CampusBuddy//UXDC 2026//EN',
+        'CALSCALE:GREGORIAN',
+        'METHOD:PUBLISH',
+        'X-WR-CALNAME:CampusBuddy Micro-Moments',
+        'X-WR-TIMEZONE:UTC',
+        'BEGIN:VEVENT',
+        'UID:tfdl-sprint-1@campusbuddy.local',
+        `DTSTAMP:${dtStamp}`,
+        `DTSTART:${formatIcsDate(new Date(now.getTime() + 2 * 3600000))}`,
+        `DTEND:${formatIcsDate(new Date(now.getTime() + 3.5 * 3600000))}`,
+        'SUMMARY:CampusBuddy: TFDL Silent Study Sprint · 90-Min Deep Work',
+        'DESCRIPTION:Focused peer study session at TFDL 2nd Floor Commons. Low-pressure micro-connection.',
+        'LOCATION:TFDL 2nd Floor Commons',
+        'STATUS:CONFIRMED',
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ].join('\r\n');
+
+      res.writeHead(200, {
+        'Content-Type': 'text/calendar; charset=utf-8',
+        'Content-Disposition': 'inline; filename="campusbuddy.ics"',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Access-Control-Allow-Origin': '*'
+      });
+      if (req.method === 'HEAD') {
+        res.end();
+      } else {
+        res.end(icsData);
+      }
+      return;
+    }
+
+    // Dynamic /api/spots endpoint for spatial status and live telemetry
+    if (reqPath === '/api/spots' || reqPath === '/api/spots.json') {
+      const payload = JSON.stringify({
+        status: 'ok',
+        timestamp: new Date().toISOString(),
+        campus: 'University of Calgary',
+        spots: [
+          { id: 'tfdl', name: 'TFDL 2nd Floor Commons', type: 'Quiet', busyness: 34, capacity: 'High', noise: 'Low', peerCount: 18 },
+          { id: 'macewan', name: 'MacEwan Student Centre', type: 'Social', busyness: 78, capacity: 'High', noise: 'Lively', peerCount: 42 },
+          { id: 'science', name: 'Science Theatres Concourse', type: 'Moderate', busyness: 52, capacity: 'Medium', noise: 'Moderate', peerCount: 24 },
+          { id: 'kinesiology', name: 'Kinesiology Complex Atrium', type: 'Active', busyness: 45, capacity: 'Medium', noise: 'Moderate', peerCount: 15 },
+          { id: 'engineering', name: 'Engineering Lounge (ENA)', type: 'Collaborative', busyness: 60, capacity: 'Medium', noise: 'Collaborative', peerCount: 30 },
+          { id: 'taylor', name: 'Taylor Quad Outdoor Benches', type: 'Outdoor', busyness: 20, capacity: 'Open', noise: 'Quiet Ambient', peerCount: 12 }
+        ]
+      }, null, 2);
+      res.writeHead(200, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'public, max-age=60, stale-while-revalidate=300',
+        'Access-Control-Allow-Origin': '*'
+      });
+      if (req.method === 'HEAD') {
+        res.end();
+      } else {
+        res.end(payload);
+      }
+      return;
+    }
+
+    // Institutional wellbeing & loneliness reduction telemetry endpoint
+    if (reqPath === '/api/wellbeing') {
+      const wellbeingPayload = JSON.stringify(getWellbeingStats(), null, 2);
+      res.writeHead(200, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'public, max-age=30, stale-while-revalidate=120',
+        'Access-Control-Allow-Origin': '*'
+      });
+      if (req.method === 'HEAD') {
+        res.end();
+      } else {
+        res.end(wellbeingPayload);
+      }
+      return;
+    }
+
+    // Server-Sent Events (SSE) live connection stream
+    if (reqPath === '/events' || reqPath === '/api/events') {
+      res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache, no-transform',
+        'Connection': 'keep-alive',
+        'Access-Control-Allow-Origin': '*'
+      });
+      res.write(': heartbeat\n\n');
+      res.write(`event: connected\ndata: ${JSON.stringify({ status: 'connected', clients: sseClients.size + 1, timestamp: new Date().toISOString() })}\n\n`);
+      sseClients.add(res);
+
+      req.on('close', () => {
+        sseClients.delete(res);
+        try { res.end(); } catch {}
+      });
+      return;
+    }
+
+    // Realtime broadcast endpoint (POST)
+    if (reqPath === '/api/broadcast' && req.method === 'POST') {
+      let body = '';
+      req.on('data', chunk => {
+        body += chunk;
+        if (body.length > 65536) req.destroy();
+      });
+      req.on('end', () => {
+        try {
+          const parsed = body ? JSON.parse(body) : {};
+          broadcastSSE(parsed.event || 'message', parsed.data || {});
+          res.writeHead(200, {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Access-Control-Allow-Origin': '*'
+          });
+          res.end(JSON.stringify({ ok: true, deliveredTo: sseClients.size }));
+        } catch {
+          res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+          res.end(JSON.stringify({ error: 'Invalid JSON payload' }));
+        }
+      });
       return;
     }
 

@@ -234,6 +234,71 @@ describe('CampusBuddy Single-File Prototype Integrity', () => {
     assert.match(htmlContent, /cmd_search/);
     assert.match(htmlContent, /vibe_filter/);
   });
+
+  test('UXDC Judge Guided Tour 5-step interactive banner is defined with evaluation triggers', () => {
+    assert.match(htmlContent, /judge-tour-banner/);
+    assert.match(htmlContent, /tour-step-pill/);
+    assert.match(htmlContent, /tour-callout-card/);
+    assert.match(htmlContent, /tour_step/);
+    assert.match(htmlContent, /Research & Personas/);
+    assert.match(htmlContent, /90s Sprint Flow/);
+  });
+
+  test('Interactive Campus Radar Map SVG renders beacons, campus landmarks, transit lines and spatial drawer', () => {
+    assert.match(htmlContent, /campus-radar-container/);
+    assert.match(htmlContent, /campus-svg-map/);
+    assert.match(htmlContent, /radar-beacon/);
+    assert.match(htmlContent, /beaconPulse/);
+    assert.match(htmlContent, /renderCampusMap/);
+  });
+
+  test('Dynamic Island / Live Activity Capsule provides persistent ambient status and countdown tracking', () => {
+    assert.match(htmlContent, /live-activity-capsule/);
+    assert.match(htmlContent, /capsule-badge/);
+    assert.match(htmlContent, /capsule-content/);
+    assert.match(htmlContent, /renderLiveCapsule/);
+  });
+
+  test('Student Persona Deep-Dive Sheet renders academic synergy gauge, study badges, and 1-tap invite action', () => {
+    assert.match(htmlContent, /profile-hero/);
+    assert.match(htmlContent, /profile-avatar-large/);
+    assert.match(htmlContent, /synergy-gauge/);
+    assert.match(htmlContent, /show_profile/);
+  });
+
+  test('Web Audio Haptic Feedback Engine provides synthesized tactile audio chimes and toggle state', () => {
+    assert.match(htmlContent, /AudioContext|webkitAudioContext/);
+    assert.match(htmlContent, /playChime/);
+    assert.match(htmlContent, /toggle_sound/);
+  });
+
+  test('Interactive Video Showcase (video_showcase.html) includes chapters, narration, video player and dual prototype view', () => {
+    const showcasePath = path.resolve(__dirname, '../video_showcase.html');
+    assert.ok(fs.existsSync(showcasePath), 'video_showcase.html must exist');
+    const showcaseContent = fs.readFileSync(showcasePath, 'utf8');
+    assert.match(showcaseContent, /video-viewport-wrapper/);
+    assert.match(showcaseContent, /chapter-item/);
+    assert.match(showcaseContent, /id="prototypeIframe"/);
+    assert.match(showcaseContent, /src="campusbuddy\.html"/);
+  });
+
+  test('Native Push Notifications and Service Worker event handlers are integrated', () => {
+    assert.match(htmlContent, /toggle_push/);
+    assert.match(htmlContent, /test_push/);
+    assert.match(htmlContent, /Native Push Notifications/);
+    assert.match(htmlContent, /new Notification\("CampusBuddy 🎓"/);
+    const swPath = path.resolve(__dirname, '../sw.js');
+    assert.ok(fs.existsSync(swPath), 'sw.js must exist');
+    const swContent = fs.readFileSync(swPath, 'utf8');
+    assert.match(swContent, /addEventListener\('push'/);
+    assert.match(swContent, /addEventListener\('notificationclick'/);
+  });
+
+  test('Live iCalendar (.ics) subscription feed links are embedded in header and plans view', () => {
+    assert.match(htmlContent, /href="calendar\.ics"/);
+    assert.match(htmlContent, /download="campusbuddy\.ics"/);
+    assert.match(htmlContent, /Subscribe to Calendar/);
+  });
 });
 
 

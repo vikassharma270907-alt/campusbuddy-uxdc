@@ -57,7 +57,7 @@ if (fs.existsSync(assetsSrc)) {
 fs.writeFileSync(path.join(distDir, '.nojekyll'), '');
 fs.copyFileSync(path.join(distDir, 'index.html'), path.join(distDir, '404.html'));
 
-// Step 5: Static health endpoints for CDN / serverless deployments
+// Step 5: Static health and API endpoints for CDN / serverless deployments
 const healthPayload = JSON.stringify({
   status: 'healthy',
   timestamp: new Date().toISOString(),
@@ -66,6 +66,53 @@ const healthPayload = JSON.stringify({
 }, null, 2);
 fs.writeFileSync(path.join(distDir, 'health'), healthPayload);
 fs.writeFileSync(path.join(distDir, 'healthz'), healthPayload);
+
+// Generate static /calendar.ics in dist/
+const pad = n => String(n).padStart(2, '0');
+const formatIcsDate = d =>
+  `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
+const now = new Date();
+const dtStamp = formatIcsDate(now);
+const staticIcs = [
+  'BEGIN:VCALENDAR',
+  'VERSION:2.0',
+  'PRODID:-//CampusBuddy//UXDC 2026//EN',
+  'CALSCALE:GREGORIAN',
+  'METHOD:PUBLISH',
+  'X-WR-CALNAME:CampusBuddy Micro-Moments',
+  'X-WR-TIMEZONE:UTC',
+  'BEGIN:VEVENT',
+  'UID:tfdl-sprint-1@campusbuddy.local',
+  `DTSTAMP:${dtStamp}`,
+  `DTSTART:${formatIcsDate(new Date(now.getTime() + 2 * 3600000))}`,
+  `DTEND:${formatIcsDate(new Date(now.getTime() + 3.5 * 3600000))}`,
+  'SUMMARY:CampusBuddy: TFDL Silent Study Sprint · 90-Min Deep Work',
+  'DESCRIPTION:Focused peer study session at TFDL 2nd Floor Commons. Low-pressure micro-connection.',
+  'LOCATION:TFDL 2nd Floor Commons',
+  'STATUS:CONFIRMED',
+  'END:VEVENT',
+  'END:VCALENDAR'
+].join('\r\n');
+fs.writeFileSync(path.join(distDir, 'calendar.ics'), staticIcs);
+
+// Generate static /api/spots in dist/
+const apiDir = path.join(distDir, 'api');
+fs.mkdirSync(apiDir, { recursive: true });
+const spotsPayload = JSON.stringify({
+  status: 'ok',
+  timestamp: new Date().toISOString(),
+  campus: 'University of Calgary',
+  spots: [
+    { id: 'tfdl', name: 'TFDL 2nd Floor Commons', type: 'Quiet', busyness: 34, capacity: 'High', noise: 'Low', peerCount: 18 },
+    { id: 'macewan', name: 'MacEwan Student Centre', type: 'Social', busyness: 78, capacity: 'High', noise: 'Lively', peerCount: 42 },
+    { id: 'science', name: 'Science Theatres Concourse', type: 'Moderate', busyness: 52, capacity: 'Medium', noise: 'Moderate', peerCount: 24 },
+    { id: 'kinesiology', name: 'Kinesiology Complex Atrium', type: 'Active', busyness: 45, capacity: 'Medium', noise: 'Moderate', peerCount: 15 },
+    { id: 'engineering', name: 'Engineering Lounge (ENA)', type: 'Collaborative', busyness: 60, capacity: 'Medium', noise: 'Collaborative', peerCount: 30 },
+    { id: 'taylor', name: 'Taylor Quad Outdoor Benches', type: 'Outdoor', busyness: 20, capacity: 'Open', noise: 'Quiet Ambient', peerCount: 12 }
+  ]
+}, null, 2);
+fs.writeFileSync(path.join(apiDir, 'spots'), spotsPayload);
+fs.writeFileSync(path.join(apiDir, 'spots.json'), spotsPayload);
 
 console.log(`[CampusBuddy Build] Copied ${PUBLIC_FILES.length} public assets and generated .nojekyll, health endpoints + 404.html SPA fallback in dist/.`);
 console.log('[CampusBuddy Build] Production build completed successfully.');

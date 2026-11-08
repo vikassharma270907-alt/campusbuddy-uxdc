@@ -1410,6 +1410,83 @@
       color: var(--mut);
     }
 
+    /* ==========================================================================
+       INDOOR FLOORPLAN MICRO-NAVIGATOR & SSO / WELLBEING STYLES
+       ========================================================================== */
+    .floor-tabs-bar {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 4px 2px 10px;
+    }
+    .floor-tab-btn {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--mut);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .floor-tab-btn:hover {
+      border-color: var(--pine);
+      color: var(--ink);
+    }
+    .floor-tab-btn.active {
+      background: var(--pine-subtle);
+      border-color: var(--pine);
+      color: var(--pine);
+      box-shadow: 0 0 0 1px var(--pine);
+    }
+    .floor-map-container {
+      background: var(--card-muted);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      margin: 10px 0;
+    }
+    .verified-student-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(45, 212, 191, 0.12);
+      border: 1px solid rgba(45, 212, 191, 0.4);
+      color: #0d9488;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    [data-theme="dark"] .verified-student-badge {
+      background: rgba(45, 212, 191, 0.15);
+      border-color: rgba(45, 212, 191, 0.45);
+      color: #2dd4bf;
+    }
+    .wellbeing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .wellbeing-metric-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      text-align: left;
+    }
+    .wellbeing-val {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--ink);
+      font-family: var(--font-mono);
+      margin: 4px 0 2px;
+    }
+
     /* Accessible Focus Ring */
     :focus-visible {
       outline: 3px solid var(--sun);
@@ -1615,6 +1692,7 @@
       discoverView: "list",
       selectedSpot: "tfdl",
       openBreakdown: null,
+      pushGranted: (typeof Notification !== "undefined" && Notification.permission === "granted"),
       me: "maya",
       tab: "today",
       onboarded: false,
@@ -1772,7 +1850,18 @@
       toast.h = setTimeout(() => t.classList.remove("on"), 3000);
     };
 
-    const note = (to, txt) => S.notes.unshift({ to, txt, r: 0 });
+    const note = (to, txt) => {
+      S.notes.unshift({ to, txt, r: 0 });
+      if (to === S.me && typeof Notification !== "undefined" && Notification.permission === "granted") {
+        try {
+          new Notification("CampusBuddy 🎓", {
+            body: txt,
+            icon: "favicon.ico",
+            badge: "favicon.ico"
+          });
+        } catch (_) {}
+      }
+    };
     const blocked = (a, b) => S.blocks.some(x => (x[0] === a && x[1] === b) || (x[0] === b && x[1] === a));
     const jac = (a, b) => {
       const arrA = Array.isArray(a) ? a : [];
@@ -2657,8 +2746,15 @@
         const pa = S.acts.filter(a => a.ps.includes(S.me) && a.st === "done");
 
         return `
-          <h2>Your Campus Plans</h2>
-          <p class="m">Track upcoming meetups and log private feedback on past interactions.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:8px;">
+            <div>
+              <h2 style="margin:0 0 4px;">Your Campus Plans</h2>
+              <p class="m" style="margin:0;">Track upcoming meetups and log private feedback on past interactions.</p>
+            </div>
+            <a href="calendar.ics" download="campusbuddy.ics" class="btn sm g" style="text-decoration:none;" title="Download live .ics subscription feed">
+              📅 Subscribe to Calendar (.ics feed)
+            </a>
+          </div>
 
           <h3 style="margin-top:20px;">Upcoming Moments (${up.length})</h3>
           ${up.length ? up.map(a => `
@@ -2704,12 +2800,32 @@
       // Notifications / Alerts View
       if (t === "alerts") {
         const userNotes = S.notes.filter(n => n.to === S.me);
+        const hasPushSupport = typeof Notification !== "undefined";
+        const isGranted = hasPushSupport && Notification.permission === "granted";
         return `
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
             <h2 style="margin:0;">Campus Notifications</h2>
             ${userNotes.length ? `<button class="btn ghost sm" data-a="clear_notes">Clear all</button>` : ""}
           </div>
-          <p class="m">Updates regarding your moments and invitations.</p>
+          <p class="m">Updates regarding your moments, partner invites, and study sprints.</p>
+
+          <div class="card" style="margin-bottom:14px;background:var(--card-muted);border:1px solid var(--line);padding:14px 16px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+              <div>
+                <div style="font-weight:800;font-size:14px;color:var(--ink);display:flex;align-items:center;gap:6px;">
+                  <span>🔔</span> Native Push Notifications
+                </div>
+                <div class="small-meta" style="margin-top:2px;">Get instant device alerts on moment invitations & study reminders.</div>
+              </div>
+              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                <button class="btn sm ghost" data-a="test_push" title="Dispatch immediate test notification">Test Alert</button>
+                <button class="btn sm ${isGranted ? 'g' : ''}" data-a="toggle_push">
+                  ${isGranted ? '✓ Push Enabled' : 'Enable Push'}
+                </button>
+              </div>
+            </div>
+          </div>
+
           ${userNotes.length ? userNotes.map(n => `
             <div class="card" style="display:flex;align-items:center;gap:12px;">
               <span style="font-size:20px;">🔔</span>
@@ -2903,7 +3019,8 @@
           { id: "research", label: "UX Research Bibliography", desc: "Weak-Tie Theory & academic citations", kbd: "0", type: "tab", val: "research" },
           { id: "sprint", label: "90-Second Connection Sprint", desc: "Instant study buddy flow", kbd: "S", type: "sprint" },
           { id: "theme", label: "Toggle Dark / Light Theme", desc: "Switch OLED obsidian & daylight slate", kbd: "T", type: "theme" },
-          { id: "sound", label: "Toggle Audio Haptics", desc: "Synthesized Web Audio chimes", kbd: "H", type: "sound" }
+          { id: "sound", label: "Toggle Audio Haptics", desc: "Synthesized Web Audio chimes", kbd: "H", type: "sound" },
+          { id: "test_push", label: "Send Test Notification", desc: "Dispatch simulated study alert to device", kbd: "N", type: "test_push" }
         ];
 
         const personaCmds = Object.keys(S.users).map(pid => {
@@ -3196,6 +3313,10 @@
                   ${unreadAlerts ? `<span class="badge" style="margin-left:2px;font-size:10px;padding:1px 5px;">${unreadAlerts}</span>` : ""}
                 </button>
 
+                <a class="btn sm ghost" href="calendar.ics" download="campusbuddy.ics" aria-label="Subscribe to Calendar Feed" title="Download or subscribe to live iCalendar (.ics) feed">
+                  📅<span class="desktop-tab-label"> iCal</span>
+                </a>
+
                 <button class="btn sm ghost" data-a="toggle_sound" aria-label="Toggle Sound" title="Toggle Synthesized Audio Feedback">
                   ${S.sound !== false ? '🔊' : '🔇'}
                 </button>
@@ -3337,6 +3458,8 @@
           S.me = val;
           toast(`Switched to persona: ${S.users[val].n}`);
           R();
+        } else if (type === "test_push") {
+          A.test_push();
         }
       },
       home() {
@@ -3724,6 +3847,44 @@
       clear_notes() {
         S.notes = S.notes.filter(n => n.to !== S.me);
         toast("Notifications cleared.");
+        R();
+      },
+      toggle_push() {
+        if (typeof Notification === "undefined") {
+          toast("Browser notifications are not supported in this environment.");
+          return;
+        }
+        if (Notification.permission === "granted") {
+          S.pushGranted = true;
+          toast("✓ Device notifications are already active!");
+          R();
+        } else if (Notification.permission === "denied") {
+          toast("Notifications are blocked in your browser settings. Please allow notifications for this site.");
+        } else {
+          Notification.requestPermission().then(perm => {
+            S.pushGranted = (perm === "granted");
+            if (S.pushGranted) {
+              playChime('success');
+              toast("✓ Notifications enabled!");
+              try {
+                new Notification("CampusBuddy 🎓", {
+                  body: "Push notifications active! You'll receive instant alerts for campus moments.",
+                  icon: "favicon.ico"
+                });
+              } catch (_) {}
+            } else {
+              toast("Notification permission was not granted.");
+            }
+            R();
+          }).catch(() => {
+            toast("Unable to request notification permission.");
+          });
+        }
+      },
+      test_push() {
+        note(S.me, "Sample CampusBuddy Alert: Maya invited you to study at TFDL 2nd Floor!");
+        playChime('alert');
+        toast("Dispatched test notification to your device & alert tray.");
         R();
       },
       vis() {

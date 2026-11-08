@@ -41,6 +41,9 @@ describe('CampusBuddy Production HTTP Server', () => {
     if (createdVideoFixture && fs.existsSync(sampleVideoPath)) {
       try { fs.unlinkSync(sampleVideoPath); } catch {}
     }
+    if (typeof server.closeAllConnections === 'function') {
+      server.closeAllConnections();
+    }
     await new Promise((resolve, reject) => {
       server.close((err) => {
         if (err) return reject(err);
@@ -71,10 +74,18 @@ describe('CampusBuddy Production HTTP Server', () => {
       });
     });
     req.on('error', reject);
+    if (options.body) {
+      req.write(typeof options.body === 'string' ? options.body : JSON.stringify(options.body));
+    }
     req.end();
   });
 
   const get = (urlPath, headers = {}) => request(urlPath, { method: 'GET', headers });
+  const post = (urlPath, body = {}, headers = {}) => request(urlPath, {
+    method: 'POST',
+    body,
+    headers: { 'Content-Type': 'application/json', ...headers }
+  });
 
   test('GET / serves index.html with 200 OK, CORS, and security headers', async () => {
     const res = await get('/');
@@ -299,6 +310,79 @@ describe('CampusBuddy Production HTTP Server', () => {
     const res = await get('/campusbuddy_showcase.mp4', { Range: 'bytes=999999999-999999999' });
     assert.equal(res.status, 416);
     assert.match(res.headers['content-range'], /^bytes \*\/\d+$/);
+  });
+
+  test('GET /calendar.ics returns 200 OK with text/calendar MIME type and valid VCALENDAR payload', async () => {
+    const res = await get('/calendar.ics');
+    assert.equal(res.status, 200);
+    assert.match(res.headers['content-type'], /text\/calendar/);
+    assert.match(res.headers['content-disposition'], /inline; filename="campusbuddy\.ics"/);
+    assert.match(res.body, /BEGIN:VCALENDAR/);
+    assert.match(res.body, /PRODID:-\/\/CampusBuddy\/\/UXDC 2026\/\/EN/);
+    assert.match(res.body, /BEGIN:VEVENT/);
+    assert.match(res.body, /END:VCALENDAR/);
+  });
+
+  test('HEAD /calendar.ics returns 200 OK with empty body', async () => {
+    const res = await request('/calendar.ics', { method: 'HEAD' });
+    assert.equal(res.status, 200);
+    assert.match(res.headers['content-type'], /text\/calendar/);
+    assert.equal(res.body, '');
+  });
+
+  test('GET /api/spots returns 200 OK with verified campus zones and metrics', async () => {
+    const res = await get('/api/spots');
+    assert.equal(res.status, 200);
+    assert.match(res.headers['content-type'], /application\/json/);
+    const data = JSON.parse(res.body);
+    assert.equal(data.status, 'ok');
+    assert.equal(data.campus, 'University of Calgary');
+    assert.equal(data.spots.length, 6);
+    assert.ok(data.spots.some(s => s.id === 'tfdl' && s.busyness > 0));
+    assert.ok(data.spots.some(s => s.id === 'macewan' && s.type === 'Social'));
+  });
+
+  test('GET /api/wellbeing returns 200 OK with institutional campus telemetry', async () => {
+    const res = await get('/api/wellbeing');
+    assert.equal(res.status, 200);
+    assert.match(res.headers['content-type'], /application\/json/);
+    const data = JSON.parse(res.body);
+    assert.equal(data.campus, 'University of Calgary');
+    assert.ok(data.activeMomentsToday >= 0);
+    assert.equal(data.lonelinessReductionIndex, '+42%');
+    assert.ok(Array.isArray(data.topLandmarks));
+  });
+
+  test('POST /api/broadcast accepts and distributes event to connected listeners', async () => {
+    const res = await post('/api/broadcast', {
+      event: 'moment:created',
+      data: { id: 'test_moment_99', title: 'Calculus Review Sprint' }
+    });
+    assert.equal(res.status, 200);
+    const data = JSON.parse(res.body);
+    assert.equal(data.ok, true);
+    assert.ok(typeof data.deliveredTo === 'number');
+  });
+
+  test('GET /events initiates native SSE stream with event-stream headers', async () => {
+    const http = await import('node:http');
+    const sseRes = await new Promise((resolve, reject) => {
+      const req = http.get(`http://127.0.0.1:${testPort}/events`, (res) => {
+        resolve({
+          status: res.statusCode,
+          contentType: res.headers['content-type'],
+          cacheControl: res.headers['cache-control']
+        });
+        res.destroy();
+        req.destroy();
+      });
+      req.on('error', (err) => {
+        if (err.code !== 'ECONNRESET') reject(err);
+      });
+    });
+    assert.equal(sseRes.status, 200);
+    assert.match(sseRes.contentType, /text\/event-stream/);
+    assert.match(sseRes.cacheControl, /no-cache/);
   });
 
   test('GET /non-existent-route returns index.html fallback for SPA routing', async () => {
