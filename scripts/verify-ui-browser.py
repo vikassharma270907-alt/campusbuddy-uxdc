@@ -17,19 +17,27 @@ import asyncio
 import os
 import subprocess
 import time
+import socket
+import urllib.request
 from pathlib import Path
 from playwright.async_api import async_playwright
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 SCREENSHOTS_DIR = ROOT_DIR / "assets" / "screenshots"
-PORT = 8098
+
+def get_free_port():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(('127.0.0.1', 0))
+        return s.getsockname()[1]
+
+PORT = get_free_port()
 BASE_URL = f"http://127.0.0.1:{PORT}"
 
 async def run_ui_verification():
     SCREENSHOTS_DIR.mkdir(parents=True, exist_ok=True)
     
     # Step 1: Start local production Node.js server
-    print(f"[UI Audit] Starting server.js on port {PORT}...")
+    print(f"[UI Audit] Starting server.js on free port {PORT}...")
     server_process = subprocess.Popen(
         ["node", "server.js"],
         cwd=str(ROOT_DIR),
@@ -38,7 +46,19 @@ async def run_ui_verification():
         stderr=subprocess.DEVNULL,
         shell=(os.name == 'nt')
     )
-    time.sleep(2.0)
+    
+    # Wait for server readiness
+    ready = False
+    for _ in range(30):
+        try:
+            with urllib.request.urlopen(f"{BASE_URL}/health", timeout=1) as resp:
+                if resp.status == 200:
+                    ready = True
+                    break
+        except Exception:
+            time.sleep(0.2)
+    assert ready, f"server.js failed to start on port {PORT}"
+    print(f"  ✓ Server ready and responding on {BASE_URL}")
 
     console_errors = []
     
