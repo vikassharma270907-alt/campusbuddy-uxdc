@@ -214,6 +214,13 @@ describe('CampusBuddy Production HTTP Server', () => {
     assert.match(res.body, /Design System/);
   });
 
+  test('GET /assets/audio/chapter1.mp3 returns 200 OK with audio/mpeg MIME type', async () => {
+    const res = await get('/assets/audio/chapter1.mp3');
+    assert.equal(res.status, 200);
+    assert.match(res.headers['content-type'], /audio\/mpeg/);
+    assert.ok(res.rawBuffer.length > 1000);
+  });
+
   test('GET /non-existent-route returns index.html fallback for SPA routing', async () => {
     const res = await get('/study-session-view');
     assert.equal(res.status, 200);

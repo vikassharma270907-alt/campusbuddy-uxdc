@@ -42,6 +42,13 @@ for (const file of PUBLIC_FILES) {
   }
 }
 
+// Step 3b: Copy assets/ directory if present
+const assetsSrc = path.join(rootDir, 'assets');
+const assetsDst = path.join(distDir, 'assets');
+if (fs.existsSync(assetsSrc)) {
+  fs.cpSync(assetsSrc, assetsDst, { recursive: true });
+}
+
 // Step 4: GitHub Pages & SPA routing helpers
 // .nojekyll bypasses Jekyll processing; 404.html enables client-side routing fallback
 fs.writeFileSync(path.join(distDir, '.nojekyll'), '');

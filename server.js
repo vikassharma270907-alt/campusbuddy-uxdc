@@ -28,7 +28,9 @@ const MIME_TYPES = {
   '.webp': 'image/webp',
   '.woff2': 'font/woff2',
   '.webmanifest': 'application/manifest+json; charset=utf-8',
-  '.ics': 'text/calendar; charset=utf-8'
+  '.ics': 'text/calendar; charset=utf-8',
+  '.mp3': 'audio/mpeg',
+  '.wav': 'audio/wav'
 };
 
 const STATIC_EXTENSIONS = new Set(Object.keys(MIME_TYPES));
