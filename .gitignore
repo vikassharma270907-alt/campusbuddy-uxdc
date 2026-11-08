@@ -16,11 +16,13 @@ coverage/
 Thumbs.db
 *.log
 *.mp3
+*.mp4
 assets/audio/
 .npm/
 
 # Temporary research or build clones
 temp_*/
+assets/raw_video_temp/
 
 # Environment files
 .env
@@ -29,3 +31,4 @@ temp_*/
 # Tasteskill artifacts & deal histories
 .taste-skill/
 .taste-pro/
+assets/raw_video_temp/

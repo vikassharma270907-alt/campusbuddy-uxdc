@@ -26,6 +26,7 @@ const PUBLIC_FILES = [
   'campusbuddy.html',
   'video_showcase.html',
   'video.html',
+  'campusbuddy_showcase.mp4',
   'manifest.webmanifest',
   'sw.js',
   'favicon.ico',

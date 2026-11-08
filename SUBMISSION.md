@@ -13,8 +13,9 @@
 - **Interactive Prototype (Live Hosted URL):** [https://vikassharma270907-alt.github.io/campusbuddy-uxdc/](https://vikassharma270907-alt.github.io/campusbuddy-uxdc/)
 - **Cloud Deployment (Render Blueprint):** [https://render.com/deploy?repo=https://github.com/vikassharma270907-alt/campusbuddy-uxdc](https://render.com/deploy?repo=https://github.com/vikassharma270907-alt/campusbuddy-uxdc)
 - **GitHub Repository:** [https://github.com/vikassharma270907-alt/campusbuddy-uxdc](https://github.com/vikassharma270907-alt/campusbuddy-uxdc)
+- **Interactive Video Presentation & Showcase:** [https://vikassharma270907-alt.github.io/campusbuddy-uxdc/video_showcase.html](https://vikassharma270907-alt.github.io/campusbuddy-uxdc/video_showcase.html) (or `video_showcase.html` / `video.html`)
+- **Rendered 1080p Walkthrough Video:** `campusbuddy_showcase.mp4` (Full HD video with synchronized studio neural narration)
 - **Figma Design System & Community File:** `[INSERT FIGMA LINK HERE]`
-- **Video Walkthrough (3-Minute Loom / YouTube):** `[INSERT DEMO VIDEO LINK HERE]`
 - **Team / Creator:** Vikas Sharma (Solo Submission — Product Design, UX Research & Full-Stack Development)
 
 ---
