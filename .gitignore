@@ -17,7 +17,10 @@ Thumbs.db
 *.log
 *.mp3
 *.mp4
-assets/audio/
+!campusbuddy_showcase.mp4
+assets/audio/*
+!assets/audio/campusbuddy_3min_voice.mp3
+!assets/audio/campusbuddy_master_narration.mp3
 .npm/
 
 # Temporary research or build clones
