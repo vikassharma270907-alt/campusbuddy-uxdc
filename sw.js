@@ -32,6 +32,11 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
+  // Bypass service worker cache for large media and byte-range requests
+  if (event.request.headers.has('range') || event.request.url.includes('.mp4') || event.request.url.includes('.mp3')) {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) {

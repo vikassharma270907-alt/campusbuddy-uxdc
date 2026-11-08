@@ -164,6 +164,7 @@ describe('CampusBuddy Single-File Prototype Integrity', () => {
     assert.match(swContent, /addEventListener\('fetch'/);
     assert.match(swContent, /networkRes\.clone\(\)/);
     assert.match(swContent, /campusbuddy-v\d+/);
+    assert.match(swContent, /event\.request\.headers\.has\('range'\)/);
     assert.match(swContent, /event\.request\.mode === 'navigate'/);
   });
 
