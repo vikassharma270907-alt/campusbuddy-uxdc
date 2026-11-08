@@ -1,0 +1,31 @@
+# Render Blueprint Specification for CampusBuddy
+# Deploy either as a Node.js Web Service or as a Static Site with 1 click.
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  # Option 1: Lightweight Node.js Production Web Service (with HTTP security headers)
+  - type: web
+    name: campusbuddy-web
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+
+  # Option 2: Standalone Static Site CDN Deployment
+  - type: static
+    name: campusbuddy-app
+    plan: free
+    region: oregon
+    buildCommand: ""
+    publishPath: .
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

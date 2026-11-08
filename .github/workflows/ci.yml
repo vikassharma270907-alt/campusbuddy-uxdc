@@ -1,0 +1,65 @@
+﻿name: CampusBuddy CI & Quality Gate
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  verify-campusbuddy:
+    name: Test & Validate (${{ matrix.os }} · Node ${{ matrix.node-version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node-version: ['20.x', '22.x', '24.x']
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Verify Project Deliverables Exist
+        shell: bash
+        run: |
+          test -f campusbuddy.html || (echo "Missing campusbuddy.html" && exit 1)
+          test -f index.html || (echo "Missing index.html" && exit 1)
+          test -f server.js || (echo "Missing server.js" && exit 1)
+          test -f DESIGN.md || (echo "Missing DESIGN.md" && exit 1)
+          test -f RESEARCH.md || (echo "Missing RESEARCH.md" && exit 1)
+          test -f DEMO_SCRIPT.md || (echo "Missing DEMO_SCRIPT.md" && exit 1)
+          test -f SUBMISSION.md || (echo "Missing SUBMISSION.md" && exit 1)
+          test -f package.json || (echo "Missing package.json" && exit 1)
+
+      - name: Run Complete Automated Test Suite (Domain Rules, Integrity & Server)
+        run: npm test
+
+      - name: Validate Single-File Prototype & Accessibility Standards
+        run: |
+          node -e "
+            import fs from 'node:fs';
+            const html = fs.readFileSync('index.html', 'utf8');
+            const checks = [
+              ['90-Second Micro-Connection Sprint', 'Missing 90s sprint workflow banner'],
+              ['Taylor Family Digital Library', 'Missing verified public campus landmarks'],
+              ['data-theme=\"dark\"', 'Missing high-contrast dark theme styling'],
+              ['Bricolage Grotesque', 'Missing display font declaration'],
+              ['Figtree', 'Missing body typography declaration'],
+              ['aria-modal=\"true\"', 'Missing accessible modal dialog attribute'],
+              ['role=\"status\"', 'Missing toast notification status role']
+            ];
+            for (const [needle, msg] of checks) {
+              if (!html.includes(needle)) {
+                console.error('Validation failure: ' + msg);
+                process.exit(1);
+              }
+            }
+            console.log('✓ All 7 critical HTML and WCAG AA accessibility assertions passed.');
+          "

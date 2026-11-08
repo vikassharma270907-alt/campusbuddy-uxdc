@@ -1,0 +1,2095 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>CampusBuddy · Your campus. Your people. Your moments.</title>
+  <meta name="description" content="CampusBuddy connects university students for short, low-pressure, public campus study and social meetups in under 90 seconds.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM TOKENS (LIGHT & DARK MODE - WCAG AA / AAA COMPLIANT)
+       ========================================================================== */
+    :root {
+      --font-display: "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-body: "Figtree", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+      /* Light Theme Palette */
+      --bg: #f4f7f8;
+      --card: #ffffff;
+      --card-muted: #edf2f4;
+      --ink: #0d1e26;
+      --ink-secondary: #2c424e;
+      --mut: #496370;
+      --line: #cbd8dc;
+      --line-subtle: #e2ebee;
+
+      /* Semantic Brand Colors (Min 4.5:1 text, 3:1 UI components) */
+      --pine: #0a635a;
+      --pine-hover: #074e47;
+      --pine-subtle: #e6f4f2;
+      --onp: #ffffff;
+
+      --sun: #d97706;
+      --sun-subtle: #fef3c7;
+      --sun-ink: #78350f;
+
+      --blue: #1d4ed8;
+      --blue-subtle: #eff6ff;
+
+      --red: #b91c1c;
+      --red-subtle: #fef2f2;
+      --red-ink: #7f1d1d;
+
+      --green: #15803d;
+      --green-subtle: #f0fdf4;
+
+      --shadow-sm: 0 1px 2px rgba(13, 30, 38, 0.05);
+      --shadow-md: 0 4px 12px rgba(13, 30, 38, 0.08);
+      --shadow-lg: 0 12px 28px rgba(13, 30, 38, 0.12);
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-full: 9999px;
+
+      color-scheme: light;
+      box-sizing: border-box;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #091216;
+        --card: #111e24;
+        --card-muted: #172830;
+        --ink: #eaf2f5;
+        --ink-secondary: #c0d3dc;
+        --mut: #8da4af;
+        --line: #223741;
+        --line-subtle: #192a32;
+
+        --pine: #2dd4bf;
+        --pine-hover: #14b8a6;
+        --pine-subtle: #092c28;
+        --onp: #04211e;
+
+        --sun: #fbbf24;
+        --sun-subtle: #2d2006;
+        --sun-ink: #fef3c7;
+
+        --blue: #60a5fa;
+        --blue-subtle: #0f2442;
+
+        --red: #f87171;
+        --red-subtle: #301111;
+        --red-ink: #fee2e2;
+
+        --green: #4ade80;
+        --green-subtle: #0d2815;
+
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+        --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.55);
+
+        color-scheme: dark;
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #091216;
+      --card: #111e24;
+      --card-muted: #172830;
+      --ink: #eaf2f5;
+      --ink-secondary: #c0d3dc;
+      --mut: #8da4af;
+      --line: #223741;
+      --line-subtle: #192a32;
+
+      --pine: #2dd4bf;
+      --pine-hover: #14b8a6;
+      --pine-subtle: #092c28;
+      --onp: #04211e;
+
+      --sun: #fbbf24;
+      --sun-subtle: #2d2006;
+      --sun-ink: #fef3c7;
+
+      --blue: #60a5fa;
+      --blue-subtle: #0f2442;
+
+      --red: #f87171;
+      --red-subtle: #301111;
+      --red-ink: #fee2e2;
+
+      --green: #4ade80;
+      --green-subtle: #0d2815;
+
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.55);
+
+      color-scheme: dark;
+    }
+
+    /* Base Reset */
+    *, *::before, *::after { box-sizing: inherit; }
+    html {
+      scroll-padding-top: 80px;
+      -webkit-text-size-adjust: 100%;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+    }
+
+    @media (min-width: 768px) {
+      body { padding-bottom: 40px; }
+    }
+
+    /* Headings & Typography */
+    h1, h2, h3, h4 {
+      font-family: var(--font-display);
+      color: var(--ink);
+      line-height: 1.15;
+      margin: 0;
+      letter-spacing: -0.015em;
+    }
+    h1 { font-size: clamp(32px, 5.5vw, 54px); font-weight: 800; }
+    h2 { font-size: clamp(22px, 3.2vw, 28px); font-weight: 700; margin: 24px 0 8px; }
+    h3 { font-size: 18px; font-weight: 700; }
+    p { margin: 0 0 12px; }
+    .m { color: var(--mut); font-size: 14.5px; }
+    .small-meta { font-size: 12.5px; color: var(--mut); }
+
+    /* Layout Container */
+    .wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* Header & Navigation */
+    header {
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 40;
+      border-bottom: 1px solid var(--line);
+    }
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      flex-wrap: wrap;
+    }
+    .brand-col {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo-btn {
+      background: none;
+      border: 0;
+      padding: 0;
+      font: 800 22px var(--font-display);
+      color: var(--pine);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+    .logo-btn:hover { opacity: 0.9; }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .persona-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-full);
+      padding: 4px 10px 4px 6px;
+      font-size: 13px;
+      color: var(--ink);
+    }
+    .avatar-dot {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--pine);
+      color: var(--onp);
+      font-weight: 700;
+      font-size: 11px;
+      display: grid;
+      place-items: center;
+      text-transform: uppercase;
+    }
+
+    /* Navigation Tabs */
+    .desktop-tabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 0 0 10px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .desktop-tabs::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--mut);
+      font: 600 14px var(--font-body);
+      padding: 7px 14px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tab-btn:hover {
+      background: var(--card-muted);
+      color: var(--ink);
+    }
+    .tab-btn.on {
+      background: var(--pine);
+      color: var(--onp);
+      border-color: var(--pine);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Mobile Bottom Navigation Bar */
+    .mobile-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      border-top: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      z-index: 50;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+    }
+    @media (min-width: 768px) {
+      .mobile-bar { display: none; }
+    }
+    .mobile-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 4px 6px;
+      background: none;
+      border: 0;
+      color: var(--mut);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.15s;
+    }
+    .mobile-nav-item.on {
+      color: var(--pine);
+    }
+    .mobile-nav-item svg {
+      width: 20px;
+      height: 20px;
+      margin-bottom: 2px;
+      stroke-width: 2;
+    }
+
+    /* Badges & Counters */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--sun);
+      color: var(--sun-ink);
+      border-radius: var(--radius-full);
+      padding: 0 6px;
+      font-size: 11px;
+      font-weight: 700;
+      min-width: 18px;
+      height: 18px;
+    }
+    .badge-subtle {
+      background: var(--card-muted);
+      color: var(--mut);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-full);
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: var(--pine);
+      color: var(--onp);
+      border: 1.5px solid transparent;
+      border-radius: var(--radius-md);
+      padding: 10px 18px;
+      font: 600 15px var(--font-body);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
+      min-height: 44px;
+      user-select: none;
+    }
+    .btn:hover {
+      background: var(--pine-hover);
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
+    .btn.g {
+      background: transparent;
+      color: var(--pine);
+      border-color: var(--pine);
+    }
+    .btn.g:hover {
+      background: var(--pine-subtle);
+    }
+    .btn.r {
+      background: var(--red);
+      color: #ffffff;
+    }
+    .btn.r:hover {
+      background: #991b1b;
+    }
+    .btn.ghost {
+      background: transparent;
+      border-color: transparent;
+      color: var(--mut);
+      padding: 8px 12px;
+      min-height: 38px;
+    }
+    .btn.ghost:hover {
+      background: var(--card-muted);
+      color: var(--ink);
+    }
+    .btn.sm {
+      padding: 6px 12px;
+      font-size: 13.5px;
+      min-height: 34px;
+      border-radius: var(--radius-sm);
+    }
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* Cards & Layout */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin: 14px 0;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.15s ease;
+    }
+    .card:hover {
+      border-color: var(--mut);
+    }
+    .tile {
+      display: grid;
+      grid-template-columns: 82px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    @media (max-width: 480px) {
+      .tile {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+
+    /* Time Callout Box */
+    .when-box {
+      background: var(--sun-subtle);
+      border: 1px solid var(--sun);
+      color: var(--sun-ink);
+      border-radius: var(--radius-md);
+      text-align: center;
+      padding: 10px 4px;
+      font: 800 13px var(--font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1.25;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+    .when-box .day {
+      font-size: 14px;
+    }
+    .when-box .slot {
+      font-size: 11px;
+      font-weight: 700;
+      opacity: 0.9;
+    }
+
+    /* Chips */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--card-muted);
+      border: 1px solid var(--line);
+      color: var(--ink-secondary);
+      border-radius: var(--radius-full);
+      padding: 4px 11px;
+      font-size: 13px;
+      font-weight: 500;
+      margin: 3px 4px 3px 0;
+      line-height: 1.2;
+    }
+    .chip.status-open {
+      background: var(--green-subtle);
+      border-color: var(--green);
+      color: var(--green);
+      font-weight: 700;
+    }
+    .chip.status-full {
+      background: var(--card-muted);
+      border-color: var(--line);
+      color: var(--mut);
+    }
+    .chip.status-joined {
+      background: var(--pine-subtle);
+      border-color: var(--pine);
+      color: var(--pine);
+      font-weight: 700;
+    }
+    button.chip {
+      cursor: pointer;
+      border: 1.5px solid var(--line);
+      transition: all 0.15s ease;
+      min-height: 36px;
+      font-family: inherit;
+    }
+    button.chip:hover {
+      border-color: var(--pine);
+      background: var(--pine-subtle);
+    }
+    button.chip.on {
+      background: var(--pine);
+      color: var(--onp);
+      border-color: var(--pine);
+      font-weight: 700;
+    }
+
+    /* Fit Score & Reasons Box */
+    .fit-box {
+      margin: 12px 0;
+      padding: 10px 14px;
+      background: var(--pine-subtle);
+      border-left: 3.5px solid var(--pine);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+    .fit-box b {
+      color: var(--pine);
+      font-size: 14px;
+    }
+    .fit-reasons-list {
+      margin: 4px 0 0;
+      padding-left: 18px;
+      color: var(--ink);
+    }
+    .fit-reasons-list li {
+      margin-bottom: 2px;
+    }
+
+    /* Safe Meeting Point Badge */
+    .safe-point {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--pine);
+      font-weight: 600;
+      font-size: 13px;
+      margin: 4px 0;
+    }
+
+    /* Forms & Inputs */
+    input, select, textarea {
+      font: inherit;
+      color: var(--ink);
+      background: var(--card);
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      width: 100%;
+      box-sizing: border-box;
+      margin: 6px 0 14px;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--pine);
+      box-shadow: 0 0 0 3px var(--pine-subtle);
+      outline: none;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--ink);
+      margin-top: 6px;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0 14px;
+    }
+    .flt-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .flt-bar select {
+      width: auto;
+      margin: 0;
+      padding: 8px 12px;
+    }
+
+    /* 90-Second Sprint Flow Elements */
+    .sprint-header {
+      background: linear-gradient(135deg, var(--pine-subtle) 0%, var(--card) 100%);
+      border: 1.5px solid var(--pine);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .timer-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card);
+      border: 1px solid var(--pine);
+      color: var(--pine);
+      font: 700 15px var(--font-display);
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-sm);
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #22c55e;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.6; }
+    }
+    .micro-steps {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 12px 0 4px;
+      font-size: 13px;
+      color: var(--mut);
+      flex-wrap: wrap;
+    }
+    .step-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 600;
+    }
+    .step-pill.active {
+      color: var(--pine);
+    }
+
+    /* Modals & Overlays */
+    .ov {
+      position: fixed;
+      inset: 0;
+      background: rgba(9, 18, 22, 0.72);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: grid;
+      place-items: center;
+      z-index: 100;
+      padding: 16px;
+      animation: fadeIn 0.15s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .modal-card {
+      background: var(--card);
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: var(--shadow-lg);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .success-celebrate {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .success-icon-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--green-subtle);
+      border: 2px solid var(--green);
+      color: var(--green);
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    /* Toast Notification */
+    #toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+      transform: translateX(-50%) translateY(16px);
+      background: var(--ink);
+      color: var(--bg);
+      padding: 11px 20px;
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-lg);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 200;
+      font-size: 14.5px;
+      font-weight: 600;
+      max-width: 90%;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #toast.on {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Hero Section */
+    .hero-section {
+      padding: 40px 0 24px;
+      text-align: left;
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--pine-subtle);
+      color: var(--pine);
+      border: 1px solid var(--pine);
+      border-radius: var(--radius-full);
+      padding: 4px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .hero-sub {
+      font-size: clamp(17px, 2.2vw, 20px);
+      color: var(--ink-secondary);
+      max-width: 580px;
+      line-height: 1.45;
+      margin: 12px 0 24px;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    /* Accessible Focus Ring */
+    :focus-visible {
+      outline: 3px solid var(--sun);
+      outline-offset: 2px;
+    }
+
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <div id="live-region" class="visually-hidden" aria-live="polite" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;"></div>
+
+  <script>
+    // =========================================================================
+    // DOMAIN CONSTANTS & CANONICAL MAPS
+    // =========================================================================
+    const CATS = {
+      study: "Study together",
+      lunch: "Lunch together",
+      coffee: "Coffee chat",
+      explore: "Campus exploration",
+      event: "Attend an event",
+      cowork: "Co-working",
+      sport: "Sports and games",
+      hobby: "Hobby group",
+      walk: "Short walk"
+    };
+
+    const CAT_ICONS = {
+      study: "📚",
+      lunch: "🥗",
+      coffee: "☕",
+      explore: "🧭",
+      event: "🎨",
+      cowork: "💻",
+      sport: "⚽",
+      hobby: "🎸",
+      walk: "🌲"
+    };
+
+    const SL = ["Morning", "Afternoon", "Evening"];
+    const STY = ["Quiet company", "Study-focused", "Casual conversation", "Small groups", "Explore and socialize"];
+
+    // Safe, verified, open public campus locations (University of Calgary specific)
+    const LOC = [
+      "Taylor Family Digital Library (TFDL), Level 2 Commons",
+      "MacEwan Student Centre (MSC), North Food Court",
+      "Science Theatres (ST) Concourse Benches",
+      "Prairie Chicken Quad (Swann Mall outdoor tables)",
+      "Rozsa Centre Student Arts Lounge",
+      "Gallagher Library (Earth Sciences), 1st Floor Study Zone"
+    ];
+
+    const STARTERS = {
+      study: [
+        "What are you studying this term?",
+        "What’s the topic you keep putting off?",
+        "Which problem set or assignment has been the toughest this week?"
+      ],
+      lunch: [
+        "What’s your go-to lunch spot on campus?",
+        "What’s been the best part of your week?",
+        "Any favourite food trucks or coffee spots nearby?"
+      ],
+      coffee: [
+        "How’s your semester going so far?",
+        "What made you pick your major?",
+        "Are you taking any fun electives this term?"
+      ],
+      explore: [
+        "Have you checked out this part of campus before?",
+        "What’s one hidden campus study corner you’d recommend?",
+        "Do you commute to campus or live in residence?"
+      ],
+      event: [
+        "What made you interested in this event?",
+        "Have you attended one of these campus sessions before?",
+        "What projects or hobbies are you working on lately?"
+      ],
+      cowork: [
+        "What are you aiming to finish in today’s session?",
+        "Want to do a quick 25-minute focus sprint and check in?",
+        "Are you working on course assignments or personal projects?"
+      ],
+      sport: [
+        "How long have you been playing?",
+        "What’s your favourite casual game to play?",
+        "Do you play intramural sports at the gym?"
+      ],
+      hobby: [
+        "How did you first get into this hobby?",
+        "What’s your current favourite thing you’re creating?",
+        "Any podcasts, books, or shows inspiring you right now?"
+      ],
+      walk: [
+        "Which part of campus do you usually hang around?",
+        "What’s your favourite way to unwind between classes?",
+        "Nice day for some fresh air and a quick lap, isn’t it?"
+      ]
+    };
+
+    const U = (n, role, course, cats, av, int, sty, vis = true) => ({
+      n, role, course, cats, av, int, sty, vis
+    });
+
+    // Seed state populated with realistic fictional student personas and moments
+    const seed = () => ({
+      mode: null,
+      theme: localStorage.getItem("cb_theme") || "light",
+      me: "maya",
+      tab: "today",
+      onboarded: false,
+      n: 100,
+      modal: null,
+      err: "",
+      f: { c: "", d: "", s: "", o: "", sort: "fit" },
+      fp: {},
+      users: {
+        maya: U("Maya", "First-year · Biology", "Biology", ["study", "coffee", "walk"], ["Morning", "Afternoon"], ["photography", "calculus", "hiking"], ["Quiet company", "Casual conversation"]),
+        dev: U("Dev", "Commuter · Computer Science", "Computer Science", ["study", "cowork", "lunch"], ["Afternoon"], ["chess", "calculus", "coffee"], ["Study-focused"]),
+        ines: U("Ines", "Third-year · Design", "Design", ["event", "explore", "coffee"], ["Evening", "Afternoon"], ["photography", "film", "design"], ["Explore and socialize", "Small groups"]),
+        tom: U("Tom", "Second-year · Mathematics", "Mathematics", ["study", "coffee", "cowork"], ["Morning", "Afternoon"], ["calculus", "chess", "running"], ["Study-focused", "Small groups"]),
+        zoe: U("Zoe", "Exchange student · Biology", "Biology", ["sport", "lunch", "walk"], ["Evening", "Morning"], ["hiking", "board games", "photography"], ["Explore and socialize"])
+      },
+      acts: [
+        { id: "a1", t: "Calculus revision, quiet corner", c: "study", desc: "One hour of focused problem set revision. Bring questions.", d: "Today", s: "Afternoon", dur: 60, loc: LOC[0], max: 3, host: "dev", ps: ["dev"], tags: ["calculus"], sty: "Study-focused", st: "open" },
+        { id: "a2", t: "Lunch at MacEwan food court, newcomers welcome", c: "lunch", desc: "Casual lunch in open seating. No agenda, just friendly company.", d: "Today", s: "Afternoon", dur: 45, loc: LOC[1], max: 4, host: "ines", ps: ["ines"], tags: ["design", "film"], sty: "Casual conversation", st: "open" },
+        { id: "a3", t: "Golden-hour photo walk around Prairie Chicken", c: "walk", desc: "A relaxing 40-minute loop with phone cameras and fresh air.", d: "Tomorrow", s: "Evening", dur: 40, loc: LOC[3], max: 4, host: "ines", ps: ["ines", "maya"], tags: ["photography", "hiking"], sty: "Explore and socialize", st: "open" },
+        { id: "a4", t: "Coffee before the 10am lecture", c: "coffee", desc: "Quick coffee and conversation in the atrium before class.", d: "Tomorrow", s: "Morning", dur: 30, loc: LOC[4], max: 2, host: "tom", ps: ["tom"], tags: ["coffee", "calculus"], sty: "Casual conversation", st: "open" },
+        { id: "a5", t: "Board games night at Rozsa Lounge", c: "sport", desc: "Casual tabletop board games. Beginners very welcome.", d: "Tomorrow", s: "Evening", dur: 90, loc: LOC[4], max: 2, host: "zoe", ps: ["zoe", "ines"], tags: ["board games"], sty: "Small groups", st: "open" },
+        { id: "a6", t: "Cell biology study session", c: "study", desc: "Concluded group study session on mitosis and cellular pathways.", d: "Last week", s: "Afternoon", dur: 60, loc: LOC[0], max: 3, host: "tom", ps: ["tom", "maya"], tags: ["calculus"], sty: "Study-focused", st: "done" }
+      ],
+      inv: [
+        { id: "i1", f: "tom", t: "maya", a: "a4", s: "pending" },
+        { id: "i2", f: "ines", t: "maya", a: "a3", s: "accepted" }
+      ],
+      fb: [],
+      blocks: [],
+      reports: [],
+      notes: [{ to: "maya", txt: "Tom invited you to “Coffee before the 10am lecture”.", r: 0 }]
+    });
+
+    // =========================================================================
+    // STATE PERSISTENCE & INITIALIZATION
+    // =========================================================================
+    let S;
+    try {
+      S = JSON.parse(localStorage.getItem("cb_state_v2") || localStorage.getItem("cb1"));
+    } catch (e) { S = null; }
+    if (!S || !S.users) S = seed();
+    if (!S.theme) S.theme = "light";
+    document.documentElement.setAttribute("data-theme", S.theme);
+
+    const save = () => {
+      try {
+        localStorage.setItem("cb_state_v2", JSON.stringify(S));
+        localStorage.setItem("cb_theme", S.theme);
+      } catch (e) {}
+    };
+
+    // DOM & Accessibility Helpers
+    const $ = s => document.querySelector(s);
+    const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"
+    }[c]));
+
+    const announce = msg => {
+      const el = $("#live-region");
+      if (el) el.textContent = msg;
+    };
+
+    const toast = m => {
+      const t = $("#toast");
+      t.innerHTML = `<span>✓</span> <span>${esc(m)}</span>`;
+      t.classList.add("on");
+      announce(m);
+      clearTimeout(toast.h);
+      toast.h = setTimeout(() => t.classList.remove("on"), 3000);
+    };
+
+    const note = (to, txt) => S.notes.unshift({ to, txt, r: 0 });
+    const blocked = (a, b) => S.blocks.some(x => (x[0] === a && x[1] === b) || (x[0] === b && x[1] === a));
+    const jac = (a, b) => {
+      if (!a.length && !b.length) return 0;
+      const i = a.filter(x => b.includes(x)).length;
+      return i / Math.max(1, new Set([...a, ...b]).size);
+    };
+
+    // =========================================================================
+    // EXPLAINABLE MATCHING ALGORITHM (DESIGN DEFAULTS)
+    // Weights: Activity: 30, Availability: 25, Interests: 20, Course: 15, Style: 10
+    // =========================================================================
+    function score(uid, a) {
+      const u = S.users[uid];
+      const h = S.users[a.host];
+      const why = [];
+      let total = 0;
+
+      // 1. Activity Compatibility (30 pts)
+      const c = u.cats.includes(a.c);
+      total += 30 * (c ? 1 : 0.3);
+      if (c) why.push(`${CATS[a.c]} is one of your go-to activities (+30).`);
+
+      // 2. Availability Overlap (25 pts)
+      const av = u.av.includes(a.s);
+      if (av) {
+        total += 25;
+        why.push(`You’re free ${a.d === "Today" ? "today" : "tomorrow"} ${a.s.toLowerCase()} (+25).`);
+      }
+
+      // 3. Shared Interests / Topic Overlap (20 pts)
+      const io = a.tags.filter(x => u.int.includes(x));
+      if (io.length) {
+        total += 20;
+        why.push(`Shared interests: ${io.join(", ")} (+20).`);
+      }
+
+      // 4. Same Course / Major (15 pts)
+      if (u.course && h && u.course === h.course) {
+        total += 15;
+        why.push(`${h.n} studies ${h.course} too (+15).`);
+      }
+
+      // 5. Interaction Style (10 pts)
+      if (u.sty.includes(a.sty)) {
+        total += 10;
+        why.push(`Matches your style: ${a.sty.toLowerCase()} (+10).`);
+      }
+
+      return { s: Math.round(total), why };
+    }
+
+    // Person-to-person similarity (Jaccard + common course)
+    function scoreP(uid, oid) {
+      const u = S.users[uid];
+      const o = S.users[oid];
+      const why = [];
+      const sc = 30 * jac(u.cats, o.cats) +
+                 25 * jac(u.av, o.av) +
+                 20 * jac(u.int, o.int) +
+                 (u.course === o.course ? 15 : 0) +
+                 10 * jac(u.sty, o.sty);
+
+      const ci = u.cats.filter(x => o.cats.includes(x));
+      const ai = u.av.filter(x => o.av.includes(x));
+      const ii = u.int.filter(x => o.int.includes(x));
+
+      if (ci.length) why.push(`You both like ${ci.map(x => CATS[x].toLowerCase()).join(" and ")}.`);
+      if (ai.length) why.push(`You’re both free in the ${ai.join(" and ").toLowerCase()}.`);
+      if (ii.length) why.push(`You share interests in ${ii.join(", ")}.`);
+      if (u.course === o.course) why.push(`You’re both in ${u.course}.`);
+
+      return { s: Math.round(sc), why };
+    }
+
+    const spots = a => a.max - a.ps.length;
+    const ord = a => (a.d === "Today" ? 0 : 3) + SL.indexOf(a.s);
+    const visible = a => a.st !== "cancelled" && !blocked(S.me, a.host);
+    const opts = (l, v, k) => l.map(x => `<option value="${esc(k ? x : x)}"${x === v ? " selected" : ""}>${esc(CATS[x] || x)}</option>`).join("");
+
+    // =========================================================================
+    // COMPONENT RENDERING HELPERS
+    // =========================================================================
+    function card(a, isHighlight = false) {
+      const sc = score(S.me, a);
+      const u = S.me;
+      const left = spots(a);
+      const host = S.users[a.host] || { n: "Student", course: "" };
+
+      let actBtn = "";
+      if (a.ps.includes(u)) {
+        actBtn = `<span class="chip status-joined">✓ You’re attending</span>`;
+      } else if (a.st !== "open") {
+        actBtn = `<span class="chip status-full">${a.st === "done" ? "Session concluded" : "Cancelled"}</span>`;
+      } else if (left <= 0) {
+        actBtn = `<span class="chip status-full">Moment Full (${a.max}/${a.max})</span>`;
+      } else {
+        actBtn = `<button class="btn ${isHighlight ? "" : "g"}" data-a="join" data-v="${a.id}">Join this moment</button>`;
+      }
+
+      const icon = CAT_ICONS[a.c] || "📍";
+
+      return `
+        <article class="card tile" style="${isHighlight ? 'border-color:var(--pine);box-shadow:var(--shadow-md);' : ''}">
+          <div class="when-box">
+            <span class="day">${esc(a.d)}</span>
+            <span class="slot">${esc(a.s)}</span>
+          </div>
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+              <h3 style="margin:0">${esc(a.t)}</h3>
+              <span class="chip ${left > 0 ? 'status-open' : 'status-full'}">${left > 0 ? left + ' spots open' : 'Full'}</span>
+            </div>
+            <p class="m" style="margin:4px 0 8px;">${esc(a.desc)}</p>
+            <div style="margin:6px 0;">
+              <span class="chip">${icon} ${CATS[a.c]}</span>
+              <span class="chip">⏱ ${a.dur} min</span>
+              <span class="chip safe-point">📍 ${esc(a.loc)}</span>
+              <span class="chip">Hosted by ${esc(host.n)}</span>
+            </div>
+            <div class="fit-box">
+              <div><b>${sc.s}% Match Score</b> <span class="small-meta">· Design defaults</span></div>
+              <ul class="fit-reasons-list">
+                ${sc.why.slice(0, 3).map(w => `<li>${esc(w)}</li>`).join("")}
+              </ul>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:10px;">
+              <div class="small-meta">Attendees: ${a.ps.map(p => esc((S.users[p] || {}).n || p)).join(", ")}</div>
+              <div>${actBtn}</div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function pcard(id) {
+      const o = S.users[id];
+      if (!o) return "";
+      const sc = scoreP(S.me, id);
+      const mine = S.acts.filter(a => a.ps.includes(S.me) && a.st === "open" && spots(a) > 0);
+
+      return `
+        <article class="card">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+            <div class="avatar-dot" style="width:36px;height:36px;font-size:15px;">${esc(o.n[0])}</div>
+            <div>
+              <h3 style="margin:0">${esc(o.n)}</h3>
+              <div class="small-meta">${esc(o.role)}</div>
+            </div>
+          </div>
+          <p style="margin:6px 0;">
+            ${o.int.map(i => `<span class="chip">${esc(i)}</span>`).join("")}
+          </p>
+          <div class="fit-box">
+            <b>${sc.s}% Peer Synergy</b>
+            <div style="font-size:13px;color:var(--ink-secondary);margin-top:2px;">
+              ${esc(sc.why.join(" ") || "A different peer group. Weak ties foster campus belonging.")}
+            </div>
+          </div>
+          <div style="margin-top:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <label for="sel-${id}" class="small-meta" style="margin:0;font-weight:600;">Invite to:</label>
+            <select id="sel-${id}" style="width:auto;margin:0;padding:6px 10px;font-size:14px;">
+              ${mine.length ? mine.map(a => `<option value="${a.id}">${esc(a.t)} (${a.d})</option>`).join("") : `<option value="">Create or join a moment first</option>`}
+            </select>
+            <button class="btn sm" data-a="invite" data-v="${id}" ${mine.length ? "" : "disabled"}>Send invitation</button>
+          </div>
+        </article>
+      `;
+    }
+
+    // =========================================================================
+    // MAIN APPLICATION VIEWS
+    // =========================================================================
+    function view() {
+      const u = S.users[S.me] || S.users.maya;
+      const t = S.tab;
+      const h = new Date().getHours();
+      const g = h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
+      const vis = S.acts.filter(visible);
+      const open = vis.filter(a => a.st === "open");
+
+      // Onboarding View
+      if (t === "onboard") {
+        return `
+          <div style="max-width:620px;margin:24px auto;">
+            <h2>Welcome to CampusBuddy, ${esc(u.n)}</h2>
+            <p class="m">Three quick taps to calibrate your study & meetup preferences. You can adjust this anytime.</p>
+            <div class="card">
+              <label><b>How do you prefer to spend time?</b></label>
+              <div style="margin:6px 0 14px;">
+                ${STY.map(x => `<button class="chip${u.sty.includes(x) ? " on" : ""}" data-a="chip" data-v="sty|${x}">${x}</button>`).join("")}
+              </div>
+              <label><b>What activities are you open to?</b></label>
+              <div style="margin:6px 0 14px;">
+                ${Object.keys(CATS).map(x => `<button class="chip${u.cats.includes(x) ? " on" : ""}" data-a="chip" data-v="cats|${x}">${CAT_ICONS[x]} ${CATS[x]}</button>`).join("")}
+              </div>
+              <label><b>When are you usually on campus?</b></label>
+              <div style="margin:6px 0 14px;">
+                ${SL.map(x => `<button class="chip${u.av.includes(x) ? " on" : ""}" data-a="chip" data-v="av|${x}">${x}</button>`).join("")}
+              </div>
+              <label for="ints"><b>Your Courses & Interests</b> (comma separated)</label>
+              <input id="ints" value="${esc(u.int.join(", "))}" placeholder="e.g. calculus, biology, chess, hiking">
+              <div style="display:flex;gap:10px;margin-top:12px;">
+                <button class="btn" data-a="obdone">Save & Start Connecting</button>
+                <button class="btn ghost" data-a="obdone" data-v="skip">Skip for now</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 90-SECOND STUDY PATH
+      if (t === "study") {
+        const pool = open
+          .filter(a => ["study", "cowork"].includes(a.c) && !a.ps.includes(S.me) && spots(a) > 0)
+          .sort((a, b) => score(S.me, b).s - score(S.me, a).s);
+
+        const sl = S.sl || (pool[0] && pool[0].s) || u.av[0] || "Afternoon";
+        const c = pool.filter(a => a.s === sl);
+        const mySlotStudy = open.filter(a => ["study", "cowork"].includes(a.c) && a.ps.includes(S.me) && a.s === sl);
+        const elapsed = S.t0 ? Math.floor((Date.now() - S.t0) / 1000) : 0;
+
+        return `
+          <div class="sprint-header">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+              <div>
+                <span class="badge" style="background:var(--pine);color:var(--onp);margin-bottom:6px;">90-Second Micro-Connection Sprint</span>
+                <h2 style="margin:4px 0 2px;">Nobody to study with? Let’s fix that.</h2>
+              </div>
+              <div class="timer-pill">
+                <span class="pulse-dot"></span>
+                <span id="clk">${elapsed}</span>s elapsed
+              </div>
+            </div>
+            <div class="micro-steps">
+              <span class="step-pill active">① Pick slot</span> ➔
+              <span class="step-pill active">② View best match</span> ➔
+              <span class="step-pill active">③ Tap Join (meet in public)</span>
+            </div>
+          </div>
+
+          <label><b>When are you free to study?</b></label>
+          <div style="margin:8px 0 16px;">
+            ${SL.map(x => `<button class="chip${sl === x ? " on" : ""}" data-a="sl" data-v="${x}">${x}</button>`).join("")}
+          </div>
+
+          ${c.length ? `
+            <div style="margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
+              <h3 style="color:var(--pine);">★ Recommended Match for You</h3>
+              <span class="small-meta">Calculated via explainable criteria</span>
+            </div>
+            ${card(c[0], true)}
+            ${c.length > 1 ? `
+              <h3 style="margin-top:24px;">Other Open Study Sessions</h3>
+              ${c.slice(1).map(x => card(x, false)).join("")}
+            ` : ""}
+          ` : mySlotStudy.length ? `
+            <div class="card" style="border-left:4.5px solid var(--pine);padding:22px;">
+              <span class="badge" style="background:var(--pine);color:var(--onp);margin-bottom:8px;">Active Registration</span>
+              <h3 style="margin:4px 0 6px;">You’re already attending a study moment in this time slot</h3>
+              <p class="m" style="margin-bottom:12px;">You’re scheduled for <b>${esc(mySlotStudy[0].t)}</b> at ${esc(mySlotStudy[0].loc)}.</p>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn sm" data-a="modal" data-v="${mySlotStudy[0].id}">View Meeting Details & Icebreaker</button>
+                <button class="btn sm g" data-a="tab" data-v="plans">View All Plans</button>
+              </div>
+            </div>
+          ` : `
+            <div class="card" style="text-align:center;padding:36px 20px;">
+              <div style="font-size:36px;margin-bottom:8px;">☕</div>
+              <h3>No open study moments right now for ${esc(sl.toLowerCase())}</h3>
+              <p class="m" style="max-width:420px;margin:8px auto 16px;">
+                Be the catalyst! Post a quick 45-minute moment at a safe campus spot and let classmates join you.
+              </p>
+              <button class="btn" data-a="tab" data-v="create">Start a 45-min study moment</button>
+            </div>
+          `}
+        `;
+      }
+
+      // Today Dashboard View
+      if (t === "today") {
+        const rec = open.filter(a => !a.ps.includes(S.me) && spots(a) > 0)
+          .sort((a, b) => score(S.me, b).s - score(S.me, a).s).slice(0, 3);
+        const soon = open.filter(a => a.ps.includes(S.me));
+        const pend = S.inv.filter(i => i.t === S.me && i.s === "pending");
+        const ppl = Object.keys(S.users)
+          .filter(i => i !== S.me && S.users[i].vis && !blocked(S.me, i))
+          .sort((a, b) => scoreP(S.me, b).s - scoreP(S.me, a).s).slice(0, 2);
+
+        return `
+          <div style="margin-top:12px;">
+            <h2>${esc(g)}, ${esc(u.n)}</h2>
+            <p class="m">Your campus. Your people. Your moments.</p>
+
+            <div style="display:flex;gap:10px;margin:16px 0 24px;flex-wrap:wrap;">
+              <button class="btn" data-a="study" style="box-shadow:var(--shadow-md);">
+                ⚡ Find someone to study with (<90s)
+              </button>
+              <button class="btn g" data-a="tab" data-v="create">
+                + Create a moment
+              </button>
+            </div>
+
+            ${pend.length ? `
+              <div class="card" style="background:var(--sun-subtle);border-color:var(--sun);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+                <div>
+                  <b style="color:var(--sun-ink);">📬 You have ${pend.length} pending meetup invitation${pend.length > 1 ? "s" : ""}</b>
+                  <div class="small-meta" style="color:var(--sun-ink);">Peers are hoping to connect with you.</div>
+                </div>
+                <button class="btn sm" data-a="tab" data-v="invites" style="background:var(--sun-ink);color:#fff;">Review Invitations</button>
+              </div>
+            ` : ""}
+
+            <div style="display:flex;align-items:center;justify-content:space-between;margin:24px 0 8px;">
+              <h2>Recommended Moments Today</h2>
+              <button class="btn ghost sm" data-a="tab" data-v="discover">View all</button>
+            </div>
+            ${rec.length ? rec.map(x => card(x)).join("") : `<p class="m">No open moments found right now. Be the first to create one!</p>`}
+
+            <h2>Your Confirmed Upcoming Moments</h2>
+            ${soon.length ? soon.map(x => card(x)).join("") : `
+              <div class="card" style="text-align:center;padding:24px 16px;">
+                <p class="m">You haven’t joined any moments yet today.</p>
+                <button class="btn sm g" data-a="tab" data-v="discover">Browse moments on campus</button>
+              </div>
+            `}
+
+            <div style="display:flex;align-items:center;justify-content:space-between;margin:24px 0 8px;">
+              <h2>Peers You Might Click With</h2>
+              <button class="btn ghost sm" data-a="tab" data-v="people">See more peers</button>
+            </div>
+            ${ppl.map(pcard).join("")}
+          </div>
+        `;
+      }
+
+      // Discover Moments View with Filters
+      if (t === "discover") {
+        const f = S.f;
+        let l = open.filter(a =>
+          (!f.c || a.c === f.c) &&
+          (!f.d || a.d === f.d) &&
+          (!f.s || a.s === f.s) &&
+          (!f.o || spots(a) > 0)
+        );
+
+        l.sort((a, b) => f.sort === "time" ? ord(a) - ord(b) : score(S.me, b).s - score(S.me, a).s);
+
+        const sel = (k, list, lab, displayMap = null) => `
+          <select aria-label="${lab}" data-f="${k}">
+            <option value="">${lab}</option>
+            ${list.map(x => `<option value="${x}"${f[k] === x ? " selected" : ""}>${esc(displayMap ? displayMap[x] : x)}</option>`).join("")}
+          </select>
+        `;
+
+        return `
+          <h2>Discover Campus Moments</h2>
+          <p class="m">Short, optional, time-bound meetups in verified public campus spots.</p>
+          <div class="flt-bar">
+            ${sel("c", Object.keys(CATS), "All Activities", CATS)}
+            ${sel("d", ["Today", "Tomorrow"], "Any Day")}
+            ${sel("s", SL, "Any Time")}
+            <select aria-label="Availability filter" data-f="o">
+              <option value="">All Moments</option>
+              <option value="1"${f.o ? " selected" : ""}>Only with spots left</option>
+            </select>
+            <select aria-label="Sort order" data-f="sort">
+              <option value="fit"${f.sort === "fit" ? " selected" : ""}>Best fit first</option>
+              <option value="time"${f.sort === "time" ? " selected" : ""}>Soonest first</option>
+            </select>
+          </div>
+          ${l.length ? l.map(x => card(x)).join("") : `
+            <div class="card" style="text-align:center;padding:36px;">
+              <p class="m">No campus moments match these filters.</p>
+              <button class="btn sm" data-a="tab" data-v="create">Create a moment now</button>
+            </div>
+          `}
+        `;
+      }
+
+      // People / Buddy Directory
+      if (t === "people") {
+        const peers = Object.keys(S.users)
+          .filter(i => i !== S.me && S.users[i].vis && !blocked(S.me, i))
+          .sort((a, b) => scoreP(S.me, b).s - scoreP(S.me, a).s);
+
+        return `
+          <h2>Classmates & Peers</h2>
+          <p class="m">
+            Ranked by shared courses, free hours, and mutual interests. Only students with public visibility appear here.
+          </p>
+          ${peers.map(pcard).join("")}
+        `;
+      }
+
+      // Create Moment View
+      if (t === "create") {
+        return `
+          <h2>Create a Moment</h2>
+          <p class="m">Host a casual meetup. Keep it public, safe, and low-pressure.</p>
+          <div class="card">
+            <label><b>Quick Templates:</b></label>
+            <div style="margin:6px 0 16px;">
+              ${["study", "lunch", "coffee", "walk"].map(x => `
+                <button class="chip" data-a="tpl" data-v="${x}">
+                  ${CAT_ICONS[x]} ${CATS[x]}
+                </button>
+              `).join("")}
+            </div>
+
+            ${S.err ? `<div class="card" style="background:var(--red-subtle);border-color:var(--red);color:var(--red);padding:10px 14px;font-weight:600;margin-bottom:14px;">${esc(S.err)}</div>` : ""}
+
+            <label for="c-t">Moment Title</label>
+            <input id="c-t" maxlength="60" placeholder="e.g. Calculus problem set review in TFDL">
+
+            <label for="c-ds">Description</label>
+            <textarea id="c-ds" rows="2" maxlength="140" placeholder="e.g. Working through Chapter 4 problems. Come say hi!"></textarea>
+
+            <div class="row">
+              <div>
+                <label for="c-c">Category</label>
+                <select id="c-c">${opts(Object.keys(CATS), "study")}</select>
+              </div>
+              <div>
+                <label for="c-day">Day</label>
+                <select id="c-day"><option>Today</option><option>Tomorrow</option></select>
+              </div>
+              <div>
+                <label for="c-s">Time Slot</label>
+                <select id="c-s">${opts(SL, "Afternoon")}</select>
+              </div>
+              <div>
+                <label for="c-du">Duration (minutes)</label>
+                <input id="c-du" type="number" value="45" min="15" max="180">
+              </div>
+              <div>
+                <label for="c-l">Verified Campus Public Spot</label>
+                <select id="c-l">${opts(LOC)}</select>
+              </div>
+              <div>
+                <label for="c-m">Max Attendees</label>
+                <input id="c-m" type="number" value="3" min="2" max="8">
+              </div>
+            </div>
+
+            <label for="c-tg">Topic Tags (optional, comma-separated)</label>
+            <input id="c-tg" placeholder="e.g. calculus, linear algebra, biology">
+
+            <button class="btn" data-a="create" style="margin-top:10px;">Post this moment to campus</button>
+          </div>
+        `;
+      }
+
+      // Invites View
+      if (t === "invites") {
+        const rc = S.inv.filter(i => i.t === S.me);
+        const sn = S.inv.filter(i => i.f === S.me);
+
+        const renderInvRow = i => {
+          const a = S.acts.find(x => x.id === i.a) || { t: "Moment" };
+          const other = S.users[i.f === S.me ? i.t : i.f] || { n: "Student" };
+          return `
+            <div class="card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+              <div>
+                <div style="font-weight:700;font-size:16px;">${esc(other.n)}</div>
+                <div class="m" style="margin:2px 0;">Moment: <b>${esc(a.t)}</b></div>
+                <span class="chip status-${i.s}">${esc(i.s)}</span>
+              </div>
+              <div style="display:flex;gap:8px;">
+                ${i.s === "pending" ? (
+                  i.t === S.me ? `
+                    <button class="btn sm" data-a="resp" data-v="${i.id}|accepted">Accept</button>
+                    <button class="btn sm g" data-a="resp" data-v="${i.id}|declined">Decline</button>
+                  ` : `
+                    <button class="btn sm g" data-a="resp" data-v="${i.id}|cancelled">Cancel invitation</button>
+                  `
+                ) : ""}
+              </div>
+            </div>
+          `;
+        };
+
+        return `
+          <h2>Invitations</h2>
+          <p class="m">Personal meetup invites. Switch persona in the top bar to accept as another student.</p>
+
+          <h3 style="margin-top:20px;">Invitations Received (${rc.length})</h3>
+          ${rc.length ? rc.map(renderInvRow).join("") : `<p class="m">No invitations received yet.</p>`}
+
+          <h3 style="margin-top:24px;">Invitations Sent (${sn.length})</h3>
+          ${sn.length ? sn.map(renderInvRow).join("") : `<p class="m">No sent invitations. Check the People tab to invite peers.</p>`}
+        `;
+      }
+
+      // Plans & Feedback View
+      if (t === "plans") {
+        const up = S.acts.filter(a => a.ps.includes(S.me) && a.st === "open");
+        const pa = S.acts.filter(a => a.ps.includes(S.me) && a.st === "done");
+
+        return `
+          <h2>Your Campus Plans</h2>
+          <p class="m">Track upcoming meetups and log private feedback on past interactions.</p>
+
+          <h3 style="margin-top:20px;">Upcoming Moments (${up.length})</h3>
+          ${up.length ? up.map(a => `
+            ${card(a)}
+            <div style="display:flex;gap:8px;margin-top:-6px;margin-bottom:16px;flex-wrap:wrap;">
+              <button class="btn sm g" data-a="modal" data-v="${a.id}">View meeting details</button>
+              <button class="btn sm g" data-a="done" data-v="${a.id}">Demo: Mark as completed</button>
+              ${a.host === S.me ? `
+                <button class="btn sm r" data-a="cancel" data-v="${a.id}">Cancel moment</button>
+              ` : `
+                <button class="btn sm g" data-a="leave" data-v="${a.id}">Leave moment</button>
+              `}
+            </div>
+          `).join("") : `<p class="m">Nothing scheduled yet. Join an activity in Discover.</p>`}
+
+          <h3 style="margin-top:28px;">Past Moments (${pa.length})</h3>
+          ${pa.length ? pa.map(a => {
+            const hasFb = S.fb.some(f => f.a === a.id && f.u === S.me);
+            const choice = S.fp[a.id];
+            return `
+              ${card(a)}
+              <div class="card" style="margin-top:-6px;">
+                ${hasFb ? `
+                  <p class="m" style="color:var(--green);font-weight:600;">✓ Thank you. Your feedback has been privately recorded.</p>
+                ` : `
+                  <label><b>How was this meetup?</b> (Private; helps refine your future matches)</label>
+                  <div style="margin:8px 0 12px;">
+                    ${["Enjoyed the experience", "Would meet again", "Preferred different group size", "Other"].map(opt => `
+                      <button class="chip${choice === opt ? " on" : ""}" data-a="fbp" data-v="${a.id}|${opt}">${opt}</button>
+                    `).join("")}
+                  </div>
+                  <label for="fbt-${a.id}">Optional private note:</label>
+                  <input id="fbt-${a.id}" placeholder="e.g. Great session, we solved problem set 3!">
+                  <button class="btn sm" data-a="fb" data-v="${a.id}">Submit private feedback</button>
+                `}
+              </div>
+            `;
+          }).join("") : `<p class="m">Past moments will appear here once marked as happened.</p>`}
+        `;
+      }
+
+      // Notifications / Alerts View
+      if (t === "alerts") {
+        const userNotes = S.notes.filter(n => n.to === S.me);
+        return `
+          <h2>Campus Notifications</h2>
+          <p class="m">Updates regarding your moments and invitations.</p>
+          ${userNotes.length ? userNotes.map(n => `
+            <div class="card" style="display:flex;align-items:center;gap:12px;">
+              <span style="font-size:20px;">🔔</span>
+              <div>${esc(n.txt)}</div>
+            </div>
+          `).join("") : `<p class="m">You’re all caught up! No new notifications.</p>`}
+        `;
+      }
+
+      // Safety & Privacy View
+      if (t === "safety") {
+        const oth = Object.keys(S.users).filter(i => i !== S.me);
+        return `
+          <h2>Privacy & Safety</h2>
+          <p class="m">CampusBuddy is designed around human connection with psychological safety first.</p>
+
+          <div class="card">
+            <h3>Profile Visibility</h3>
+            <p class="m">
+              ${u.vis ? "Your profile is visible to other students in campus buddy recommendations." : "Your profile is hidden. You will not appear in buddy recommendations."}
+            </p>
+            <button class="btn sm g" data-a="vis">${u.vis ? "Hide my profile" : "Make profile visible"}</button>
+            <p class="small-meta" style="margin-top:10px;">
+              🛡️ Note: Phone numbers, social media handles, and exact real-time GPS locations are never displayed or stored. All meetups take place strictly in verified public campus areas.
+            </p>
+          </div>
+
+          <div class="card">
+            <h3>Block a User</h3>
+            <p class="m">Blocked users cannot see your moments or send you invitations. Any existing pending invitations are immediately cancelled.</p>
+            <div style="display:flex;gap:8px;max-width:380px;">
+              <select id="bl" style="margin:0;">
+                ${oth.map(i => `<option value="${i}">${esc(S.users[i].n)} (${esc(S.users[i].role)})</option>`).join("")}
+              </select>
+              <button class="btn sm r" data-a="block">Block</button>
+            </div>
+            ${S.blocks.filter(b => b[0] === S.me).map(b => `
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding:6px 0;border-bottom:1px solid var(--line);">
+                <span>${esc((S.users[b[1]] || {}).n || b[1])}</span>
+                <button class="btn sm ghost" data-a="unblock" data-v="${b[1]}">Unblock</button>
+              </div>
+            `).join("")}
+          </div>
+
+          <div class="card">
+            <h3>Report a Concern</h3>
+            <p class="m">Reports are securely logged for administrative review. This design prototype has no live moderator.</p>
+            <label for="rp-w">Student</label>
+            <select id="rp-w">
+              ${oth.map(i => `<option value="${i}">${esc(S.users[i].n)}</option>`).join("")}
+            </select>
+            <label for="rp-y">Reason</label>
+            <select id="rp-y">
+              <option>Made me feel uncomfortable</option>
+              <option>No-show or cancelled late</option>
+              <option>Inappropriate communication</option>
+              <option>Safety concern</option>
+              <option>Other</option>
+            </select>
+            <label for="rp-t">Details (optional)</label>
+            <textarea id="rp-t" rows="2" placeholder="Briefly describe what happened..."></textarea>
+            <button class="btn sm r" data-a="report">Submit report</button>
+
+            ${S.reports.filter(r => r.by === S.me).length ? `
+              <div style="margin-top:16px;">
+                <label><b>Your Logged Reports:</b></label>
+                ${S.reports.filter(r => r.by === S.me).map(r => `
+                  <div class="small-meta" style="margin-top:4px;">
+                    Report on ${esc((S.users[r.who] || {}).n || r.who)} (${esc(r.why)}): <b>${esc(r.st)}</b>
+                  </div>
+                `).join("")}
+              </div>
+            ` : ""}
+          </div>
+        `;
+      }
+
+      return "";
+    }
+
+    // =========================================================================
+    // CONFIRMATION MODAL (THE 90-SECOND JOURNEY DESTINATION)
+    // =========================================================================
+    function modal() {
+      const a = S.acts.find(x => x.id === S.modal);
+      if (!a) return "";
+      const starters = STARTERS[a.c] || STARTERS.study;
+      const starterIdx = (a.id.charCodeAt(a.id.length - 1) + (S.starterOffset || 0)) % starters.length;
+      const starterText = starters[starterIdx];
+
+      return `
+        <div class="ov" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+          <div class="modal-card">
+            <div class="success-celebrate">
+              <div class="success-icon-badge">✓</div>
+              <div>
+                <h2 id="modal-title" style="margin:0;">${S.took != null ? "Study Partner Connected!" : "Meetup Confirmed"}</h2>
+                <div class="small-meta" style="color:var(--pine);font-weight:700;">
+                  ${S.took != null ? `⏱ From “nobody to study with” to confirmed plan in ${S.took} seconds.` : "You’re officially on the attendee list."}
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="background:var(--card-muted);border:1px solid var(--line);padding:14px;margin:12px 0;">
+              <div style="font-weight:800;font-size:17px;color:var(--ink);margin-bottom:4px;">${esc(a.t)}</div>
+              <div class="m" style="margin-bottom:6px;">
+                🗓 <b>${esc(a.d)}</b> · ${esc(a.s)} · <b>${a.dur} minutes</b>
+              </div>
+              <div class="safe-point" style="margin-bottom:6px;">
+                📍 ${esc(a.loc)}
+              </div>
+              <div class="small-meta">
+                👥 Attendees: <b>${a.ps.map(p => esc((S.users[p] || {}).n || p)).join(", ")}</b>
+              </div>
+            </div>
+
+            <div class="card" style="background:var(--pine-subtle);border-left:4px solid var(--pine);padding:12px 14px;margin:12px 0;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <b style="color:var(--pine);font-size:13px;text-transform:uppercase;letter-spacing:0.04em;">Icebreaker Question:</b>
+                <button class="btn ghost sm" data-a="shuffle_starter" style="padding:2px 6px;font-size:12px;">Shuffle ⟳</button>
+              </div>
+              <p style="font-style:italic;color:var(--ink);margin:6px 0 0;font-size:14.5px;">
+                “${esc(starterText)}”
+              </p>
+            </div>
+
+            <div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;">
+              <button class="btn" data-a="modal_close" style="flex:1;">Done</button>
+              <button class="btn g" data-a="copy_details" data-v="${a.id}">Copy meeting details</button>
+              <button class="btn ghost" data-a="tab" data-v="plans">View all plans</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // PRIMARY RENDER FUNCTION (R)
+    // =========================================================================
+    function R() {
+      const activeId = document.activeElement && document.activeElement.id;
+
+      // Landing / Hero screen if demo not explicitly entered
+      if (!S.mode) {
+        $("#app").innerHTML = `
+          <div class="wrap hero-section">
+            <div class="hero-tag">UXDC Designathon 2026 · Experienced Track</div>
+            <h1>Your campus.<br>Your people.<br>Your moments.</h1>
+            <p class="hero-sub">
+              CampusBuddy is a low-pressure way for university students to find or create short, time-bound meetups in safe, public campus spots. No algorithmic feeds. No endless chatting. Just human connection.
+            </p>
+            <div class="hero-actions">
+              <button class="btn" data-a="quick" style="padding:14px 24px;font-size:16px;box-shadow:var(--shadow-md);">
+                ⚡ See the 90-Second Journey
+              </button>
+              <button class="btn g" data-a="start" style="padding:14px 20px;font-size:16px;">
+                Explore Full Interactive Demo
+              </button>
+            </div>
+            <div class="small-meta" style="color:var(--mut);">
+              Note: Fictional student personas and campus mock data for design prototype evaluation.
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      // Clear alert read state if on alerts tab
+      if (S.tab === "alerts") {
+        S.notes.forEach(n => { if (n.to === S.me) n.r = 1; });
+      }
+
+      const pendingCount = S.inv.filter(i => i.t === S.me && i.s === "pending").length;
+      const unreadAlerts = S.notes.filter(n => n.to === S.me && !n.r).length;
+
+      const navTabs = [
+        { id: "today", label: "Today", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>` },
+        { id: "discover", label: "Discover", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>` },
+        { id: "people", label: "People", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>` },
+        { id: "create", label: "Create", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>` },
+        { id: "invites", label: "Invites", badge: pendingCount, icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>` },
+        { id: "plans", label: "Plans", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>` },
+        { id: "alerts", label: "Alerts", badge: unreadAlerts, icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>` },
+        { id: "safety", label: "Safety", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>` }
+      ];
+
+      const currentUser = S.users[S.me] || S.users.maya;
+
+      $("#app").innerHTML = `
+        <header>
+          <div class="wrap">
+            <div class="top-bar">
+              <div class="brand-col">
+                <button class="logo-btn" data-a="home">
+                  <span>CampusBuddy</span>
+                </button>
+                <span class="badge-subtle">Fictional Demo</span>
+              </div>
+
+              <div class="top-actions">
+                <div class="persona-badge" title="Persona switcher">
+                  <span class="avatar-dot">${esc(currentUser.n[0])}</span>
+                  <label for="who" class="visually-hidden">Switch Persona</label>
+                  <select id="who" aria-label="Switch Persona" style="border:0;background:transparent;padding:0;margin:0;font-weight:600;font-size:13px;color:var(--ink);cursor:pointer;outline:none;">
+                    ${Object.keys(S.users).map(id => `
+                      <option value="${id}" ${id === S.me ? "selected" : ""}>
+                        ${esc(S.users[id].n)} (${esc(S.users[id].role.split("·")[0].trim())})
+                      </option>
+                    `).join("")}
+                  </select>
+                </div>
+
+                <button class="btn sm ghost" data-a="theme" aria-label="Toggle theme" title="Toggle Light/Dark Theme">
+                  ${S.theme === "dark" ? "☀️ Light" : "🌙 Dark"}
+                </button>
+
+                <button class="btn sm g" data-a="reset" title="Reset state to initial seed">
+                  Reset
+                </button>
+              </div>
+            </div>
+
+            <nav class="desktop-tabs" aria-label="Main Navigation">
+              ${navTabs.map(tab => `
+                <button class="tab-btn ${S.tab === tab.id ? "on" : ""}" data-a="tab" data-v="${tab.id}">
+                  <span>${tab.label}</span>
+                  ${tab.badge ? `<span class="badge">${tab.badge}</span>` : ""}
+                </button>
+              `).join("")}
+            </nav>
+          </div>
+        </header>
+
+        <main class="wrap" style="padding-top:16px;">
+          ${view()}
+        </main>
+
+        <nav class="mobile-bar" aria-label="Mobile Navigation">
+          ${[
+            { id: "today", label: "Today", icon: navTabs[0].icon },
+            { id: "discover", label: "Discover", icon: navTabs[1].icon },
+            { id: "create", label: "Create", icon: navTabs[3].icon },
+            { id: "invites", label: "Invites", icon: navTabs[4].icon, badge: pendingCount },
+            { id: "plans", label: "Plans", icon: navTabs[5].icon }
+          ].map(tab => `
+            <button class="mobile-nav-item ${S.tab === tab.id ? "on" : ""}" data-a="tab" data-v="${tab.id}">
+              ${tab.icon}
+              <span>${tab.label}</span>
+              ${tab.badge ? `<span class="badge" style="position:absolute;top:4px;right:18%;">${tab.badge}</span>` : ""}
+            </button>
+          `).join("")}
+        </nav>
+
+        ${modal()}
+      `;
+
+      save();
+      if (activeId && $("#" + activeId)) $("#" + activeId).focus();
+    }
+
+    // =========================================================================
+    // ACTION CONTROLLER (A)
+    // =========================================================================
+    const A = {
+      home() {
+        S.tab = "today";
+        S.err = "";
+        S.modal = null;
+        R();
+      },
+      theme() {
+        S.theme = S.theme === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", S.theme);
+        save();
+        R();
+      },
+      quick() {
+        S = seed();
+        S.mode = "demo";
+        S.onboarded = true;
+        S.tab = "study";
+        S.t0 = Date.now();
+        R();
+        toast("90-second study sprint started! Pick a time and join your match.");
+      },
+      study() {
+        S.tab = "study";
+        S.t0 = Date.now();
+        R();
+      },
+      sl(v) {
+        S.sl = v;
+        R();
+      },
+      start() {
+        S.mode = "demo";
+        S.tab = S.onboarded ? "today" : "onboard";
+        R();
+      },
+      tab(v) {
+        S.tab = v;
+        S.err = "";
+        S.modal = null;
+        window.scrollTo(0, 0);
+        R();
+      },
+      chip(v) {
+        const [k, x] = v.split("|");
+        const list = S.users[S.me][k];
+        const idx = list.indexOf(x);
+        if (idx < 0) list.push(x);
+        else list.splice(idx, 1);
+        R();
+      },
+      obdone(v) {
+        const u = S.users[S.me];
+        if (v !== "skip") {
+          const raw = $("#ints") ? $("#ints").value : "";
+          u.int = raw.split(",").map(x => x.trim().toLowerCase()).filter(Boolean);
+        }
+        S.onboarded = true;
+        S.tab = "today";
+        toast("Profile calibrated successfully.");
+        R();
+      },
+      modal(v) {
+        S.modal = v || null;
+        if (!v) S.took = null;
+        R();
+      },
+      modal_close() {
+        S.modal = null;
+        S.took = null;
+        R();
+      },
+      shuffle_starter() {
+        S.starterOffset = (S.starterOffset || 0) + 1;
+        R();
+      },
+      copy_details(id) {
+        const a = S.acts.find(x => x.id === id);
+        if (a) {
+          const txt = `CampusBuddy Meetup: ${a.t} | ${a.d} (${a.s}) | Location: ${a.loc} (Public Campus Spot)`;
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(txt).then(() => toast("Meeting summary copied to clipboard!"));
+          } else {
+            toast("Details: " + a.t + " at " + a.loc);
+          }
+        }
+      },
+      join(id) {
+        const a = S.acts.find(x => x.id === id);
+        const u = S.me;
+        if (!a) return toast("Moment not found.");
+        if (a.st !== "open") return toast("This moment is no longer open.");
+        if (a.ps.includes(u)) return toast("You’re already in this moment.");
+        if (a.ps.length >= a.max) return toast("This moment is full.");
+        if (blocked(u, a.host)) return toast("Cannot join due to privacy settings.");
+
+        a.ps.push(u);
+        note(a.host, `${S.users[u].n} joined “${a.t}”.`);
+        S.modal = id;
+        S.took = S.t0 ? Math.max(1, Math.round((Date.now() - S.t0) / 1000)) : null;
+        S.t0 = null;
+        toast("You joined this moment!");
+        R();
+      },
+      invite(to) {
+        const selectEl = $("#sel-" + to);
+        const aid = selectEl ? selectEl.value : "";
+        if (!aid) return toast("Create or join a moment first, then invite someone.");
+
+        const a = S.acts.find(x => x.id === aid);
+        if (!a) return toast("Moment not found.");
+        if (a.ps.length >= a.max) return toast("That moment is already full.");
+        if (a.ps.includes(to)) return toast(`${S.users[to].n} is already attending that moment.`);
+        if (blocked(S.me, to)) return toast("You can’t invite this user.");
+
+        const hasPending = S.inv.some(i => i.f === S.me && i.t === to && i.a === aid && i.s === "pending");
+        if (hasPending) return toast("You already sent an invitation for this moment.");
+
+        S.inv.push({ id: "i" + S.n++, f: S.me, t: to, a: aid, s: "pending" });
+        note(to, `${S.users[S.me].n} invited you to “${a.t}”.`);
+        toast("Invitation sent.");
+        R();
+      },
+      resp(v) {
+        const [id, to] = v.split("|");
+        const i = S.inv.find(x => x.id === id);
+        if (!i || i.s !== "pending") return toast("That invitation can’t change any more.");
+
+        const a = S.acts.find(x => x.id === i.a);
+        if (!a) return toast("Moment not found.");
+
+        if (to === "accepted") {
+          if (a.st !== "open") return toast("That moment is no longer open.");
+          if (a.ps.length >= a.max) return toast("That moment reached capacity.");
+          if (!a.ps.includes(i.t)) a.ps.push(i.t);
+          note(i.f, `${S.users[i.t].n} accepted your invitation to “${a.t}”.`);
+          S.modal = a.id;
+          toast("Invitation accepted!");
+        } else if (to === "declined") {
+          note(i.f, `${S.users[i.t].n} declined the invitation to “${a.t}”.`);
+          toast("Invitation declined.");
+        } else if (to === "cancelled") {
+          toast("Invitation cancelled.");
+        }
+
+        i.s = to;
+        R();
+      },
+      leave(id) {
+        const a = S.acts.find(x => x.id === id);
+        if (!a) return;
+        a.ps = a.ps.filter(p => p !== S.me);
+        note(a.host, `${S.users[S.me].n} left “${a.t}”.`);
+        toast("You left this moment.");
+        R();
+      },
+      cancel(id) {
+        const a = S.acts.find(x => x.id === id);
+        if (!a) return;
+        a.st = "cancelled";
+        S.inv.forEach(i => {
+          if (i.a === id && i.s === "pending") i.s = "cancelled";
+        });
+        a.ps.forEach(p => {
+          if (p !== S.me) note(p, `“${a.t}” was cancelled by the host.`);
+        });
+        toast("Moment cancelled.");
+        R();
+      },
+      done(id) {
+        const a = S.acts.find(x => x.id === id);
+        if (!a) return;
+        a.st = "done";
+        toast("Marked as concluded. Moved to Past.");
+        R();
+      },
+      fbp(v) {
+        const [a, o] = v.split("|");
+        S.fp[a] = o;
+        R();
+      },
+      fb(id) {
+        const choice = S.fp[id];
+        if (!choice) return toast("Select one rating option first.");
+        const textInput = $("#fbt-" + id);
+        const comment = textInput ? textInput.value.trim() : "";
+        S.fb.push({ a: id, u: S.me, o: choice, x: comment });
+        toast("Private feedback recorded. Thank you!");
+        R();
+      },
+      tpl(c) {
+        const templates = {
+          study: ["Calculus & Biology Focus Session", "One hour of quiet co-study. Bring problem sets or readings."],
+          lunch: ["Casual Food Court Lunch Meetup", "Low-pressure lunch chat at the MacEwan Food Court. Everyone welcome."],
+          coffee: ["Campus Coffee & Semester Catch-up", "Quick 30-minute coffee break to chat about electives and campus life."],
+          walk: ["Fresh Air Walk Around Swann Mall", "Relaxing 40-minute campus walk. Great for clearing your head."]
+        };
+        const m = templates[c] || ["Study Together", "Casual study session."];
+        if ($("#c-t")) $("#c-t").value = m[0];
+        if ($("#c-ds")) $("#c-ds").value = m[1];
+        if ($("#c-c")) $("#c-c").value = c;
+      },
+      create() {
+        const titleEl = $("#c-t");
+        const maxEl = $("#c-m");
+        const durEl = $("#c-du");
+        const t = titleEl ? titleEl.value.trim() : "";
+        const m = parseInt(maxEl ? maxEl.value : 0, 10);
+        const du = parseInt(durEl ? durEl.value : 0, 10);
+
+        let err = "";
+        if (t.length < 3) err = "Give your moment a title of at least 3 characters.";
+        else if (!(m >= 2 && m <= 8)) err = "Attendee limit must be between 2 and 8.";
+        else if (!(du >= 15 && du <= 180)) err = "Duration must be between 15 and 180 minutes.";
+
+        if (err) {
+          S.err = err;
+          R();
+          return;
+        }
+
+        const cat = $("#c-c") ? $("#c-c").value : "study";
+        const desc = $("#c-ds") ? $("#c-ds").value.trim() : "";
+        const day = $("#c-day") ? $("#c-day").value : "Today";
+        const slot = $("#c-s") ? $("#c-s").value : "Afternoon";
+        const loc = $("#c-l") ? $("#c-l").value : LOC[0];
+        const tagsRaw = $("#c-tg") ? $("#c-tg").value : "";
+        const tags = tagsRaw.split(",").map(x => x.trim().toLowerCase()).filter(Boolean);
+
+        S.acts.unshift({
+          id: "a" + S.n++,
+          t,
+          c: cat,
+          desc: desc || "Open meetup at a safe campus public spot.",
+          d: day,
+          s: slot,
+          dur: du,
+          loc: loc,
+          max: m,
+          host: S.me,
+          ps: [S.me],
+          tags: tags,
+          sty: (S.users[S.me].sty && S.users[S.me].sty[0]) || "Casual conversation",
+          st: "open"
+        });
+
+        S.err = "";
+        toast("Moment posted to campus!");
+        S.tab = "discover";
+        R();
+      },
+      vis() {
+        const u = S.users[S.me];
+        u.vis = !u.vis;
+        toast(u.vis ? "Profile is now visible." : "Profile is now hidden.");
+        R();
+      },
+      block() {
+        const target = $("#bl") ? $("#bl").value : "";
+        if (!target) return;
+        if (!blocked(S.me, target)) {
+          S.blocks.push([S.me, target]);
+        }
+        // Auto-cancel mutual pending invitations
+        S.inv.forEach(i => {
+          if (i.s === "pending" && (
+            (i.f === S.me && i.t === target) ||
+            (i.f === target && i.t === S.me)
+          )) {
+            i.s = "cancelled";
+          }
+        });
+        toast(`Blocked ${S.users[target].n}.`);
+        R();
+      },
+      unblock(target) {
+        S.blocks = S.blocks.filter(b => !(b[0] === S.me && b[1] === target));
+        toast(`Unblocked ${S.users[target].n}.`);
+        R();
+      },
+      report() {
+        const who = $("#rp-w") ? $("#rp-w").value : "";
+        const why = $("#rp-y") ? $("#rp-y").value : "";
+        const text = $("#rp-t") ? $("#rp-t").value.trim() : "";
+        if (!who) return toast("Select a student to report.");
+        S.reports.push({
+          by: S.me,
+          who: who,
+          why: why,
+          x: text,
+          st: "Logged for review",
+          time: new Date().toISOString()
+        });
+        toast("Report logged for campus review. Thank you for keeping our community safe.");
+        R();
+      },
+      reset() {
+        S = seed();
+        S.mode = "demo";
+        S.onboarded = true;
+        save();
+        toast("Prototype reset to seed data.");
+        R();
+      }
+    };
+
+    // Global Event Delegation
+    document.addEventListener("click", e => {
+      const b = e.target.closest("[data-a]");
+      if (b && A[b.dataset.a]) {
+        A[b.dataset.a](b.dataset.v);
+      }
+    });
+
+    document.addEventListener("change", e => {
+      if (e.target.id === "who") {
+        S.me = e.target.value;
+        S.tab = "today";
+        toast(`Switched persona to ${S.users[S.me].n}`);
+        R();
+      } else if (e.target.dataset.f) {
+        S.f[e.target.dataset.f] = e.target.value;
+        R();
+      }
+    });
+
+    // Keyboard Accessibility (Esc closes modal)
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && S.modal) {
+        A.modal_close();
+      }
+    });
+
+    // Initial render
+    R();
+
+    // 1-Second Precision Timer for 90-Second Micro-Connection Sprint
+    setInterval(() => {
+      const clk = $("#clk");
+      if (clk && S.t0) {
+        clk.textContent = Math.floor((Date.now() - S.t0) / 1000);
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

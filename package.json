@@ -1,0 +1,29 @@
+{
+  "name": "campusbuddy",
+  "version": "1.0.0",
+  "description": "Your campus. Your people. Your moments. Low-pressure moment-based micro-connection experience for university students.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node --test tests/*.test.js",
+    "check": "node --test tests/*.test.js",
+    "ci": "node --test tests/*.test.js"
+  },
+  "keywords": [
+    "uxdc-2026",
+    "designathon",
+    "human-connection",
+    "campus-connection",
+    "micro-moments",
+    "university-of-calgary",
+    "accessibility",
+    "wcag-aa"
+  ],
+  "author": "vikassharma270907-alt",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

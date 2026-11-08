@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Local IDE & Antigravity Agent Junctions
+.agents/
+.vscode/
+
+# Testing & Playwright Artifacts
+.playwright-mcp/
+test-results/
+coverage/
+
+# OS Metadata & Logs
+.DS_Store
+Thumbs.db
+*.log
+.npm/
+
+# Environment files
+.env
+.env.local
