@@ -2124,6 +2124,15 @@
                   </select>
                 </div>
 
+                <button class="btn sm ghost" data-a="tab" data-v="safety" aria-label="Safety & Guidelines" title="Campus Safety Guidelines">
+                  🛡️<span class="desktop-tab-label"> Safety</span>
+                </button>
+
+                <button class="btn sm ghost" data-a="tab" data-v="alerts" aria-label="Notifications" title="Notifications & Alerts" style="position:relative;">
+                  🔔<span class="desktop-tab-label"> Alerts</span>
+                  ${unreadAlerts ? `<span class="badge" style="margin-left:2px;font-size:10px;padding:1px 5px;">${unreadAlerts}</span>` : ""}
+                </button>
+
                 <button class="btn sm ghost" data-a="theme" aria-label="Toggle theme" title="Toggle Light/Dark Theme">
                   ${S.theme === "dark" ? "☀️ Light" : "🌙 Dark"}
                 </button>
