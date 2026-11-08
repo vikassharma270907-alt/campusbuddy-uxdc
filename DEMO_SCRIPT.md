@@ -8,6 +8,7 @@
 ## Overview & Demo Setup
 
 - **Live Prototype URL:** [https://vikassharma270907-alt.github.io/campusbuddy-uxdc/](https://vikassharma270907-alt.github.io/campusbuddy-uxdc/) (or open `campusbuddy.html` / `npm start`).
+- **YouTube Walkthrough Video:** [https://www.youtube.com/watch?v=ImvvlRvdYWI](https://www.youtube.com/watch?v=ImvvlRvdYWI) (3:09 HD Presentation).
 - **Device Support:** 100% responsive across desktop (1920x1080), tablets, and mobile devices (375x812).
 - **Core Narrative:** Follow **Maya**, an incoming first-year Biology student sitting alone at the library facing a daunting calculus problem set. Within **90 seconds**, she goes from feeling isolated to having a confirmed study partner at a safe public campus landmark.
 
