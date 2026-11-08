@@ -1828,7 +1828,9 @@
         if (a) {
           const txt = `CampusBuddy Meetup: ${a.t} | ${a.d} (${a.s}) | Location: ${a.loc} (Public Campus Spot)`;
           if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(txt).then(() => toast("Meeting summary copied to clipboard!"));
+            navigator.clipboard.writeText(txt)
+              .then(() => toast("Meeting summary copied to clipboard!"))
+              .catch(() => toast("Details: " + a.t + " at " + a.loc));
           } else {
             toast("Details: " + a.t + " at " + a.loc);
           }
@@ -1898,6 +1900,9 @@
       leave(id) {
         const a = S.acts.find(x => x.id === id);
         if (!a) return;
+        if (a.host === S.me) {
+          return toast("As host, use Cancel moment instead of leaving.");
+        }
         a.ps = a.ps.filter(p => p !== S.me);
         note(a.host, `${S.users[S.me].n} left “${a.t}”.`);
         toast("You left this moment.");
@@ -1906,6 +1911,9 @@
       cancel(id) {
         const a = S.acts.find(x => x.id === id);
         if (!a) return;
+        if (a.host !== S.me) {
+          return toast("Only the host can cancel this moment.");
+        }
         a.st = "cancelled";
         S.inv.forEach(i => {
           if (i.a === id && i.s === "pending") i.s = "cancelled";
@@ -1919,22 +1927,34 @@
       done(id) {
         const a = S.acts.find(x => x.id === id);
         if (!a) return;
+        if (!a.ps.includes(S.me)) {
+          return toast("Only participants can conclude this moment.");
+        }
         a.st = "done";
         toast("Marked as concluded. Moved to Past.");
         R();
       },
       fbp(v) {
+        if (!v || typeof v !== "string" || !v.includes("|")) return;
         const [a, o] = v.split("|");
         S.fp[a] = o;
         R();
       },
       fb(id) {
+        if (S.fb.some(f => f.a === id && f.u === S.me)) {
+          return toast("Feedback already submitted for this moment.");
+        }
         const choice = S.fp[id];
         if (!choice) return toast("Select one rating option first.");
         const textInput = $("#fbt-" + id);
         const comment = textInput ? textInput.value.trim() : "";
         S.fb.push({ a: id, u: S.me, o: choice, x: comment });
         toast("Private feedback recorded. Thank you!");
+        R();
+      },
+      clear_filters() {
+        S.f = { c: "", d: "", s: "", o: "", sort: "fit" };
+        toast("Filters reset.");
         R();
       },
       tpl(c) {
@@ -1945,6 +1965,12 @@
           walk: ["Fresh Air Walk Around Swann Mall", "Relaxing 40-minute campus walk. Great for clearing your head."]
         };
         const m = templates[c] || ["Study Together", "Casual study session."];
+        S.draft = {
+          ...(S.draft || {}),
+          t: m[0],
+          desc: m[1],
+          c
+        };
         if ($("#c-t")) $("#c-t").value = m[0];
         if ($("#c-ds")) $("#c-ds").value = m[1];
         if ($("#c-c")) $("#c-c").value = c;
@@ -1953,9 +1979,25 @@
         const titleEl = $("#c-t");
         const maxEl = $("#c-m");
         const durEl = $("#c-du");
+        const catEl = $("#c-c");
+        const descEl = $("#c-ds");
+        const dayEl = $("#c-day");
+        const slotEl = $("#c-s");
+        const locEl = $("#c-l");
+        const tagsEl = $("#c-tg");
+
         const t = titleEl ? titleEl.value.trim() : "";
         const m = parseInt(maxEl ? maxEl.value : 0, 10);
         const du = parseInt(durEl ? durEl.value : 0, 10);
+        const cat = catEl ? catEl.value : "study";
+        const desc = descEl ? descEl.value.trim() : "";
+        const day = dayEl ? dayEl.value : "Today";
+        const slot = slotEl ? slotEl.value : "Afternoon";
+        const loc = locEl ? locEl.value : LOC[0];
+        const tagsRaw = tagsEl ? tagsEl.value : "";
+        const tags = tagsRaw.split(",").map(x => x.trim().toLowerCase()).filter(Boolean);
+
+        S.draft = { t, m, du, c: cat, desc, day, s: slot, loc, tags: tagsRaw };
 
         let err = "";
         if (t.length < 3) err = "Give your moment a title of at least 3 characters.";
@@ -1967,14 +2009,6 @@
           R();
           return;
         }
-
-        const cat = $("#c-c") ? $("#c-c").value : "study";
-        const desc = $("#c-ds") ? $("#c-ds").value.trim() : "";
-        const day = $("#c-day") ? $("#c-day").value : "Today";
-        const slot = $("#c-s") ? $("#c-s").value : "Afternoon";
-        const loc = $("#c-l") ? $("#c-l").value : LOC[0];
-        const tagsRaw = $("#c-tg") ? $("#c-tg").value : "";
-        const tags = tagsRaw.split(",").map(x => x.trim().toLowerCase()).filter(Boolean);
 
         S.acts.unshift({
           id: "a" + S.n++,
@@ -1994,6 +2028,7 @@
         });
 
         S.err = "";
+        S.draft = null;
         toast("Moment posted to campus!");
         S.tab = "discover";
         R();
@@ -2006,7 +2041,7 @@
       },
       block() {
         const target = $("#bl") ? $("#bl").value : "";
-        if (!target) return;
+        if (!target || !S.users[target] || target === S.me) return;
         if (!blocked(S.me, target)) {
           S.blocks.push([S.me, target]);
         }
@@ -2055,6 +2090,10 @@
 
     // Global Event Delegation
     document.addEventListener("click", e => {
+      if (e.target.classList.contains("ov")) {
+        A.modal_close();
+        return;
+      }
       const b = e.target.closest("[data-a]");
       if (b && A[b.dataset.a]) {
         A[b.dataset.a](b.dataset.v);
@@ -2065,6 +2104,9 @@
       if (e.target.id === "who") {
         S.me = e.target.value;
         S.tab = "today";
+        S.modal = null;
+        S.took = null;
+        S.err = "";
         toast(`Switched persona to ${S.users[S.me].n}`);
         R();
       } else if (e.target.dataset.f) {

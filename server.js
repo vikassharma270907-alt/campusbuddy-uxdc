@@ -30,34 +30,49 @@ const MIME_TYPES = {
 
 const STATIC_EXTENSIONS = new Set(Object.keys(MIME_TYPES));
 
-const server = http.createServer((req, res) => {
-  const startTime = Date.now();
+function createServer() {
+  return http.createServer((req, res) => {
+    const startTime = Date.now();
 
-  // Standard production security headers
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+    // Standard production security headers
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
 
-  // Only allow GET and HEAD methods for static web service
-  if (req.method !== 'GET' && req.method !== 'HEAD') {
-    res.writeHead(405, {
-      'Content-Type': 'application/json; charset=utf-8',
-      'Allow': 'GET, HEAD'
-    });
-    res.end(JSON.stringify({ error: 'Method Not Allowed', allowed: ['GET', 'HEAD'] }));
-    return;
-  }
+    // Only allow GET and HEAD methods for static web service
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      res.writeHead(405, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Allow': 'GET, HEAD'
+      });
+      res.end(JSON.stringify({ error: 'Method Not Allowed', allowed: ['GET', 'HEAD'] }));
+      return;
+    }
 
-  // Safe URI decoding with error handling
-  let reqPath;
-  try {
-    reqPath = decodeURIComponent(req.url.split('?')[0]);
-  } catch {
-    res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
-    res.end(JSON.stringify({ error: 'Bad Request: Malformed URI sequence' }));
-    return;
-  }
+    const rawUrl = req.url || '/';
+    // Null-byte poisoning protection
+    if (rawUrl.includes('\0') || rawUrl.includes('%00')) {
+      res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ error: 'Bad Request: Null byte detected in URI' }));
+      return;
+    }
+
+    // Safe URI decoding with error handling
+    let reqPath;
+    try {
+      reqPath = decodeURIComponent(rawUrl.split('?')[0]);
+    } catch {
+      res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ error: 'Bad Request: Malformed URI sequence' }));
+      return;
+    }
+
+    if (reqPath.includes('\0')) {
+      res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ error: 'Bad Request: Null byte detected in URI' }));
+      return;
+    }
 
   // Dedicated /favicon.ico handler for browsers
   if (reqPath === '/favicon.ico') {
@@ -119,6 +134,15 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // Security guard: Block direct access to sensitive repository configuration files
+  const BLOCKED_FILES = new Set(['render.yaml', 'package.json', 'package-lock.json', '.env', '.env.example']);
+  const baseName = path.basename(filePath).toLowerCase();
+  if (BLOCKED_FILES.has(baseName)) {
+    res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('403 Forbidden');
+    return;
+  }
+
   const reqExt = path.extname(filePath).toLowerCase();
 
   fs.stat(filePath, (err, stats) => {
@@ -172,7 +196,10 @@ const server = http.createServer((req, res) => {
       }
     });
   });
-});
+  });
+}
+
+const server = createServer();
 
 // Graceful shutdown handling for container and cloud environments
 const handleShutdown = (signal) => {
@@ -193,4 +220,4 @@ if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
   });
 }
 
-export { server, MIME_TYPES, PORT, HOST };
+export { server, createServer, MIME_TYPES, PORT, HOST };

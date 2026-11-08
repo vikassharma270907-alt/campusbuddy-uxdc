@@ -119,9 +119,10 @@ The hallmark of CampusBuddy is the **90-Second Micro-Connection Journey**:
 | **Capacity & Join Constraints** | Full moment prevention, duplicate join blocking, cancelled session blocking | 3 / 3 Passed | ✅ Verified |
 | **Invitation State Machine** | Pending-to-accepted transitions, finality enforcement, capacity checks, duplicate invite prevention | 4 / 4 Passed | ✅ Verified |
 | **Blocking & Privacy** | Pending invite auto-cancellation, mutual join prevention, invite prevention, unblock recovery | 4 / 4 Passed | ✅ Verified |
+| **E2E Smoke Journey** | 90-second study sprint, partner join, icebreaker shuffle, modal lifecycle, and state persistence | 2 / 2 Passed | ✅ Verified |
 | **Prototype Integrity** | File existence, HTML parity, script compilation, meta tags, WCAG tokens, stopwatch, landmarks | 9 / 9 Passed | ✅ Verified |
-| **Production HTTP Server** | Security headers, JSON health probes (/health, /healthz), path traversal guard, favicon, SPA fallback | 12 / 12 Passed | ✅ Verified |
-| **Total Automated Tests** | **35 Total Test Cases** | **35 / 35 Passed (196ms)** | **100% Green** |
+| **Production HTTP Server** | Security headers, JSON health probes (/health, /healthz), path traversal guard, config protection, favicon, SPA fallback | 15 / 15 Passed | ✅ Verified |
+| **Total Automated Tests** | **40 Total Test Cases Across 7 Suites** | **40 / 40 Passed (172ms)** | **100% Green** |
 
 ---
 

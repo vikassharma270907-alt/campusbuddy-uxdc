@@ -1,10 +1,11 @@
 import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
-import { server } from '../server.js';
+import { createServer } from '../server.js';
 
 describe('CampusBuddy Production HTTP Server', () => {
   const TEST_PORT = 8992;
+  const server = createServer();
 
   before(async () => {
     await new Promise((resolve, reject) => {
@@ -92,6 +93,18 @@ describe('CampusBuddy Production HTTP Server', () => {
     assert.match(res.body, /Forbidden/);
   });
 
+  test('GET /render.yaml returns 403 Forbidden', async () => {
+    const res = await get('/render.yaml');
+    assert.equal(res.status, 403);
+    assert.match(res.body, /Forbidden/);
+  });
+
+  test('GET /package-lock.json returns 403 Forbidden', async () => {
+    const res = await get('/package-lock.json');
+    assert.equal(res.status, 403);
+    assert.match(res.body, /Forbidden/);
+  });
+
   test('GET /nonexistent-image.png returns 404 Not Found instead of SPA fallback', async () => {
     const res = await get('/nonexistent-image.png');
     assert.equal(res.status, 404);
@@ -102,6 +115,13 @@ describe('CampusBuddy Production HTTP Server', () => {
     assert.equal(res.status, 400);
     const data = JSON.parse(res.body);
     assert.match(data.error, /Bad Request/);
+  });
+
+  test('Null-byte sequence returns 400 Bad Request', async () => {
+    const res = await get('/index.html%00.png');
+    assert.equal(res.status, 400);
+    const data = JSON.parse(res.body);
+    assert.match(data.error, /Null byte/);
   });
 
   test('GET /campusbuddy.html directly serves the standalone prototype', async () => {

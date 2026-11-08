@@ -40,5 +40,5 @@ jobs:
           test -f SUBMISSION.md || (echo "Missing SUBMISSION.md" && exit 1)
           test -f package.json || (echo "Missing package.json" && exit 1)
 
-      - name: Run Complete Automated Test Suite (Domain Rules, Integrity & Server)
-        run: npm test
+      - name: Run Full CI Quality Gate (Lint, Typecheck, Test Suite & Sync)
+        run: npm run ci

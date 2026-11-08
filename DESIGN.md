@@ -24,73 +24,74 @@ All text and UI component combinations strictly adhere to **WCAG 2.2 AA standard
 
 ```css
 /* ==========================================================================
-   LIGHT MODE TOKENS (Default)
+   DARK MODE TOKENS (Default Aesthetic — Linear / Obsidian Grey & Black)
    ========================================================================== */
-:root {
-  /* Surfaces */
-  --bg:           #f4f7f8; /* Soft neutral campus slate */
-  --card:         #ffffff; /* Pure white card surface */
-  --card-muted:   #edf2f4; /* Secondary container */
-  --line:         #cbd8dc; /* Structural border (3.2:1 contrast against bg) */
-  --line-subtle:  #e2ebee; /* Inner divider */
+:root, :root[data-theme="dark"] {
+  /* Surfaces: Layered Obsidian & Charcoal */
+  --bg:           #090a0f; /* Deep obsidian canvas */
+  --bg-subtle:     #0d0f15; /* Sub-surface background */
+  --card:          #13161f; /* Surface card */
+  --card-hover:    #181c28; /* Hover card surface */
+  --card-muted:    #161924; /* Inset container surface */
+  --card-elevated: #1e2230; /* Elevated dialog surface */
 
-  /* Typography / Ink */
-  --ink:          #0d1e26; /* Primary display text (14.8:1 contrast on white - AAA) */
-  --ink-secondary:#2c424e; /* Secondary body text (8.9:1 contrast on white - AAA) */
-  --mut:          #496370; /* Muted metadata & labels (5.8:1 contrast on white - AA) */
+  /* Hairline Borders & Luminous Dividers */
+  --line:          rgba(255, 255, 255, 0.08); /* Luminous subtle border */
+  --line-subtle:   rgba(255, 255, 255, 0.04); /* Inset divider */
+  --line-glow:     rgba(255, 255, 255, 0.16); /* Border hover highlight */
 
-  /* Primary Brand (Pine Teal) */
-  --pine:         #0a635a; /* Primary CTA & active states (5.9:1 contrast on white - AA) */
-  --pine-hover:   #074e47; /* Hover / Pressed state */
-  --pine-subtle:  #e6f4f2; /* Tinted pill background */
-  --onp:          #ffffff; /* Contrast text on pine (5.9:1) */
+  /* High-Contrast Zinc Typography (WCAG AAA) */
+  --ink:           #f8fafc; /* Crisp white headers (16.5:1 contrast) */
+  --ink-secondary: #cbd5e1; /* Clear silver body text (11.2:1 contrast) */
+  --mut:           #94a3b8; /* Muted zinc metadata (6.8:1 contrast) */
+  --mut-dim:       #64748b; /* Subtle captions */
 
-  /* Accent / Warning (Warm Amber Sun) */
-  --sun:          #d97706; /* Focus ring & status highlights */
-  --sun-subtle:   #fef3c7; /* Warm amber container */
-  --sun-ink:      #78350f; /* High-contrast text on sun-subtle (7.2:1 - AAA) */
+  /* Primary Brand Accent (Luminescent Titanium & Raycast Cyan) */
+  --pine:          #f8fafc; /* Titanium white CTA */
+  --pine-hover:    #ffffff;
+  --pine-subtle:   rgba(255, 255, 255, 0.08);
+  --pine-border:   rgba(255, 255, 255, 0.18);
+  --onp:           #090a0f; /* Jet black ink on primary CTA */
 
   /* Semantic Feedback */
-  --green:        #15803d; /* Success indicators (5.2:1 contrast on white) */
-  --green-subtle: #f0fdf4;
-  --red:          #b91c1c; /* Destructive actions / Errors (6.2:1 contrast on white) */
-  --red-subtle:   #fef2f2;
-  --red-ink:      #7f1d1d;
+  --green:         #10b981; /* Emerald active pulse */
+  --green-subtle:  rgba(16, 185, 129, 0.12);
+  --green-glow:    0 0 10px rgba(16, 185, 129, 0.45);
+  --sun:           #f59e0b; /* Amber warning / timer */
+  --sun-subtle:    rgba(245, 158, 11, 0.12);
+  --sun-ink:       #fef3c7;
+  --red:           #f43f5e; /* Rose danger */
+  --red-subtle:    rgba(244, 63, 94, 0.12);
+  --red-ink:       #ffe4e6;
 }
 
 /* ==========================================================================
-   DARK MODE TOKENS (OLED / High-Contrast Dark)
+   LIGHT MODE TOKENS (Minimalist Studio Slate)
    ========================================================================== */
-:root[data-theme="dark"] {
-  /* Surfaces */
-  --bg:           #091216; /* Deep dark slate-teal */
-  --card:         #111e24; /* Elevated container */
-  --card-muted:   #172830; /* Secondary container */
-  --line:         #223741; /* Structural border */
-  --line-subtle:  #192a32; /* Inner divider */
+:root[data-theme="light"] {
+  --bg:            #f8fafc;
+  --card:          #ffffff;
+  --card-muted:    #f1f5f9;
+  --line:          #e2e8f0;
+  --line-subtle:   #f1f5f9;
 
-  /* Typography / Ink */
-  --ink:          #eaf2f5; /* Primary display text (13.9:1 on card - AAA) */
-  --ink-secondary:#c0d3dc; /* Secondary body text (9.4:1 on card - AAA) */
-  --mut:          #8da4af; /* Muted metadata (6.4:1 on card - AA) */
+  --ink:           #0f172a;
+  --ink-secondary: #334155;
+  --mut:           #64748b;
 
-  /* Primary Brand (Glowing Teal) */
-  --pine:         #2dd4bf; /* Vibrant teal brand token */
-  --pine-hover:   #14b8a6;
-  --pine-subtle:  #092c28; /* Tinted container */
-  --onp:          #04211e; /* Deep contrast text on glowing teal (10.5:1 - AAA) */
+  --pine:          #0f172a;
+  --pine-hover:    #1e293b;
+  --pine-subtle:   #f1f5f9;
+  --onp:           #ffffff;
 
-  /* Accent (Sun Gold) */
-  --sun:          #fbbf24;
-  --sun-subtle:   #2d2006;
-  --sun-ink:      #fef3c7;
-
-  /* Semantic Feedback */
-  --green:        #4ade80;
-  --green-subtle: #0d2815;
-  --red:          #f87171;
-  --red-subtle:   #301111;
-  --red-ink:      #fee2e2;
+  --sun:           #d97706;
+  --sun-subtle:    #fef3c7;
+  --sun-ink:       #78350f;
+  --green:         #059669;
+  --green-subtle:  #d1fae5;
+  --red:           #e11d48;
+  --red-subtle:    #ffe4e6;
+  --red-ink:       #881337;
 }
 ```
 

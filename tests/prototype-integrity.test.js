@@ -97,7 +97,7 @@ describe('CampusBuddy Single-File Prototype Integrity', () => {
       'home', 'theme', 'quick', 'study', 'sl', 'start', 'tab',
       'chip', 'obdone', 'modal', 'modal_close', 'shuffle_starter',
       'copy_details', 'join', 'invite', 'resp', 'leave', 'cancel',
-      'done', 'fbp', 'fb', 'tpl', 'create', 'vis', 'block',
+      'done', 'fbp', 'fb', 'clear_filters', 'tpl', 'create', 'vis', 'block',
       'unblock', 'report', 'reset'
     ];
 
