@@ -29,6 +29,48 @@ describe('CampusBuddy Single-File Prototype Integrity', () => {
     assert.match(htmlContent, /Figtree/);
   });
 
+
+  test('All application tab views render without runtime ReferenceErrors or exceptions', () => {
+    const scriptMatch = htmlContent.match(/<script>([\s\S]*?)<\/script>/);
+    assert.ok(scriptMatch, 'Must contain a <script> block');
+    const scriptCode = scriptMatch[1];
+
+    const sandbox = {
+      window: { scrollTo: () => {} },
+      document: {
+        documentElement: { setAttribute: () => {} },
+        querySelector: () => ({ innerHTML: '', classList: { add: () => {}, remove: () => {} }, setAttribute: () => {} }),
+        querySelectorAll: () => [],
+        addEventListener: () => {},
+        activeElement: null
+      },
+      localStorage: {
+        getItem: () => null,
+        setItem: () => {}
+      },
+      setInterval: () => {},
+      setTimeout: () => 1,
+      clearTimeout: () => {},
+      Date,
+      Math,
+      JSON,
+      navigator: { clipboard: { writeText: async () => {} } }
+    };
+
+    const script = new vm.Script(scriptCode + '\n;({ S, view, R });');
+    const { S, view } = script.runInNewContext(sandbox);
+
+    const tabs = ['today', 'discover', 'people', 'create', 'invites', 'plans', 'alerts', 'safety', 'onboard', 'study'];
+    tabs.forEach(tab => {
+      S.mode = 'demo';
+      S.tab = tab;
+      assert.doesNotThrow(() => {
+        const out = view();
+        assert.ok(typeof out === 'string', `Tab "${tab}" must return HTML markup`);
+      }, `Tab "${tab}" threw an exception during view()`);
+    });
+  });
+
   test('Extract and compile embedded JavaScript without syntax errors', () => {
     const scriptMatch = htmlContent.match(/<script>([\s\S]*?)<\/script>/);
     assert.ok(scriptMatch, 'Must contain a <script> block');

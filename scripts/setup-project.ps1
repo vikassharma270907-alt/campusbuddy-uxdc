@@ -46,6 +46,7 @@ $MasterFable = Join-Path -Path $PluginsBase -ChildPath 'fable-mode'
 $MasterNaming = Join-Path -Path $PluginsBase -ChildPath 'naming'
 $MasterMotion = Join-Path -Path $PluginsBase -ChildPath 'motion-skills'
 $MasterUiUxProMax = Join-Path -Path $PluginsBase -ChildPath 'ui-ux-pro-max'
+$MasterVercel = Join-Path -Path $PluginsBase -ChildPath 'vercel-agent-skills'
 
 $MasterSkills = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\config\skills'
 $ProjectsJsonPath = Join-Path -Path $env:USERPROFILE -ChildPath '.gemini\projects.json'
@@ -514,14 +515,16 @@ jobs:
     }
 
     Write-Host "[Antigravity Full-Power] Successfully configured: $Resolved" -ForegroundColor Green
-    Write-Host "  - Skills: 655+ (Awesome-Claude-Code + Anthropic Official + Superpowers + UI-Craft + DevOps + Collab + ECC + GSD + CodeRabbit + Ponytail + Agent-Reach + Lemo + Agent-Skills + Context7 + SkillSpector + Strix + Taste)"
-    Write-Host "  - Agents: 154+ (E2E Dev Roles + Charrette Architecture + Fable Mode + UI-Craft + GSD Spec Planners/Executors + Code-Reviewer + Security-Auditor + Taste-Designer + Film-Director)"
-    Write-Host "  - Rules: 142+ (TDD, Superpowers, UI-Craft Anti-Slop, Avoid-AI-Writing, Awesome-CC Catalog, Security, CodeRabbit, SkillSpector, Context7, Strix Pentesting, Ponytail, Ralph, GSD)"
+    Write-Host "  - Skills: 735+ (Awesome-Claude-Code + Anthropic Official + Superpowers + Vercel Official + UI-Craft + DevOps + Collab + ECC + GSD + CodeRabbit + Ponytail + Agent-Reach + Lemo + Agent-Skills + Context7 + SkillSpector + Strix + Taste)"
+    Write-Host "  - Agents: 159+ (Vercel Architects + E2E Dev Roles + Charrette Architecture + Fable Mode + UI-Craft + GSD Spec Planners/Executors + Code-Reviewer + Security-Auditor + Taste-Designer + Film-Director)"
+    Write-Host "  - Rules: 148+ (Vercel 70 React Rules, Web Guidelines, TDD, Superpowers, UI-Craft Anti-Slop, Avoid-AI-Writing, Awesome-CC Catalog, Security, CodeRabbit, SkillSpector, Context7, Strix Pentesting, Ponytail, Ralph, GSD)"
     Write-Host "  - Workflows: 114+ (/skillspector, /taste, /taste-gate, /spec, /ship, /webperf, /test, /review, /planning, /reach, autonomous pipelines)"
+    Write-Host "  - Vercel Official Agent Skills: Active (9 skills: react-best-practices, composition-patterns, react-native, view-transitions, vercel-optimize, web-design-guidelines, deploy-to-vercel, vercel-cli-with-tokens, writing-guidelines; 5 specialized agents: vercel-optimizer, vercel-react-architect, web-design-auditor, composition-architect, docs-writing-reviewer)"
     Write-Host "  - Awesome Claude Code Engine: Active (awesome-cc CLI, 260+ cataloged tools, 'awesome-claude-code' skill, instant discovery)"
     Write-Host "  - Anthropic Official Skills: Active (19 skills: docx, pptx, xlsx, canvas, algorithmic-art, frontend-design, mcp-builder, webapp-testing)"
     Write-Host "  - Superpowers Engineering: Active (15 skills: TDD, systematic-debugging, subagent-driven development, git-worktrees, verification)"
     Write-Host "  - UI-Craft Anti-Slop Engine: Active (34 skills, 2 agents: a11y-auditor, design-reviewer, taste tokens, typography standards)"
+  Write-Host "  - UI/UX Pro Max Engine: Active (80 styles, 192 palettes, 74 type pairs, 120 UX rules, 22 stacks, 'ui-ux-architect' & 'design-review' agents, uipro CLI)"
     Write-Host "  - Human Prose Quality: Active (7 skills: avoid-ai-writing, voice-preserving-rewriter, elimination of 49 robotic tropes)"
     Write-Host "  - Tasteskill & Motion: Active (figma & x.ai bar, design-motion-principles, Emil Kowalski / Jakub Krehel physics)"
     Write-Host "  - Strix Autonomous Pentesting: Active (9 security skills, OWASP Top 10, API testing, PoC exploit validation, strix 1.7.0 CLI)"

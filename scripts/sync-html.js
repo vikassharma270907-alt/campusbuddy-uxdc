@@ -15,7 +15,11 @@ if (!fs.existsSync(src)) {
   process.exit(1);
 }
 
-const content = fs.readFileSync(src, 'utf8');
+// Normalize to LF across both files so Windows git checkouts maintain exact byte-for-byte parity
+let content = fs.readFileSync(src, 'utf8');
+content = content.replace(/\r\n/g, '\n');
+
+fs.writeFileSync(src, content, 'utf8');
 fs.writeFileSync(dst, content, 'utf8');
 
-console.log(`[CampusBuddy Sync] Successfully synchronized campusbuddy.html -> index.html (${content.length} bytes).`);
+console.log(`[CampusBuddy Sync] Successfully synchronized campusbuddy.html -> index.html (${content.length} bytes, LF normalized).`);

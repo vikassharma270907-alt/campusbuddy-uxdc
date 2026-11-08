@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>CampusBuddy · Your campus. Your people. Your moments.</title>
   <meta name="description" content="CampusBuddy connects university students for short, low-pressure, public campus study and social meetups in under 90 seconds.">
-  <meta name="theme-color" content="#0a635a">
+  <meta name="theme-color" content="#090a0f">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -81,7 +81,7 @@
 
         --sun: #fbbf24;
         --sun-subtle: rgba(251, 191, 36, 0.14);
-        --sun-ink: #090a0f;
+        --sun-ink: #fef08a;
 
         --blue: #38bdf8;
         --blue-subtle: rgba(56, 189, 248, 0.14);
@@ -118,7 +118,7 @@
 
       --sun: #fbbf24;
       --sun-subtle: rgba(251, 191, 36, 0.14);
-      --sun-ink: #090a0f;
+      --sun-ink: #fef08a;
 
       --blue: #38bdf8;
       --blue-subtle: rgba(56, 189, 248, 0.14);
@@ -768,6 +768,19 @@
       font-size: 22px;
       flex-shrink: 0;
     }
+    .kbd-key {
+      display: inline-block;
+      padding: 2px 7px;
+      font-size: 11px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      line-height: 1.4;
+      color: var(--ink);
+      background-color: var(--bg-warm);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      box-shadow: inset 0 -1px 0 var(--line);
+      font-weight: 700;
+    }
 
     /* Celebration Confetti Particles */
     .celebrate-container {
@@ -815,6 +828,12 @@
     #toast.on {
       opacity: 1;
       transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 767px) {
+      #toast {
+        bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+      }
     }
 
     /* Hero Section */
@@ -914,14 +933,82 @@
     const STY = ["Quiet company", "Study-focused", "Casual conversation", "Small groups", "Explore and socialize"];
 
     // Safe, verified, open public campus locations (University of Calgary specific)
-    const LOC = [
-      "Taylor Family Digital Library (TFDL), Level 2 Commons",
-      "MacEwan Student Centre (MSC), North Food Court",
-      "Science Theatres (ST) Concourse Benches",
-      "Prairie Chicken Quad (Swann Mall outdoor tables)",
-      "Rozsa Centre Student Arts Lounge",
-      "Gallagher Library (Earth Sciences), 1st Floor Study Zone"
+    const CAMPUS_SPOTS = [
+      {
+        id: "tfdl",
+        name: "Taylor Family Digital Library (TFDL), Level 2 Commons",
+        vibe: "Active Collaborative",
+        vibeCat: "collab",
+        badge: "Most Popular",
+        icon: "📚",
+        noise: "Moderate (Group Work Allowed)",
+        hours: "24/7 during Fall/Winter terms (with UCID)",
+        amenities: ["Power outlets at every pod", "Coffee cart on Level 1", "Adjustable whiteboards", "Accessible elevators"],
+        directions: "Take the central stairs or elevator to Level 2. Tables are clustered around the west glass wall overlooking the quad."
+      },
+      {
+        id: "msc",
+        name: "MacEwan Student Centre (MSC), North Food Court",
+        vibe: "Bustling & Social",
+        vibeCat: "social",
+        badge: "Central Transit Hub",
+        icon: "☕",
+        noise: "Lively & Energized",
+        hours: "7:00 AM – 10:00 PM Daily",
+        amenities: ["Food court & Bake Chef adjacent", "Near CTrain university station", "High-top & booth seating", "ATM & pharmacy nearby"],
+        directions: "North entrance facing the transit bus loop. Ample seating near Starbucks and the Jugo Juice concourse."
+      },
+      {
+        id: "st",
+        name: "Science Theatres (ST) Concourse Benches",
+        vibe: "STEM Focus & Casual",
+        vibeCat: "collab",
+        badge: "Natural Daylight",
+        icon: "🔬",
+        noise: "Quiet to Moderate",
+        hours: "7:30 AM – 9:00 PM Weekdays",
+        amenities: ["Wall-mounted outlets", "Large lecture hall proximity", "Vending machines", "Indoor pathway connects to Science B"],
+        directions: "Second floor concourse between ST 140 and ST 148 overlooking the outdoor courtyard."
+      },
+      {
+        id: "quad",
+        name: "Prairie Chicken Quad (Swann Mall outdoor tables)",
+        vibe: "Fresh Air & Outdoor",
+        vibeCat: "outdoor",
+        badge: "Open Air Landmark",
+        icon: "🌲",
+        noise: "Natural Outdoor Ambient",
+        hours: "Open campus outdoor space (Daylight recommended)",
+        amenities: ["Heavy wooden picnic tables", "Sculpture landmark meeting point", "Accessible paved paths", "Direct sun during midday"],
+        directions: "Directly between Science A and the Taylor Institute for Teaching and Learning, by the iconic Spire sculpture."
+      },
+      {
+        id: "rozsa",
+        name: "Rozsa Centre Student Arts Lounge",
+        vibe: "Artistic & Relaxed",
+        vibeCat: "social",
+        badge: "Cozy Ambiance",
+        icon: "🎭",
+        noise: "Quiet to Low Murmur",
+        hours: "8:00 AM – 8:00 PM (Performance dependent)",
+        amenities: ["Cushioned lounge seating", "Acoustic wood paneling", "Piano practice rooms nearby", "Natural skylights"],
+        directions: "Enter Rozsa Centre from the north doors. Walk past the Eckhardt-Gramatté Hall into the sunlit student gallery."
+      },
+      {
+        id: "gallagher",
+        name: "Gallagher Library (Earth Sciences), 1st Floor Study Zone",
+        vibe: "Deep Focus & Quiet",
+        vibeCat: "quiet",
+        badge: "Deep Work Sanctuary",
+        icon: "🗺️",
+        noise: "Strict Quiet Policy",
+        hours: "8:30 AM – 7:00 PM Weekdays",
+        amenities: ["Individual carrels & dual monitors", "Specialized geology collections", "Silent study pods", "Scanning stations"],
+        directions: "Earth Sciences building (ES), Level 1. Turn left immediately past the main entry revolving doors."
+      }
     ];
+
+    const LOC = CAMPUS_SPOTS.map(s => s.name);
 
     const STARTERS = {
       study: [
@@ -1041,8 +1128,38 @@
       if (el) el.textContent = msg;
     };
 
+    function playChime(kind = 'success') {
+      try {
+        if (typeof window === "undefined") return;
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        if (ctx.state === 'suspended') ctx.resume();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        const now = ctx.currentTime;
+        if (kind === 'success') {
+          osc.frequency.setValueAtTime(587.33, now);
+          osc.frequency.setValueAtTime(880, now + 0.08);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (kind === 'alert') {
+          osc.frequency.setValueAtTime(1046.5, now);
+          gain.gain.setValueAtTime(0.06, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+          osc.start(now);
+          osc.stop(now + 0.22);
+        }
+      } catch (e) {}
+    }
+
     const toast = m => {
       const t = $("#toast");
+      if (!t) return;
       t.innerHTML = `<span>✓</span> <span>${esc(m)}</span>`;
       t.classList.add("on");
       announce(m);
@@ -1462,6 +1579,7 @@
 
       // Create Moment View
       if (t === "create") {
+        const d = S.draft || {};
         return `
           <h2>Create a Moment</h2>
           <p class="m">Host a casual meetup. Keep it public, safe, and low-pressure.</p>
@@ -1702,6 +1820,7 @@
       if (typeof document === "undefined" || !document.createElement || !document.body) return;
       if (typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       const c = document.createElement("div");
+      if (!c || typeof c.setAttribute !== "function" || typeof c.appendChild !== "function") return;
       c.className = "celebrate-container";
       c.setAttribute("aria-hidden", "true");
       const colors = ["#f8fafc", "#38bdf8", "#fbbf24", "#4ade80", "#a855f7"];
@@ -2067,6 +2186,7 @@
         S.took = S.t0 ? Math.max(1, Math.round((Date.now() - S.t0) / 1000)) : null;
         S.t0 = null;
         toast("You joined this moment!");
+        celebrate();
         R();
       },
       invite(to) {
@@ -2103,6 +2223,7 @@
           note(i.f, `${S.users[i.t].n} accepted your invitation to “${a.t}”.`);
           S.modal = a.id;
           toast("Invitation accepted!");
+          celebrate();
         } else if (to === "declined") {
           note(i.f, `${S.users[i.t].n} declined the invitation to “${a.t}”.`);
           toast("Invitation declined.");
